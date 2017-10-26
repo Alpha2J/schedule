@@ -4,26 +4,19 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//import me.shaohui.bottomdialog.BottomDialog;
-//
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
 
@@ -36,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //为左侧抽屉添加事件图标
+        //为左侧抽屉添加点击事件的图标
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
@@ -47,33 +40,17 @@ public class MainActivity extends AppCompatActivity {
         //左侧抽屉NavigationView的相关设置
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_profile);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        drawerLayout.closeDrawers();
-                        return true;
-                    }
-                }
-        );
+        navigationView.setNavigationItemSelectedListener(this);
 
         //为下部的添加悬浮按钮设置监听事件
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        Snackbar.make(v, "点击了添加按钮", Snackbar.LENGTH_SHORT).setAction("撤销", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                Toast.makeText(MainActivity.this, "你已经撤销了添加", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }).show();
-                        Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
-                        startActivity(intent);
-                    }
-                }
-        );
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //设置RecyclerView
 //        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -135,5 +112,46 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_profile:
+                Toast.makeText(this, "个人简介", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_task_today:
+                Toast.makeText(this, "任务: 今天", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_task_next_seven_day:
+                Toast.makeText(this, "任务: 接下来7天", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_task_history:
+                Toast.makeText(this, "任务: 历史", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_task_statistics:
+                Toast.makeText(this, "统计分析", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_setting:
+                Toast.makeText(this, "设置中心", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_about:
+                Toast.makeText(this, "关于", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+        }
+
+        drawerLayout.closeDrawers();
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
