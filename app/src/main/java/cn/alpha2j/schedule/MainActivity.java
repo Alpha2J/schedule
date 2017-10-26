@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import me.shaohui.bottomdialog.BottomDialog;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -100,10 +102,9 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.add:
-                Toast.makeText(this, "点击了添加按钮", Toast.LENGTH_SHORT).show();
-//                BottomDialog.create(getSupportFragmentManager())
-//                        .setLayoutRes(R.layout.dialog_add_task)
-//                        .show();
+                BottomDialog.create(getSupportFragmentManager())
+                        .setLayoutRes(R.layout.bottom_dialog_add_task)
+                        .show();
                 break;
             case R.id.setting:
                 Toast.makeText(this, "点击了设置图标", Toast.LENGTH_SHORT).show();
