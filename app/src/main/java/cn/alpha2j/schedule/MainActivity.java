@@ -9,11 +9,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.shaohui.bottomdialog.BottomDialog;
 
@@ -55,36 +60,20 @@ public class MainActivity extends AppCompatActivity
         });
 
         //设置RecyclerView
-//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-//        final List<Task> taskList = new ArrayList<>();
-//        taskList.add(new Task("今晚打老虎"));
-//        taskList.add(new Task("记得吃饭"));
-//        taskList.add(new Task("学习英语"));
-//        taskList.add(new Task("学习英语"));
-//        taskList.add(new Task("学习英语"));
-//        taskList.add(new Task("学习英语"));
-//        taskList.add(new Task("学习英语"));
-//
-//        for (int i = 0; i < 100; i++) {
-//            taskList.add(new Task("学习英语"));
-//        }
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        List<Task> taskList = new ArrayList<>();
+        taskList.add(new Task(0, "title 1", null, null));
+        taskList.add(new Task(0, "title 2", null, null));
+        taskList.add(new Task(0, "title 3", null, null));
+        taskList.add(new Task(0, "title 4", null, null));
+        taskList.add(new Task(0, "title 5", null, null));
+        taskList.add(new Task(0, "title 6", null, null));
 
-//        TaskListAdapter adapter = new TaskListAdapter(taskList);
-//        recyclerView.setAdapter(adapter);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        MyItemDecoration itemDecoration = new MyItemDecoration();
-//        recyclerView.addItemDecoration(itemDecoration);
-//        recyclerView.addItemDecoration(new SectionDecoration(this, new SectionDecoration.DecorationCallback() {
-//            @Override
-//            public long getGroupId(int position) {
-//                return Character.toUpperCase(taskList.get(position).getTitle().charAt(0));
-//            }
-//
-//            @Override
-//            public String getGroupFirstLine(int position) {
-//                return taskList.get(position).getTitle().substring(0, 1).toUpperCase();
-//            }
-//        }));
+        TaskListAdapter adapter = new TaskListAdapter(taskList);
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     @Override
