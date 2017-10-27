@@ -19,18 +19,19 @@ android:background="@color/colorWhite">
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginBottom="20dp"
-            android:alpha="0.7"
-            android:scaleType="centerCrop"
-            android:src="@drawable/background" />
+        <!--<ImageView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="120dp"-->
+            <!--android:layout_marginBottom="20dp"-->
+            <!--android:alpha="0.7"-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:src="@drawable/background" />-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp"
             android:background="@drawable/text_view_label_shape"
             android:paddingBottom="10dp"
@@ -38,6 +39,7 @@ android:background="@color/colorWhite">
             android:paddingRight="30dp"
             android:paddingTop="10dp"
             android:text="今天"
+            android:textStyle="bold"
             android:textColor="@color/colorWhite"
             android:textSize="22sp" />
 
@@ -52,6 +54,8 @@ android:background="@color/colorWhite">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/text_view_divider_shape" />
 
