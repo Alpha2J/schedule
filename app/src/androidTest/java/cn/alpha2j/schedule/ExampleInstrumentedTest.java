@@ -7,6 +7,13 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Calendar;
+import java.util.List;
+
+import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.repository.ScheduleDatabaseHelper;
+import cn.alpha2j.schedule.repository.impl.TaskRepositoryImpl;
+
 import static org.junit.Assert.*;
 
 /**

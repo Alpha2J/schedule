@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule;
+package cn.alpha2j.schedule.ui.activity;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -20,12 +20,24 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.shaohui.bottomdialog.BottomDialog;
+import cn.alpha2j.schedule.service.TaskService;
+import cn.alpha2j.schedule.service.impl.TaskServiceImpl;
+import cn.alpha2j.schedule.ui.dialog.AddTaskBottomDialog;
+import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.ui.adapter.TaskListAdapter;
+import cn.alpha2j.schedule.entity.Task;
 
+/**
+ * @author alpha
+ * Created on 2017/11/4.
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
+    private RecyclerView recyclerView;
+    private List<Task> taskList;
+    private TaskListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +71,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //设置RecyclerView
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        List<Task> taskList = new ArrayList<>();
-        taskList.add(new Task(0, "title 1", null, null));
-        taskList.add(new Task(0, "title 2", null, null));
-        taskList.add(new Task(0, "title 3", null, null));
-        taskList.add(new Task(0, "title 4", null, null));
-        taskList.add(new Task(0, "title 5", null, null));
-        taskList.add(new Task(0, "title 6", null, null));
+        //初始化RecyclerView(用当天数据)
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        TaskService taskService = new TaskServiceImpl();
+        taskList = taskService.findAllForToday();
 
-        TaskListAdapter adapter = new TaskListAdapter(taskList);
+        adapter = new TaskListAdapter(taskList);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -91,9 +98,13 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.add:
-                BottomDialog.create(getSupportFragmentManager())
-                        .setLayoutRes(R.layout.bottom_dialog_add_task)
-                        .show();
+                AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
+                addTaskBottomDialog.setOnTaskAddedListener(task -> {
+                    taskList.add(task);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(taskList.size() - 1);
+                });
+                addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
             case R.id.setting:
                 Toast.makeText(this, "点击了设置图标", Toast.LENGTH_SHORT).show();

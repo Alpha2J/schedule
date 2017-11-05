@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Schedule</string>
-
+    <string name="bottom_dialog_add_task_title_hint">快速创建任务</string>
 </resources>

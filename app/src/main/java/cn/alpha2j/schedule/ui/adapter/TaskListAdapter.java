@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule;
+package cn.alpha2j.schedule.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +8,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * Created by alpha on 2017/10/27.
- */
+import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.entity.Task;
 
+/**
+ * @author alpha
+ * Created on 2017/11/4.
+ */
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
     private List<Task> taskList;

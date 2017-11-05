@@ -6,7 +6,7 @@ android:layout_height="wrap_content"
 android:background="@color/colorWhite">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/dialog_add_done"
+        android:id="@+id/bottom_dialog_add_done_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
@@ -67,11 +67,13 @@ android:background="@color/colorWhite">
                 android:textSize="20sp" />
 
             <EditText
+                android:id="@+id/bottom_dialog_task_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="输入描述"
+                android:hint="@string/bottom_dialog_add_task_title_hint"
                 android:inputType="text"
+                android:singleLine="false"
                 android:textColor="@color/colorBlack"
                 android:theme="@style/MyEditText" />
         </LinearLayout>

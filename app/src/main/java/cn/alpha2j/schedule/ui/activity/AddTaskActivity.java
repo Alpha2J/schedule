@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule;
+package cn.alpha2j.schedule.ui.activity;
 
 import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,12 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
+import cn.alpha2j.schedule.R;
+
+/**
+ * @author alpha
+ * Created on 2017/11/4.
+ */
 public class AddTaskActivity extends AppCompatActivity {
 
     @Override
@@ -27,7 +33,8 @@ public class AddTaskActivity extends AppCompatActivity {
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddTaskActivity.this, dateSetListener, year, month, day);
                 DatePicker datePicker = datePickerDialog.getDatePicker();
-                calendar.set(Calendar.DAY_OF_MONTH, 25);//后一天
+                //后一天
+                calendar.set(Calendar.DAY_OF_MONTH, 25);
                 datePicker.setMinDate(calendar.getTimeInMillis());
                 calendar.set(Calendar.DAY_OF_MONTH, 29);
                 datePicker.setMaxDate(calendar.getTimeInMillis());
