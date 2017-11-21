@@ -1,6 +1,7 @@
 package cn.alpha2j.schedule.service.impl;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cn.alpha2j.schedule.MyApplication;
@@ -8,6 +9,7 @@ import cn.alpha2j.schedule.entity.Task;
 import cn.alpha2j.schedule.repository.TaskRepository;
 import cn.alpha2j.schedule.repository.impl.TaskRepositoryImpl;
 import cn.alpha2j.schedule.service.TaskService;
+import cn.alpha2j.schedule.util.DateUtils;
 
 /**
  * @author alpha
@@ -15,19 +17,35 @@ import cn.alpha2j.schedule.service.TaskService;
 public class TaskServiceImpl implements TaskService {
 
     private TaskRepository taskRepository;
+    private static TaskService taskService;
 
-    public TaskServiceImpl() {
-        this.taskRepository = new TaskRepositoryImpl(MyApplication.getDatabaseHelper());
+    private TaskServiceImpl() {
+        taskRepository = TaskRepositoryImpl.getInstance();
     }
 
-    public TaskServiceImpl(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public static TaskService getInstance() {
+        if(taskService == null) {
+            synchronized (TaskServiceImpl.class) {
+                if(taskService == null) {
+                    taskService = new TaskServiceImpl();
+                }
+            }
+        }
+
+        return taskService;
     }
 
     @Override
     public boolean addTask(Task task) {
         if(task == null) {
             return false;
+        }
+
+        //需要对task对象的date字段做处理, 如果存在date字段, 那么date应该指向当天 00:00:00
+        Date date = task.getDate();
+        if(date != null) {
+            date = DateUtils.transformDateToDateBegin(date);
+            task.setDate(date);
         }
 
         long id = taskRepository.addTask(task);
@@ -37,9 +55,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> findAllForToday() {
-        Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 0);
+        Date today = DateUtils.generateDateBeginForToday();
 
-        return taskRepository.findAllByDate(today.getTime());
+        return taskRepository.findAllByDate(today);
     }
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/activity_main_menu_profile_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/activity_main_menu_profile_item"
+            android:icon="@drawable/ic_account_circle"
+            android:title="个人信息"/>
+
+    </group>
+
+    <group android:id="@+id/activity_main_menu_task_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/activity_main_menu_task_today_item"
+            android:icon="@drawable/ic_event"
+            android:title="今天"/>
+
+        <item
+            android:id="@+id/activity_main_menu_task_overview_item"
+            android:icon="@drawable/ic_event_note"
+            android:title="任务总览"/>
+
+        <item
+            android:id="@+id/activity_main_menu_task_statistics_item"
+            android:icon="@drawable/ic_statistics"
+            android:title="统计"/>
+    </group>
+
+    <group android:id="@+id/activity_main_menu_other_group"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/activity_main_menu_settings_item"
+            android:icon="@drawable/ic_settings"
+            android:title="设置"/>
+
+    </group>
+</menu>

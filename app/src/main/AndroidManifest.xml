@@ -3,7 +3,7 @@
     package="cn.alpha2j.schedule">
 
     <application
-        android:name="cn.alpha2j.schedule.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.activity.MainActivity"
+            android:name=".app.ui.activity.MainActivity"
             android:label="Schedule">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.AddTaskActivity"></activity>
+        <activity android:name=".app.ui.activity.AddTaskActivity" />
+
+        <receiver
+            android:name=".app.broadcast.TaskTimeOutReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="cn.alpha2j.schedule.receiver.TASK_TIME_OUT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

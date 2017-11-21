@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.ui.activity;
+package cn.alpha2j.schedule.app.ui.activity;
 
 import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;

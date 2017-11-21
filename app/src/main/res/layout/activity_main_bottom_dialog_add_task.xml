@@ -19,14 +19,6 @@ android:background="@color/colorWhite">
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--<ImageView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="120dp"-->
-            <!--android:layout_marginBottom="20dp"-->
-            <!--android:alpha="0.7"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:src="@drawable/background" />-->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,7 +54,7 @@ android:background="@color/colorWhite">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="快速创建任务:"
+                android:text="@string/bottom_dialog_add_task_title_hint"
                 android:textColor="@color/colorAccent"
                 android:textSize="20sp" />
 

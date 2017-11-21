@@ -10,8 +10,9 @@ import java.util.Date;
 import java.util.List;
 
 import cn.alpha2j.schedule.Constants;
+import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.entity.Task;
-import cn.alpha2j.schedule.repository.ScheduleDatabaseHelper;
+import cn.alpha2j.schedule.app.helper.ScheduleDatabaseHelper;
 import cn.alpha2j.schedule.repository.TaskRepository;
 import cn.alpha2j.schedule.util.DateUtils;
 
@@ -22,9 +23,22 @@ import cn.alpha2j.schedule.util.DateUtils;
 public class TaskRepositoryImpl implements TaskRepository {
 
     private ScheduleDatabaseHelper mDatabaseHelper;
+    private static TaskRepository taskRepository;
 
-    public TaskRepositoryImpl(ScheduleDatabaseHelper mDatabaseHelper) {
-        this.mDatabaseHelper = mDatabaseHelper;
+    public static TaskRepository getInstance() {
+        if(taskRepository == null) {
+            synchronized (TaskRepositoryImpl.class) {
+                if(taskRepository == null) {
+                    taskRepository = new TaskRepositoryImpl();
+                }
+            }
+        }
+
+        return taskRepository;
+    }
+
+    private TaskRepositoryImpl() {
+        this.mDatabaseHelper = MyApplication.getDatabaseHelper();
     }
 
     @Override
@@ -35,11 +49,20 @@ public class TaskRepositoryImpl implements TaskRepository {
         contentValues.put("title", task.getTitle());
         contentValues.put("description", task.getDescription());
 
+        //因为数据库存的是时间的秒数, 所以存入数据库时要进行转化
         long secondsForDate = DateUtils.generateSecondsForDate(task.getDate());
-        contentValues.put("date", secondsForDate);
+        if(secondsForDate != -1) {
+            contentValues.put("date", secondsForDate);
+        }
 
         contentValues.put("isAlarm", task.isAlarm());
-        contentValues.put("alarmDateTime", task.getAlarmDateTime().getTime());
+
+        long secondsForAlarmDateTime = DateUtils.generateSecondsForDate(task.getAlarmDateTime());
+        if(secondsForAlarmDateTime != -1) {
+            contentValues.put("alarmDateTime", secondsForAlarmDateTime);
+        }
+
+        contentValues.put("isDone", task.isDone());
 
         long id = database.insert(Constants.TABLE_NAME_TASK, null, contentValues);
 
@@ -50,16 +73,9 @@ public class TaskRepositoryImpl implements TaskRepository {
     public List<Task> findAllByDate(Date date) {
         SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
 
-        //设置时间为当天0点
-        Calendar today = Calendar.getInstance();
-        today.setTime(date);
-        today.set(Calendar.HOUR_OF_DAY, 0);
+        long secondsForDate = DateUtils.generateSecondsForDate(date);
 
-        //当天0点的时间戳
-        long secondsForToday = DateUtils.generateSecondsForToday();
-
-        Cursor cursor = database.query(Constants.TABLE_NAME_TASK, null, "date = ?", new String[] {String.valueOf(secondsForToday)}, null, null, null);
-
+        Cursor cursor = database.query(Constants.TABLE_NAME_TASK, null, "date = ?", new String[] {String.valueOf(secondsForDate)}, null, null, null);
         List<Task> taskList = new ArrayList<>();
         while(cursor.moveToNext()) {
             Task task = new Task();
@@ -67,11 +83,17 @@ public class TaskRepositoryImpl implements TaskRepository {
             task.setTitle(cursor.getString(cursor.getColumnIndex("title")));
             task.setDescription(cursor.getString(cursor.getColumnIndex("description")));
             task.setDate(new Date(cursor.getLong(cursor.getColumnIndex("date"))));
+
             //设置是否提醒
             boolean isAlarm = (cursor.getInt(cursor.getColumnIndex("isAlarm"))) == 1;
             task.setAlarm(isAlarm);
+
             //设置提醒时间
             task.setAlarmDateTime(new Date(cursor.getLong(cursor.getColumnIndex("alarmDateTime"))));
+
+            //设置是否已经完成
+            boolean isDone = (cursor.getInt(cursor.getColumnIndex("isDone"))) == 1;
+            task.setDone(isDone);
 
             taskList.add(task);
         }

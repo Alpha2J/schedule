@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.ui.dialog;
+package cn.alpha2j.schedule.app.ui.dialog;
 
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +12,7 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.entity.Task;
 import cn.alpha2j.schedule.service.TaskService;
 import cn.alpha2j.schedule.service.impl.TaskServiceImpl;
+import cn.alpha2j.schedule.util.AlarmDateTimeGenerator;
 import me.shaohui.bottomdialog.BaseBottomDialog;
 
 /**
@@ -27,7 +28,7 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
 
     @Override
     public int getLayoutRes() {
-        return R.layout.bottom_dialog_add_task;
+        return R.layout.activity_main_bottom_dialog_add_task;
     }
 
     @Override
@@ -41,19 +42,14 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
         //快速生成Task, 包含 Task 的Title, 时间为当天
         Task task = new Task();
         task.setTitle(mTaskTitle.getText().toString());
+        task.setDescription(null);
         task.setDate(new Date());
         task.setAlarm(false);
-
-        //设置提醒时间, 暂定为当天 13 点
-        Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 13);
-        today.set(Calendar.MINUTE, 0);
-        today.set(Calendar.SECOND, 0);
-        Date alarmDateTime = new Date(today.getTimeInMillis() / 1000);
-        task.setAlarmDateTime(alarmDateTime);
+        task.setAlarmDateTime(null);
+        task.setDone(false);
 
         //进行持久化
-        TaskService taskService = new TaskServiceImpl();
+        TaskService taskService = TaskServiceImpl.getInstance();
         boolean isSuccess = taskService.addTask(task);
 
         if(isSuccess) {

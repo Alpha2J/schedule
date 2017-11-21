@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.ui.adapter;
+package cn.alpha2j.schedule.app.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,7 +48,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
 
         public ViewHolder(View itemView) {
             super(itemView);
-            taskTitle = (TextView) itemView.findViewById(R.id.today_task_item_task_title);
+//            taskTitle = (TextView) itemView.findViewById(R.id.today_task_item_task_title);
         }
     }
 }

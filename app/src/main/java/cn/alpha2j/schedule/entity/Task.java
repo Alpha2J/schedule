@@ -1,12 +1,15 @@
 package cn.alpha2j.schedule.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 因为intent.putExtract() 传对象的话需要实现Serializable接口, 所以这里实现该接口
+ *
  * @author alpha
  * Created on 2017/11/4.
  */
-public class Task {
+public class Task implements Serializable {
     private Integer id;
     private String title;
     private String description;
@@ -22,15 +25,21 @@ public class Task {
      */
     private Date alarmDateTime;
 
+    /**
+     * 表示该任务是否已完成
+     */
+    private boolean isDone;
+
     public Task() {}
 
-    public Task(Integer id, String title, String description, Date date, boolean isAlarm, Date alarmDateTime) {
+    public Task(Integer id, String title, String description, Date date, boolean isAlarm, Date alarmDateTime, boolean isDone) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
         this.isAlarm = isAlarm;
         this.alarmDateTime = alarmDateTime;
+        this.isDone = isDone;
     }
 
     public Integer getId() {
@@ -79,5 +88,13 @@ public class Task {
 
     public void setAlarmDateTime(Date alarmDateTime) {
         this.alarmDateTime = alarmDateTime;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 }

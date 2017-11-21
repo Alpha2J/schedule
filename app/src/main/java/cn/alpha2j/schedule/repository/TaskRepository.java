@@ -20,7 +20,7 @@ public interface TaskRepository {
 
     /**
      * 根据日期寻找所有 Task
-     * @param date 寻找的任务的日期, date对象表示当天 0 时
+     * @param date 寻找的任务的日期
      * @return 返回一个 List, 如果没有找到 Task , 那么 list.size() 为0 ,而不是 null
      */
     List<Task> findAllByDate(Date date);
