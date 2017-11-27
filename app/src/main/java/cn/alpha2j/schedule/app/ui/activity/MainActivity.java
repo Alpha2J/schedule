@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,18 +18,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.composedadapter.ComposedAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.alpha2j.schedule.app.thread.TaskAlarmThread;
-import cn.alpha2j.schedule.app.ui.adapter.RecyclerViewTaskAdapter;
-import cn.alpha2j.schedule.app.util.TaskAlarm;
+import cn.alpha2j.schedule.app.ui.adapter.SectionHeaderAdapter;
+import cn.alpha2j.schedule.app.ui.adapter.SwipeableTaskAdapter;
+import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
+import cn.alpha2j.schedule.entity.Task;
 import cn.alpha2j.schedule.service.TaskService;
 import cn.alpha2j.schedule.service.impl.TaskServiceImpl;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.adapter.TaskListAdapter;
-import cn.alpha2j.schedule.entity.Task;
 
 /**
  * @author alpha
@@ -42,9 +48,11 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private NavigationView navigationView;
 
-    private RecyclerView.Adapter<RecyclerView.ViewHolder> adapter;
+    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> unfinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> finishedTaskAdapter;
 
-    private List<Task> taskList;
+    private List<RecyclerViewTaskItem> unfinishedTaskList;
+    private List<RecyclerViewTaskItem> finishedTaskList;
     private TaskService taskService;
 
     @Override
@@ -91,9 +99,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.activity_main_menu_add_item:
                 AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
                 addTaskBottomDialog.setOnTaskAddedListener(task -> {
-                    taskList.add(task);
-                    adapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(taskList.size() - 1);
+                    unfinishedTaskList.add(new RecyclerViewTaskItem(task, false));
+                    unfinishedTaskAdapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(unfinishedTaskList.size() - 1);
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
@@ -152,9 +160,33 @@ public class MainActivity extends AppCompatActivity
      * 初始化非View类型的字段
      */
     private void initFields() {
-        adapter = new RecyclerViewTaskAdapter();
-        taskList = new ArrayList<>();
+        unfinishedTaskList = new ArrayList<>();
+        finishedTaskList = new ArrayList<>();
+
+        unfinishedTaskAdapter = new SwipeableTaskAdapter(unfinishedTaskList);
+        finishedTaskAdapter = new SwipeableTaskAdapter(finishedTaskList);
+
         taskService = TaskServiceImpl.getInstance();
+
+        //初始化未完成项目的item
+        for (int i = 0; i < 10; i++) {
+            Task task = new Task();
+            task.setId(i);
+            task.setTitle("这是" + i + "任务, 还没有完成.");
+
+            RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
+            unfinishedTaskList.add(taskItem);
+        }
+
+        //初始化已完成项目的item
+        for (int i = 10; i < 20; i++) {
+            Task task = new Task();
+            task.setId(i);
+            task.setTitle("这是" + i + "任务, 已经完成了.");
+
+            RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
+            finishedTaskList.add(taskItem);
+        }
     }
 
     private void addToolbar() {
@@ -186,9 +218,77 @@ public class MainActivity extends AppCompatActivity
      * 初始化RecyclerView的数据
      */
     private void initRecyclerViewData() {
-        recyclerView.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerViewSwipeManager unfinishedRVSManager = new RecyclerViewSwipeManager();
+        RecyclerViewSwipeManager finishedRVSManager = new RecyclerViewSwipeManager();
+
+        //为每个adapter设置监听器
+        SwipeableTaskAdapter tempAdapter = (SwipeableTaskAdapter) unfinishedTaskAdapter;
+        tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
+            @Override
+            public void onItemRemoved(int position) {
+                Toast.makeText(MainActivity.this, "未完成删除", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemPinned(int position) {
+                Toast.makeText(MainActivity.this, "未完成pinned", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onItemViewClicked(View view, int target) {
+                if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+                    Toast.makeText(MainActivity.this, "点击了未完成的item", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "未完成的delete", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        tempAdapter = (SwipeableTaskAdapter) finishedTaskAdapter;
+        tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
+            @Override
+            public void onItemRemoved(int position) {
+                Toast.makeText(MainActivity.this, "已完成删除", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onItemPinned(int position) {
+                Toast.makeText(MainActivity.this, "已完成pinned", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onItemViewClicked(View view, int target) {
+                if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+                    Toast.makeText(MainActivity.this, "点击了已完成的item", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "已完成的delete", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        //用来组合各个section
+        ComposedAdapter composedAdapter = new ComposedAdapter();
+
+        composedAdapter.addAdapter(new SectionHeaderAdapter("未完成"));
+        composedAdapter.addAdapter(unfinishedRVSManager.createWrappedAdapter(unfinishedTaskAdapter));
+        composedAdapter.addAdapter(new SectionHeaderAdapter("已完成"));
+        composedAdapter.addAdapter(finishedRVSManager.createWrappedAdapter(finishedTaskAdapter));
+
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        //Change animations 在support-v7-recyclerview v22中默认是开启的
+        //这里关闭它为了让item的回滚动画更好地工作
+        animator.setSupportsChangeAnimations(false);
+
+        recyclerView.setAdapter(composedAdapter);
+        recyclerView.setLayoutManager( new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setItemAnimator(animator);
+        //为每个item添加下划分割线
+        recyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
+
+        //为RecyclerView关联每个Adapter的Manager
+        unfinishedRVSManager.attachRecyclerView(recyclerView);
+        finishedRVSManager.attachRecyclerView(recyclerView);
     }
 }

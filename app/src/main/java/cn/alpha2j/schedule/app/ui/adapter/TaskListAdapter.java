@@ -12,9 +12,12 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.entity.Task;
 
 /**
+ * 该类已经不再使用. 项目开始时为task列表使用的recycler adapter
+ *
  * @author alpha
  * Created on 2017/11/4.
  */
+@Deprecated
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
     private List<Task> taskList;

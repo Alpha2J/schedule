@@ -35,7 +35,8 @@
             android:id="@+id/activity_main_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            style="@style/myRecyclerViewStyle"/>
 
     </android.support.design.widget.CoordinatorLayout>
 
