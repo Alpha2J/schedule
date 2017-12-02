@@ -102,4 +102,88 @@ public class TaskRepositoryImpl implements TaskRepository {
 
         return taskList;
     }
+
+    @Override
+    public List<Task> findAllUnfinishedByDate(Date date) {
+        SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+        long secondsForDate = DateUtils.generateSecondsForDate(date);
+
+        Cursor cursor = database.query(Constants.TABLE_NAME_TASK, null, "date = ? AND isDone = ?", new String[] {String.valueOf(secondsForDate), String.valueOf(0)}, null, null, null);
+        List<Task> taskList = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Task task = new Task();
+            task.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            task.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            task.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+            task.setDate(new Date(cursor.getLong(cursor.getColumnIndex("date"))));
+
+            //设置是否提醒
+            boolean isAlarm = (cursor.getInt(cursor.getColumnIndex("isAlarm"))) == 1;
+            task.setAlarm(isAlarm);
+
+            //设置提醒时间
+            task.setAlarmDateTime(new Date(cursor.getLong(cursor.getColumnIndex("alarmDateTime"))));
+
+            //设置是否已经完成
+            boolean isDone = (cursor.getInt(cursor.getColumnIndex("isDone"))) == 1;
+            task.setDone(isDone);
+
+            taskList.add(task);
+        }
+
+        cursor.close();
+
+        return taskList;
+    }
+
+    @Override
+    public List<Task> findAllFinishedByDate(Date date) {
+        if(date == null) {
+            throw new NullPointerException("参数Date不能为null");
+        }
+        SQLiteDatabase database = mDatabaseHelper.getReadableDatabase();
+
+        long secondsForDate = DateUtils.generateSecondsForDate(date);
+
+        Cursor cursor = database.query(Constants.TABLE_NAME_TASK, null, "date = ? AND isDone = ?", new String[] {String.valueOf(secondsForDate), String.valueOf(1)}, null, null, null);
+        List<Task> taskList = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Task task = new Task();
+            task.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            task.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            task.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+            task.setDate(new Date(cursor.getLong(cursor.getColumnIndex("date"))));
+
+            //设置是否提醒
+            boolean isAlarm = (cursor.getInt(cursor.getColumnIndex("isAlarm"))) == 1;
+            task.setAlarm(isAlarm);
+
+            //设置提醒时间
+            task.setAlarmDateTime(new Date(cursor.getLong(cursor.getColumnIndex("alarmDateTime"))));
+
+            //设置是否已经完成
+            boolean isDone = (cursor.getInt(cursor.getColumnIndex("isDone"))) == 1;
+            task.setDone(isDone);
+
+            taskList.add(task);
+        }
+
+        cursor.close();
+
+        return taskList;
+    }
+
+    @Override
+    public boolean updateIsDone(int id, boolean isDone) {
+        SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("isDone", isDone);
+        int updatedRow = database.update(Constants.TABLE_NAME_TASK, contentValues, "id = ?", new String[] {String.valueOf(id)});
+
+        return updatedRow != 0;
+    }
+
+
 }

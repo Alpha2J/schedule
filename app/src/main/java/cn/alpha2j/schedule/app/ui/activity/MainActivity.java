@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -25,11 +26,15 @@ import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDec
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import cn.alpha2j.schedule.Constants;
+import cn.alpha2j.schedule.app.thread.TaskAlarmThread;
 import cn.alpha2j.schedule.app.ui.adapter.SectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.adapter.SwipeableTaskAdapter;
 import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
+import cn.alpha2j.schedule.app.util.TaskAlarm;
 import cn.alpha2j.schedule.entity.Task;
 import cn.alpha2j.schedule.service.TaskService;
 import cn.alpha2j.schedule.service.impl.TaskServiceImpl;
@@ -54,6 +59,8 @@ public class MainActivity extends AppCompatActivity
     private List<RecyclerViewTaskItem> unfinishedTaskList;
     private List<RecyclerViewTaskItem> finishedTaskList;
     private TaskService taskService;
+    private TaskAlarm taskAlarm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +87,16 @@ public class MainActivity extends AppCompatActivity
 
         //初始化RecyclerView的数据
         initRecyclerViewData();
+
+        //初始化提醒器
+        List<Task> taskList = new ArrayList<>();
+        for (RecyclerViewTaskItem taskItem : unfinishedTaskList) {
+            taskList.add(taskItem.getTask());
+        }
+
+        taskAlarm = new TaskAlarm(taskList);
+        TaskAlarmThread taskAlarmThread = new TaskAlarmThread(taskAlarm, getApplicationContext());
+        taskAlarmThread.start();
     }
 
     @Override
@@ -102,6 +119,7 @@ public class MainActivity extends AppCompatActivity
                     unfinishedTaskList.add(new RecyclerViewTaskItem(task, false));
                     unfinishedTaskAdapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(unfinishedTaskList.size() - 1);
+                    taskAlarm.addTask(task);
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
@@ -168,22 +186,15 @@ public class MainActivity extends AppCompatActivity
 
         taskService = TaskServiceImpl.getInstance();
 
-        //初始化未完成项目的item
-        for (int i = 0; i < 10; i++) {
-            Task task = new Task();
-            task.setId(i);
-            task.setTitle("这是" + i + "任务, 还没有完成.");
+        List<Task> ufTL = taskService.findAllUnfinishedForToday();
+        List<Task> fTL = taskService.findAllFinishedForToday();
 
+        for (Task task : ufTL) {
             RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
             unfinishedTaskList.add(taskItem);
         }
 
-        //初始化已完成项目的item
-        for (int i = 10; i < 20; i++) {
-            Task task = new Task();
-            task.setId(i);
-            task.setTitle("这是" + i + "任务, 已经完成了.");
-
+        for(Task task : fTL) {
             RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
             finishedTaskList.add(taskItem);
         }
@@ -225,20 +236,41 @@ public class MainActivity extends AppCompatActivity
         SwipeableTaskAdapter tempAdapter = (SwipeableTaskAdapter) unfinishedTaskAdapter;
         tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
             @Override
-            public void onItemRemoved(int position) {
-                Toast.makeText(MainActivity.this, "未完成删除", Toast.LENGTH_SHORT).show();
+            public void onItemRemoved(int position, RecyclerViewTaskItem taskItem) {
+                taskService.setDone(taskItem.getTask());
+                finishedTaskList.add(taskItem);
+                finishedTaskAdapter.notifyDataSetChanged();
+
+
+
+                Snackbar snackbar = Snackbar.make(
+                        findViewById(R.id.activity_main_coordinator_layout),
+                        "一个任务已完成",
+                        Snackbar.LENGTH_LONG
+                );
+
+                snackbar.setAction("撤销", view -> {
+                    taskService.setUnDone(taskItem.getTask());
+                    unfinishedTaskList.add(position, taskItem);
+                    finishedTaskList.remove(finishedTaskList.size() - 1);
+                    finishedTaskAdapter.notifyDataSetChanged();
+                    unfinishedTaskAdapter.notifyItemInserted(position);
+                });
+
+                snackbar.show();
             }
 
             @Override
             public void onItemPinned(int position) {
                 Toast.makeText(MainActivity.this, "未完成pinned", Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onItemViewClicked(View view, int target) {
                 if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
                     Toast.makeText(MainActivity.this, "点击了未完成的item", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Constants.TASK_TIME_OUT_RECEIVER_ACTION);
+                    sendBroadcast(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "未完成的delete", Toast.LENGTH_SHORT).show();
                 }
@@ -248,7 +280,7 @@ public class MainActivity extends AppCompatActivity
         tempAdapter = (SwipeableTaskAdapter) finishedTaskAdapter;
         tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
             @Override
-            public void onItemRemoved(int position) {
+            public void onItemRemoved(int position, RecyclerViewTaskItem taskItem) {
                 Toast.makeText(MainActivity.this, "已完成删除", Toast.LENGTH_SHORT).show();
             }
 

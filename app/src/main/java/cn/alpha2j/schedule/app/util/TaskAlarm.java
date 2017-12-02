@@ -21,7 +21,7 @@ public class TaskAlarm {
     }
 
     public boolean isTaskEmpty() {
-        return true;
+        return taskList.size() == 0;
     }
 
     public void addTask(Task task) {

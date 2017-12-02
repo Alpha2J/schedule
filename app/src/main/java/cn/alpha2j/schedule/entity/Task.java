@@ -1,5 +1,7 @@
 package cn.alpha2j.schedule.entity;
 
+import org.litepal.annotation.Column;
+
 import java.io.Serializable;
 import java.util.Date;
 

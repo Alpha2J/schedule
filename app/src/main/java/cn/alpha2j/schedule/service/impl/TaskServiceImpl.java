@@ -1,10 +1,8 @@
 package cn.alpha2j.schedule.service.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.entity.Task;
 import cn.alpha2j.schedule.repository.TaskRepository;
 import cn.alpha2j.schedule.repository.impl.TaskRepositoryImpl;
@@ -36,9 +34,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public boolean addTask(Task task) {
+    public long addTask(Task task) {
         if(task == null) {
-            return false;
+            return -1;
         }
 
         //需要对task对象的date字段做处理, 如果存在date字段, 那么date应该指向当天 00:00:00
@@ -50,7 +48,7 @@ public class TaskServiceImpl implements TaskService {
 
         long id = taskRepository.addTask(task);
 
-        return id != -1;
+        return id;
     }
 
     @Override
@@ -58,5 +56,29 @@ public class TaskServiceImpl implements TaskService {
         Date today = DateUtils.generateDateBeginForToday();
 
         return taskRepository.findAllByDate(today);
+    }
+
+    @Override
+    public List<Task> findAllUnfinishedForToday() {
+        Date today = DateUtils.generateDateBeginForToday();
+
+        return taskRepository.findAllUnfinishedByDate(today);
+    }
+
+    @Override
+    public List<Task> findAllFinishedForToday() {
+        Date today = DateUtils.generateDateBeginForToday();
+
+        return taskRepository.findAllFinishedByDate(today);
+    }
+
+    @Override
+    public void setDone(Task task) {
+        taskRepository.updateIsDone(task.getId(), true);
+    }
+
+    @Override
+    public void setUnDone(Task task) {
+        taskRepository.updateIsDone(task.getId(), false);
     }
 }

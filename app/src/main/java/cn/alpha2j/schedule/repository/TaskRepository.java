@@ -24,4 +24,20 @@ public interface TaskRepository {
      * @return 返回一个 List, 如果没有找到 Task , 那么 list.size() 为0 ,而不是 null
      */
     List<Task> findAllByDate(Date date);
+
+    /**
+     * 根据日期查找所有未完成的Task
+     * @param date 寻找任务的日期
+     * @return 返回一个 List, 如果没有找到 Task , 那么 list.size() 为0 ,而不是 null
+     */
+    List<Task> findAllUnfinishedByDate(Date date);
+
+    /**
+     * 根据日期查找所有已完成的Task
+     * @param date
+     * @return 返回一个 List, 如果没有找到 Task , 那么 list.size() 为0 ,而不是 null
+     */
+    List<Task> findAllFinishedByDate(Date date);
+
+    boolean updateIsDone(int id, boolean isDone);
 }

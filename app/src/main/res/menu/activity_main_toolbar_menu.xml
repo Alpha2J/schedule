@@ -12,6 +12,6 @@
         android:id="@+id/activity_main_menu_normal_setting_item"
         android:icon="@drawable/ic_settings"
         android:title="AppSetting"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
 
 </menu>

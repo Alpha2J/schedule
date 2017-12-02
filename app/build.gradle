@@ -38,6 +38,7 @@ dependencies {
     compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar'){
         transitive=true
     }
+    compile 'org.litepal.android:core:1.6.0'
 
     testCompile 'junit:junit:4.12'
 }

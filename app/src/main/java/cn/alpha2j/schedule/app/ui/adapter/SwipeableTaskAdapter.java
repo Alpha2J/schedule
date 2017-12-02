@@ -21,6 +21,7 @@ import java.util.List;
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
+import cn.alpha2j.schedule.entity.Task;
 
 /**
  * 可左右滑动的RecyclerView Adapter
@@ -92,7 +93,7 @@ public class SwipeableTaskAdapter
          * 在item移除后会立即调用
          * @param position
          */
-        void onItemRemoved(int position);
+        void onItemRemoved(int position, RecyclerViewTaskItem taskItem);
 
         /**
          * 在item固定后会立即调用
@@ -308,6 +309,7 @@ public class SwipeableTaskAdapter
     private static class SwipeRemoveActionResult extends SwipeResultActionRemoveItem {
         private SwipeableTaskAdapter adapter;
         private final int position;
+        private RecyclerViewTaskItem taskItem;
 
         SwipeRemoveActionResult(SwipeableTaskAdapter adapter, int position) {
             this.adapter = adapter;
@@ -318,7 +320,7 @@ public class SwipeableTaskAdapter
         protected void onPerformAction() {
             super.onPerformAction();
 
-            adapter.taskItemList.remove(position);
+            taskItem = adapter.taskItemList.remove(position);
             adapter.notifyItemRemoved(position);
         }
 
@@ -327,7 +329,7 @@ public class SwipeableTaskAdapter
             super.onSlideAnimationEnd();
 
             if(adapter.eventListener != null) {
-                adapter.eventListener.onItemRemoved(position);
+                adapter.eventListener.onItemRemoved(position, taskItem);
             }
         }
 

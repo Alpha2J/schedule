@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import java.util.LinkedList;
 
@@ -16,6 +17,8 @@ import cn.alpha2j.schedule.entity.Task;
  */
 public class TaskAlarmThread extends Thread {
 
+    private static final String TAG = "TaskAlarmThread";
+
     private TaskAlarm taskAlarm;
     private Context context;
 
@@ -27,7 +30,9 @@ public class TaskAlarmThread extends Thread {
     @Override
     public void run() {
         while(true) {
+            Log.d(TAG, "run: 循环内, 未开始");
             if(taskAlarm.isTaskEmpty()) {
+                Log.d(TAG, "run: 循环内, 进行为空判断");
                 try {
                     Thread.sleep(120*1000);
                 } catch (InterruptedException e) {
@@ -35,6 +40,7 @@ public class TaskAlarmThread extends Thread {
                 }
             }
 
+            Log.d(TAG, "run: 开始设置定时任务");
             LinkedList<Task> resultList = taskAlarm.getTaskListAndRemove();
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(Constants.TASK_TIME_OUT_RECEIVER_ACTION);

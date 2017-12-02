@@ -50,10 +50,12 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
 
         //进行持久化
         TaskService taskService = TaskServiceImpl.getInstance();
-        boolean isSuccess = taskService.addTask(task);
+        long isSuccess = taskService.addTask(task);
 
-        if(isSuccess) {
+        if(isSuccess != -1) {
             Toast.makeText(MyApplication.getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+
+            task.setId((int)isSuccess);
 
             //持久化成功后回调方法
             if(mOnTaskAddedListener != null) {
