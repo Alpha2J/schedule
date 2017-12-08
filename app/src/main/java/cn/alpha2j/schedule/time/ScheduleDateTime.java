@@ -13,6 +13,11 @@ import org.joda.time.LocalDateTime;
 public class ScheduleDateTime {
     private Instant mInstant;
 
+    /**
+     * 不允许直接用new的方式生成对象
+     *
+     * @param instant
+     */
     private ScheduleDateTime(Instant instant) {
         mInstant = instant;
     }
@@ -32,7 +37,8 @@ public class ScheduleDateTime {
     }
 
     /**
-     * 获取scheduleDateTime的秒数
+     * 以秒为时间表示当前的scheduleDateTime对象
+     *
      * @return 从1970-01-01T00:00:00Z 距离现在的时间秒数
      */
     public long getEpochSecond() {
@@ -40,7 +46,8 @@ public class ScheduleDateTime {
     }
 
     /**
-     * 获取该scheduleDateTime的毫秒数
+     * 以毫秒为时间表示当前的scheduleDateTime对象
+     *
      * @return 从1970-01-01T00:00:00Z 距离现在的时间毫秒数
      */
     public long getEpochMillisecond() {
@@ -49,7 +56,8 @@ public class ScheduleDateTime {
 
     /**
      * 获取该scheduleDateTime所在时区的年份
-     * @return 所表示的年份
+     *
+     * @return 所在时区的年份
      */
     public int getYear() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
@@ -57,39 +65,75 @@ public class ScheduleDateTime {
         return localDateTime.getYear();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的月份
+     *
+     * @return 所在时区的月份
+     */
     public int getMonthOfYear() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getMonthOfYear();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的日期
+     *
+     * @return 所在时区的日期
+     */
     public int getDayOfMonth() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getDayOfMonth();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的当前日期的第几个小时
+     *
+     * @return 所在时区的小时
+     */
     public int getHourOfDay() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getHourOfDay();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的当前时间中的第几分钟
+     *
+     * @return 所在时区的分钟
+     */
     public int getMinuteOfHour() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getMinuteOfHour();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的当前时间中的第几秒
+     *
+     * @return 所在时区的秒数
+     */
     public int getSecondOfMinute() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getSecondOfMinute();
     }
 
+    /**
+     * 获取该scheduleDateTime所在时区的当前时间中的第几毫秒
+     *
+     * @return 所在时区的月份
+     */
     public int getMillisOfSecond() {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getMillisOfSecond();
+    }
+
+    @Override
+    public String toString() {
+        LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
+        return localDateTime.toString();
     }
 }
