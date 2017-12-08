@@ -1,19 +1,18 @@
-package cn.alpha2j.schedule.repository.impl;
+package cn.alpha2j.schedule.data.repository.impl;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.MyApplication;
-import cn.alpha2j.schedule.entity.Task;
-import cn.alpha2j.schedule.app.helper.ScheduleDatabaseHelper;
-import cn.alpha2j.schedule.repository.TaskRepository;
+import cn.alpha2j.schedule.data.entity.Task;
+import cn.alpha2j.schedule.data.repository.ScheduleDatabaseHelper;
+import cn.alpha2j.schedule.data.repository.TaskRepository;
 import cn.alpha2j.schedule.util.DateUtils;
 
 /**

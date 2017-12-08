@@ -1,6 +1,6 @@
 package cn.alpha2j.schedule.app.ui.data;
 
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * @author alpha

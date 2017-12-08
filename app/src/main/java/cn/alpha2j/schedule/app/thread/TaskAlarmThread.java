@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.app.util.TaskAlarm;
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * @author alpha

@@ -3,7 +3,7 @@ package cn.alpha2j.schedule;
 import android.app.Application;
 import android.content.Context;
 
-import cn.alpha2j.schedule.app.helper.ScheduleDatabaseHelper;
+import cn.alpha2j.schedule.data.repository.ScheduleDatabaseHelper;
 
 /**
  * @author alpha

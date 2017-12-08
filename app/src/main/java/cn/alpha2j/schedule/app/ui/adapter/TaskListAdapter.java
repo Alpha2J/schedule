@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * 该类已经不再使用. 项目开始时为task列表使用的recycler adapter

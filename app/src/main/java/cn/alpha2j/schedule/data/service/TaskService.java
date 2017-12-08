@@ -1,8 +1,8 @@
-package cn.alpha2j.schedule.service;
+package cn.alpha2j.schedule.data.service;
 
 import java.util.List;
 
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * @author alpha

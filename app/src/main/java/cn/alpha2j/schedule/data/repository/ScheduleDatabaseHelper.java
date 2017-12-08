@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.app.helper;
+package cn.alpha2j.schedule.data.repository;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

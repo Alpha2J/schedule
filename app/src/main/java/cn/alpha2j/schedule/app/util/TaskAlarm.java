@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * @author alpha

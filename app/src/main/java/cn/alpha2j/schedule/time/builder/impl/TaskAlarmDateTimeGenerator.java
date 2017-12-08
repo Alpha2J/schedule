@@ -1,12 +1,15 @@
-package cn.alpha2j.schedule.util;
+package cn.alpha2j.schedule.time.builder.impl;
 
 import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 该类不再推荐使用, 使用Builder接口对时间相关的操作进行处理.
+ *
  * @author alpha
  */
-public class AlarmDateTimeGenerator {
+@Deprecated
+public class TaskAlarmDateTimeGenerator {
 
     /**
      * 一天的中午, 表示12点

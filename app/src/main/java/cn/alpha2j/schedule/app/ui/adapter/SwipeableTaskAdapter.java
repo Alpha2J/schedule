@@ -21,7 +21,7 @@ import java.util.List;
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
-import cn.alpha2j.schedule.entity.Task;
+import cn.alpha2j.schedule.data.entity.Task;
 
 /**
  * 可左右滑动的RecyclerView Adapter
