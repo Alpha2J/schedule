@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity
             mCurrentFragment = savedInstanceState.getString(FragmentConstant.FRAGMENT_TAG);
             removeAllAndDisplayFragments(mCurrentFragment);
         }
+
+        initActivity();
     }
 
     @Override
@@ -120,7 +122,6 @@ public class MainActivity extends AppCompatActivity
 
         return true;
     }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -250,7 +251,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void addToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_home_app_bar);
+        Toolbar toolbar = findViewById(R.id.tb_home_app_bar);
         setSupportActionBar(toolbar);
     }
 

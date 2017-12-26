@@ -4,16 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import cn.alpha2j.schedule.data.entity.Task;
+import cn.alpha2j.schedule.data.entity.TaskEntity;
 
 /**
  * @author alpha
  */
 public class TaskAlarm {
-    private LinkedList<Task> taskList;
+    private LinkedList<TaskEntity> taskList;
     private ReentrantLock lock;
 
-    public TaskAlarm(List<Task> taskList) {
+    public TaskAlarm(List<TaskEntity> taskList) {
         this.taskList = new LinkedList<>();
         this.lock = new ReentrantLock();
 
@@ -24,7 +24,7 @@ public class TaskAlarm {
         return taskList.size() == 0;
     }
 
-    public void addTask(Task task) {
+    public void addTask(TaskEntity task) {
         lock.lock();
 
         taskList.add(task);
@@ -32,8 +32,8 @@ public class TaskAlarm {
         lock.unlock();
     }
 
-    public LinkedList<Task> getTaskListAndRemove() {
-        LinkedList<Task> resultTaskList;
+    public LinkedList<TaskEntity> getTaskListAndRemove() {
+        LinkedList<TaskEntity> resultTaskList;
 
         lock.lock();
         resultTaskList = new LinkedList<>();

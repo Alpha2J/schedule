@@ -1,13 +1,16 @@
 package cn.alpha2j.schedule.data.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
-import cn.alpha2j.schedule.data.entity.Task;
+import cn.alpha2j.schedule.data.Task;
+import cn.alpha2j.schedule.data.entity.TaskEntity;
 import cn.alpha2j.schedule.data.repository.TaskRepository;
 import cn.alpha2j.schedule.data.repository.impl.TaskRepositoryImpl;
 import cn.alpha2j.schedule.data.service.TaskService;
-import cn.alpha2j.schedule.util.DateUtils;
+import cn.alpha2j.schedule.exception.AlarmDateTimeCanNotBeNullException;
+import cn.alpha2j.schedule.time.ScheduleDateTime;
+import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
+import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 
 /**
  * @author alpha
@@ -39,46 +42,68 @@ public class TaskServiceImpl implements TaskService {
             return -1;
         }
 
-        //需要对task对象的date字段做处理, 如果存在date字段, 那么date应该指向当天 00:00:00
-        Date date = task.getDate();
-        if(date != null) {
-            date = DateUtils.transformDateToDateBegin(date);
-            task.setDate(date);
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setAlarm(task.isAlarm());
+        taskEntity.setDescription(task.getDescription());
+        taskEntity.setDone(task.isDone());
+
+        //对任务的时间进行处理, 确保任务的时间是当天零点
+        ScheduleDateTime taskScheduleDateTime = task.getTaskDate();
+        if (taskScheduleDateTime == null) {
+            taskScheduleDateTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
+        } else {
+            taskScheduleDateTime = DefaultScheduleDateBuilder.of(taskScheduleDateTime).toDateBegin().getResult();
+        }
+        long taskDate = taskScheduleDateTime.getEpochMillisecond();
+        taskEntity.setTaskDate(taskDate);
+
+        //对任务的提醒时间进行处理, 确保提醒时间精确到分钟
+        if (task.isAlarm() == true) {
+            ScheduleDateTime alarmScheduleDateTime = task.getTaskAlarmDateTime();
+            if (alarmScheduleDateTime == null) {
+                throw new AlarmDateTimeCanNotBeNullException("如果想要进行提醒, 那么需要设置提醒时间");
+            } else {
+                long taskAlarmDateTime = DefaultScheduleTimeBuilder.of(alarmScheduleDateTime).toMinuteStart().getResult().getEpochMillisecond();
+                taskEntity.setTaskAlarmDateTime(taskAlarmDateTime);
+            }
         }
 
-        long id = taskRepository.addTask(task);
-
-        return id;
+        return taskRepository.save(taskEntity).getId();
     }
 
     @Override
-    public List<Task> findAllForToday() {
-        Date today = DateUtils.generateDateBeginForToday();
+    public List<TaskEntity> findAllForToday() {
 
-        return taskRepository.findAllByDate(today);
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+
+        return taskRepository.findTaskEntitiesByTaskDate(todayBegin);
     }
 
     @Override
-    public List<Task> findAllUnfinishedForToday() {
-        Date today = DateUtils.generateDateBeginForToday();
+    public List<TaskEntity> findAllUnfinishedForToday() {
 
-        return taskRepository.findAllUnfinishedByDate(today);
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+
+        return taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, false);
     }
 
     @Override
-    public List<Task> findAllFinishedForToday() {
-        Date today = DateUtils.generateDateBeginForToday();
+    public List<TaskEntity> findAllFinishedForToday() {
 
-        return taskRepository.findAllFinishedByDate(today);
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+
+        return taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true);
     }
 
     @Override
-    public void setDone(Task task) {
-        taskRepository.updateIsDone(task.getId(), true);
+    public void setDone(TaskEntity task) {
+
+        taskRepository.updateTaskEntity(task.getId(), "done", true);
     }
 
     @Override
-    public void setUnDone(Task task) {
-        taskRepository.updateIsDone(task.getId(), false);
+    public void setUnDone(TaskEntity task) {
+
+        taskRepository.updateTaskEntity(task.getId(),"done", false);
     }
 }

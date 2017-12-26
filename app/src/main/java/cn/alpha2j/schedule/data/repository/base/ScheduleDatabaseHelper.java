@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.data.repository;
+package cn.alpha2j.schedule.data.repository.base;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,10 +14,10 @@ public class ScheduleDatabaseHelper extends SQLiteOpenHelper {
             "id integer primary key autoincrement, " +
             "title text, " +
             "description text, " +
-            "date integer, " +
-            "isAlarm integer, " +
-            "alarmDateTime integer, " +
-            "isDone integer)";
+            "taskDate integer, " +
+            "alarm integer, " +
+            "taskAlarmDateTime integer, " +
+            "done integer)";
 
     private Context mContext;
 

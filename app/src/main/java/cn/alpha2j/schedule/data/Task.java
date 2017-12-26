@@ -1,29 +1,31 @@
-package cn.alpha2j.schedule.data.entity;
+package cn.alpha2j.schedule.data;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import cn.alpha2j.schedule.time.ScheduleDateTime;
 
 /**
- * 因为intent.putExtract() 传对象的话需要实现Serializable接口, 所以这里实现该接口
+ * 表示项目使用的Task对象.
+ * 因为使用很多接口都需要实现Serializable接口, 比如intent.putExtract() 传对象的话需要实现Serializable接口
+ * 所以实现Serializable接口
  *
  * @author alpha
- * Created on 2017/11/4.
  */
 public class Task implements Serializable {
-    private Integer id;
+    private long id;
     private String title;
     private String description;
     /**
-     * Task 属于哪天. date字段存的是当天00 : 00 : 00 距离1970年1月1日00 : 00 : 00 的秒数
+     * 任务归属时间
      */
-    private Date date;
+    private ScheduleDateTime taskDate;
 
     private boolean isAlarm;
 
     /**
-     * 提醒时间设置, 哪天哪个时间点进行提醒. alarmDateTime存的是该时间距离1970年1月1日00 : 00 : 00 的秒数
+     * 任务提醒时间
      */
-    private Date alarmDateTime;
+    private ScheduleDateTime taskAlarmDateTime;
 
     /**
      * 表示该任务是否已完成
@@ -32,21 +34,21 @@ public class Task implements Serializable {
 
     public Task() {}
 
-    public Task(Integer id, String title, String description, Date date, boolean isAlarm, Date alarmDateTime, boolean isDone) {
+    public Task(long id, String title, String description, ScheduleDateTime taskDate, boolean isAlarm, ScheduleDateTime taskAlarmDateTime, boolean isDone) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.date = date;
+        this.taskDate = taskDate;
         this.isAlarm = isAlarm;
-        this.alarmDateTime = alarmDateTime;
+        this.taskAlarmDateTime = taskAlarmDateTime;
         this.isDone = isDone;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -66,12 +68,12 @@ public class Task implements Serializable {
         this.description = description;
     }
 
-    public Date getDate() {
-        return date;
+    public ScheduleDateTime getTaskDate() {
+        return taskDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setTaskDate(ScheduleDateTime taskDate) {
+        this.taskDate = taskDate;
     }
 
     public boolean isAlarm() {
@@ -82,12 +84,12 @@ public class Task implements Serializable {
         isAlarm = alarm;
     }
 
-    public Date getAlarmDateTime() {
-        return alarmDateTime;
+    public ScheduleDateTime getTaskAlarmDateTime() {
+        return taskAlarmDateTime;
     }
 
-    public void setAlarmDateTime(Date alarmDateTime) {
-        this.alarmDateTime = alarmDateTime;
+    public void setTaskAlarmDateTime(ScheduleDateTime taskAlarmDateTime) {
+        this.taskAlarmDateTime = taskAlarmDateTime;
     }
 
     public boolean isDone() {

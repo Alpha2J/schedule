@@ -8,7 +8,8 @@ import java.util.Date;
 
 import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.data.entity.Task;
+import cn.alpha2j.schedule.data.Task;
+import cn.alpha2j.schedule.data.entity.TaskEntity;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 import me.shaohui.bottomdialog.BaseBottomDialog;
@@ -38,13 +39,16 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
     @Override
     public void onClick(View v) {
         //快速生成Task, 包含 Task 的Title, 时间为当天
+//        TaskEntity task = new TaskEntity();
+//        task.setTitle(mTaskTitle.getText().toString());
+//        task.setDescription(null);
+//        task.setDate(new Date());
+//        task.setAlarm(false);
+//        task.setAlarmDateTime(null);
+//        task.setDone(false);
+
+        //临时
         Task task = new Task();
-        task.setTitle(mTaskTitle.getText().toString());
-        task.setDescription(null);
-        task.setDate(new Date());
-        task.setAlarm(false);
-        task.setAlarmDateTime(null);
-        task.setDone(false);
 
         //进行持久化
         TaskService taskService = TaskServiceImpl.getInstance();
@@ -55,9 +59,11 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
 
             task.setId((int)isSuccess);
 
+            //临时
+            TaskEntity task2 = new TaskEntity();
             //持久化成功后回调方法
             if(mOnTaskAddedListener != null) {
-                mOnTaskAddedListener.onTaskAdded(task);
+                mOnTaskAddedListener.onTaskAdded(task2);
             }
         } else {
             Toast.makeText(MyApplication.getContext(), "添加失败", Toast.LENGTH_SHORT).show();
@@ -75,6 +81,6 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
          * Task 持久化成功后回调
          * @param task
          */
-        void onTaskAdded(Task task);
+        void onTaskAdded(TaskEntity task);
     }
 }

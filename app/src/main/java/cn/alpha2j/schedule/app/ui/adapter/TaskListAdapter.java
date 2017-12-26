@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.data.entity.Task;
+import cn.alpha2j.schedule.data.entity.TaskEntity;
 
 /**
  * 该类已经不再使用. 项目开始时为task列表使用的recycler adapter
@@ -20,9 +20,9 @@ import cn.alpha2j.schedule.data.entity.Task;
 @Deprecated
 public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHolder> {
 
-    private List<Task> taskList;
+    private List<TaskEntity> taskList;
 
-    public TaskListAdapter(List<Task> taskList) {
+    public TaskListAdapter(List<TaskEntity> taskList) {
         this.taskList = taskList;
     }
 
