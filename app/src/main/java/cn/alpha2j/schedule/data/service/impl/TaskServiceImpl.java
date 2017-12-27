@@ -1,5 +1,6 @@
 package cn.alpha2j.schedule.data.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.alpha2j.schedule.data.Task;
@@ -39,13 +40,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public long addTask(Task task) {
         if(task == null) {
-            return -1;
+            throw new NullPointerException("task 不能为null");
         }
 
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setAlarm(task.isAlarm());
         taskEntity.setDescription(task.getDescription());
         taskEntity.setDone(task.isDone());
+        taskEntity.setTitle(task.getTitle());
 
         //对任务的时间进行处理, 确保任务的时间是当天零点
         ScheduleDateTime taskScheduleDateTime = task.getTaskDate();
@@ -72,38 +74,66 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskEntity> findAllForToday() {
+    public List<Task> findAllForToday() {
 
         long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
 
-        return taskRepository.findTaskEntitiesByTaskDate(todayBegin);
+        return convert(taskRepository.findTaskEntitiesByTaskDate(todayBegin));
     }
 
     @Override
-    public List<TaskEntity> findAllUnfinishedForToday() {
+    public List<Task> findAllUnfinishedForToday() {
 
         long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
 
-        return taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, false);
+        return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, false));
     }
 
     @Override
-    public List<TaskEntity> findAllFinishedForToday() {
+    public List<Task> findAllFinishedForToday() {
 
         long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
 
-        return taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true);
+        return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true));
     }
 
     @Override
-    public void setDone(TaskEntity task) {
+    public void setDone(Task task) {
 
         taskRepository.updateTaskEntity(task.getId(), "done", true);
     }
 
     @Override
-    public void setUnDone(TaskEntity task) {
+    public void setUnDone(Task task) {
 
         taskRepository.updateTaskEntity(task.getId(),"done", false);
+    }
+
+    private List<Task> convert(List<TaskEntity> taskEntities) {
+
+        List<Task> tasks = new ArrayList<>();
+        for (TaskEntity taskEntity : taskEntities) {
+            tasks.add(convert(taskEntity));
+        }
+
+        return tasks;
+    }
+
+    private Task convert(TaskEntity taskEntity) {
+
+        Task task = new Task();
+        task.setId(taskEntity.getId());
+        task.setAlarm(taskEntity.isAlarm());
+        task.setDone(taskEntity.isDone());
+        task.setTitle(taskEntity.getTitle());
+        task.setDescription(taskEntity.getDescription());
+
+        ScheduleDateTime taskAlarmDateTime = ScheduleDateTime.of(taskEntity.getTaskAlarmDateTime());
+        task.setTaskAlarmDateTime(taskAlarmDateTime);
+
+        ScheduleDateTime taskDate = ScheduleDateTime.of(taskEntity.getTaskDate());
+        task.setTaskDate(taskDate);
+
+        return task;
     }
 }

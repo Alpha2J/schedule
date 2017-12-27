@@ -1,6 +1,8 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,9 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskStatisticsFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
+    private FloatingActionButton mFloatingActionButton;
 
     private TaskTodayFragment mTaskTodayFragment;
     private TaskOverviewFragment mTaskOverviewFragment;
@@ -46,35 +49,39 @@ public class MainActivity extends AppCompatActivity
     private ConcurrentHashMap<String, Fragment> mMapOfAddedFragments = new ConcurrentHashMap<>();
 
     private String mCurrentFragment;
-    //转移到Fragment中了
-//    private FloatingActionButton floatingActionButton;
-//    private RecyclerView recyclerView;
-
-//转移到 Fragment中去
-//    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> unfinishedTaskAdapter;
-//    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> finishedTaskAdapter;
-//    private List<RecyclerViewTaskItem> unfinishedTaskList;
-//    private List<RecyclerViewTaskItem> finishedTaskList;
-//    private TaskService taskService;
-//    private TaskAlarm taskAlarm;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initActivity();
+
         //如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
-        //否则, 获取销毁前显示的Fragment, 将它显示出来
+//        否则, 获取销毁前显示的Fragment, 将它显示出来
         if(savedInstanceState == null) {
             mCurrentFragment = FragmentConstant.FRAGMENT_TAG_TASK_TODAY;
             displayFragment(mCurrentFragment);
         } else {
             mCurrentFragment = savedInstanceState.getString(FragmentConstant.FRAGMENT_TAG);
-            removeAllAndDisplayFragments(mCurrentFragment);
+//            这个方法不用了, 因为activity重建的时候里面什么东西都没有, 只需要获得相应的fragment就可以了
+//            removeAllAndDisplayFragments(mCurrentFragment);
+//            用这个方法代替
+            displayFragment(mCurrentFragment);
         }
-
-        initActivity();
+        //设置选中项
+        switch (mCurrentFragment) {
+            case FragmentConstant.FRAGMENT_TAG_TASK_TODAY :
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
+                break;
+            case FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW :
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_overview_item);
+                break;
+            case FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS :
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_statistics_item);
+                break;
+            default:
+        }
     }
 
     @Override
@@ -105,6 +112,12 @@ public class MainActivity extends AppCompatActivity
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.activity_main_menu_add_item:
+                AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
+                addTaskBottomDialog.setOnTaskAddedListener(task -> {
+
+                });
+                addTaskBottomDialog.show(getSupportFragmentManager());
+
 //                AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
 //                addTaskBottomDialog.setOnTaskAddedListener(task -> {
 //                    unfinishedTaskList.add(new RecyclerViewTaskItem(task, false));
@@ -131,34 +144,17 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.activity_main_menu_task_today_item :
                 Toast.makeText(this, "任务: 今天", Toast.LENGTH_SHORT).show();
-
-//                if(taskTodayFragment == null) {
-//                    taskTodayFragment = new TaskTodayFragment();
-//                    if(taskTodayFragment.isAdded()) {
-//
-//                    }
-//                    FragmentManager fragmentManager = getSupportFragmentManager();
-//                    fragmentManager.beginTransaction().add(R.id.fl_home_fragment_container, taskTodayFragment, "TaskTodayFragment");
-//                }
-
-
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                Fragment taskTodayFragment = new TaskTodayFragment();
-                transaction.replace(R.id.fl_home_fragment_container, taskTodayFragment, "TaskTodayFragment");
-                transaction.commit();
+                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_TODAY);
                 break;
             case R.id.activity_main_menu_task_overview_item :
                 Toast.makeText(this, "任务: 总览", Toast.LENGTH_SHORT).show();
 
-                FragmentManager fragmentManager1 = getSupportFragmentManager();
-                FragmentTransaction transaction1 = fragmentManager1.beginTransaction();
-
-                Fragment taskOverviewFragment = new TaskOverviewFragment();
-                transaction1.replace(R.id.fl_home_fragment_container, taskOverviewFragment, "TaskOverviewFragment");
-                transaction1.commit();
+                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW);
                 break;
             case R.id.activity_main_menu_task_statistics_item :
                 Toast.makeText(this, "统计", Toast.LENGTH_SHORT).show();
+
+                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS);
                 break;
             case R.id.activity_main_menu_settings_item :
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
@@ -184,9 +180,6 @@ public class MainActivity extends AppCompatActivity
         //初始化MainActivity所需控件
         initViews();
 
-        //初始化其他域
-        initFields();
-
         //添加material design 的Toolbar
         addToolbar();
 
@@ -196,58 +189,14 @@ public class MainActivity extends AppCompatActivity
         //左侧抽屉NavigationView的相关设置
         initNavigationViewData();
 
-        //为悬浮按钮初始化数据--设置监听事件
-        initFloatingActionButtonData();
-
-//        //初始化RecyclerView的数据
-//        initRecyclerViewData();
-//
-//        //初始化提醒器
-//        List<Task> taskList = new ArrayList<>();
-//        for (RecyclerViewTaskItem taskItem : unfinishedTaskList) {
-//            taskList.add(taskItem.getTask());
-//        }
-//
-//        taskAlarm = new TaskAlarm(taskList);
-//        TaskAlarmThread taskAlarmThread = new TaskAlarmThread(taskAlarm, getApplicationContext());
-//        taskAlarmThread.start();
+        //为floatingactionbutton添加监听事件
+        setFloatingActionButtonListener();
     }
 
     private void initViews() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.dl_home_activity_container);
-        mNavigationView = (NavigationView) findViewById(R.id.nv_home_side_container);
-
-
-//        转移到Fragment中
-//        floatingActionButton = (FloatingActionButton) findViewById(R.id.activity_main_fab);
-//        recyclerView = (RecyclerView) findViewById(R.id.activity_main_recycler_view);
-    }
-
-    /**
-     * 初始化非View类型的字段
-     */
-    private void initFields() {
-
-//        转移到Fragment中去
-//        unfinishedTaskList = new ArrayList<>();
-//        finishedTaskList = new ArrayList<>();
-//        unfinishedTaskAdapter = new SwipeableTaskAdapter(unfinishedTaskList);
-//        finishedTaskAdapter = new SwipeableTaskAdapter(finishedTaskList);
-//
-//        taskService = TaskServiceImpl.getInstance();
-//
-//        List<Task> ufTL = taskService.findAllUnfinishedForToday();
-//        List<Task> fTL = taskService.findAllFinishedForToday();
-//
-//        for (Task task : ufTL) {
-//            RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
-//            unfinishedTaskList.add(taskItem);
-//        }
-//
-//        for(Task task : fTL) {
-//            RecyclerViewTaskItem taskItem = new RecyclerViewTaskItem(task, false);
-//            finishedTaskList.add(taskItem);
-//        }
+        mDrawerLayout = findViewById(R.id.dl_home_activity_container);
+        mNavigationView = findViewById(R.id.nv_home_sidebar);
+        mFloatingActionButton = findViewById(R.id.fab_home_add_task_btn);
     }
 
     private void addToolbar() {
@@ -268,12 +217,13 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void initFloatingActionButtonData() {
-//        floatingActionButton.setOnClickListener(view -> {
-//            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
-//            startActivity(intent);
-//        });
+    private void setFloatingActionButtonListener() {
+        mFloatingActionButton.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+            startActivity(intent);
+        });
     }
+
 
     private void displayFragment(String fragmentTag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -327,6 +277,12 @@ public class MainActivity extends AppCompatActivity
         transaction.commit();
     }
 
+    /**
+     * 还有漏洞, 需要将其他的fragment设置为null, 这样在显示fragment的时候才能重新初始化
+     * (其实好像也不用设置为null, 因为这个方法只在activity重建的时候调用, Activity重建的时候所有字段都是空的)
+     *
+     * @param fragmentTag
+     */
     private void removeAllAndDisplayFragments(String fragmentTag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -384,103 +340,4 @@ public class MainActivity extends AppCompatActivity
 
         transaction.commit();
     }
-
-//    /**
-//     * 初始化RecyclerView的数据
-//     */
-//    private void initRecyclerViewData() {
-//        RecyclerViewSwipeManager unfinishedRVSManager = new RecyclerViewSwipeManager();
-//        RecyclerViewSwipeManager finishedRVSManager = new RecyclerViewSwipeManager();
-//
-//        //为每个adapter设置监听器
-//        SwipeableTaskAdapter tempAdapter = (SwipeableTaskAdapter) unfinishedTaskAdapter;
-//        tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
-//            @Override
-//            public void onItemRemoved(int position, RecyclerViewTaskItem taskItem) {
-//                taskService.setDone(taskItem.getTask());
-//                finishedTaskList.add(taskItem);
-//                finishedTaskAdapter.notifyDataSetChanged();
-//
-//
-//
-//                Snackbar snackbar = Snackbar.make(
-//                        findViewById(R.id.activity_main_coordinator_layout),
-//                        "一个任务已完成",
-//                        Snackbar.LENGTH_LONG
-//                );
-//
-//                snackbar.setAction("撤销", view -> {
-//                    taskService.setUnDone(taskItem.getTask());
-//                    unfinishedTaskList.add(position, taskItem);
-//                    finishedTaskList.remove(finishedTaskList.size() - 1);
-//                    finishedTaskAdapter.notifyDataSetChanged();
-//                    unfinishedTaskAdapter.notifyItemInserted(position);
-//                });
-//
-//                snackbar.show();
-//            }
-//
-//            @Override
-//            public void onItemPinned(int position) {
-//                Toast.makeText(MainActivity.this, "未完成pinned", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onItemViewClicked(View view, int target) {
-//                if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
-//                    Toast.makeText(MainActivity.this, "点击了未完成的item", Toast.LENGTH_SHORT).show();
-//                    Intent intent = new Intent(Constants.TASK_TIME_OUT_RECEIVER_ACTION);
-//                    sendBroadcast(intent);
-//                } else {
-//                    Toast.makeText(MainActivity.this, "未完成的delete", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        tempAdapter = (SwipeableTaskAdapter) finishedTaskAdapter;
-//        tempAdapter.setEventListener(new SwipeableTaskAdapter.EventListener() {
-//            @Override
-//            public void onItemRemoved(int position, RecyclerViewTaskItem taskItem) {
-//                Toast.makeText(MainActivity.this, "已完成删除", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onItemPinned(int position) {
-//                Toast.makeText(MainActivity.this, "已完成pinned", Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-//            @Override
-//            public void onItemViewClicked(View view, int target) {
-//                if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
-//                    Toast.makeText(MainActivity.this, "点击了已完成的item", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(MainActivity.this, "已完成的delete", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        //用来组合各个section
-//        ComposedAdapter composedAdapter = new ComposedAdapter();
-//
-//        composedAdapter.addAdapter(new SectionHeaderAdapter("未完成"));
-//        composedAdapter.addAdapter(unfinishedRVSManager.createWrappedAdapter(unfinishedTaskAdapter));
-//        composedAdapter.addAdapter(new SectionHeaderAdapter("已完成"));
-//        composedAdapter.addAdapter(finishedRVSManager.createWrappedAdapter(finishedTaskAdapter));
-//
-//        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-//        //Change animations 在support-v7-recyclerview v22中默认是开启的
-//        //这里关闭它为了让item的回滚动画更好地工作
-//        animator.setSupportsChangeAnimations(false);
-//
-//        recyclerView.setAdapter(composedAdapter);
-//        recyclerView.setLayoutManager( new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        recyclerView.setItemAnimator(animator);
-//        //为每个item添加下划分割线
-//        recyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_divider_h), true));
-//
-//        //为RecyclerView关联每个Adapter的Manager
-//        unfinishedRVSManager.attachRecyclerView(recyclerView);
-//        finishedRVSManager.attachRecyclerView(recyclerView);
-//    }
 }

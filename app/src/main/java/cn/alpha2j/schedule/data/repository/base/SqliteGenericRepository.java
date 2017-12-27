@@ -58,7 +58,12 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
         Field[] fields = entityClass.getDeclaredFields();
         try {
             for (Field field : fields) {
-                contentValues.put(field.getName(), field.get(entity).toString());
+                field.setAccessible(true);
+                Object fieldValue = field.get(entity);
+                String fieldValueStr = fieldValue == null ? null : fieldValue.toString();
+                if(fieldValueStr != null) {
+                    contentValues.put(field.getName(), fieldValueStr);
+                }
             }
 
             long id = database.insert(TABLE_NAME, null, contentValues);

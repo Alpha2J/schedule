@@ -7,6 +7,10 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import cn.alpha2j.schedule.data.entity.TaskEntity;
+import cn.alpha2j.schedule.data.service.TaskService;
+import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
+
 import static org.junit.Assert.*;
 
 /**
@@ -21,6 +25,9 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("cn.alpha2j.schedule", appContext.getPackageName());
+//        assertEquals("cn.alpha2j.schedule", appContext.getPackageName());
+        TaskService taskService = TaskServiceImpl.getInstance();
+        TaskEntity taskEntity = new TaskEntity();
+//        taskService.addTask()
     }
 }

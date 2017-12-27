@@ -140,7 +140,6 @@ public class SwipeableTaskAdapter
         this.deleteButtonOnClickListener = deleteButtonOnClickListener;
     }
 
-    //-----
     @Override
     public SwipeableItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_task_item, parent, false);
@@ -188,8 +187,6 @@ public class SwipeableTaskAdapter
         return taskItemList.size();
     }
 
-    //---
-
     @Override
     public int onGetSwipeReactionType(SwipeableItemViewHolder holder, int position, int x, int y) {
         return Swipeable.REACTION_CAN_SWIPE_BOTH_H;
@@ -234,8 +231,6 @@ public class SwipeableTaskAdapter
                 }
         }
     }
-
-    //---
 
     public static class SwipeableItemViewHolder extends AbstractSwipeableItemViewHolder {
 

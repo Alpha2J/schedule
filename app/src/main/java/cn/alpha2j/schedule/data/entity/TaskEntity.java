@@ -1,8 +1,8 @@
 package cn.alpha2j.schedule.data.entity;
 
-import java.io.Serializable;
+import org.greenrobot.greendao.annotation.Entity;
 
-import cn.alpha2j.schedule.annotation.TableName;
+import java.io.Serializable;
 
 /**
  * 表示与持久化交互的TaskEntity实体
@@ -10,8 +10,9 @@ import cn.alpha2j.schedule.annotation.TableName;
  * @author alpha
  * Created on 2017/11/4.
  */
-@TableName("Schedule_Task")
-public class TaskEntity implements Serializable {
+@Entity
+public class TaskEntity {
+    
     private long id;
     private String title;
     private String description;

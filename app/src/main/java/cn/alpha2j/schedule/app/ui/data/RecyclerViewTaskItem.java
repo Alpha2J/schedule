@@ -1,28 +1,28 @@
 package cn.alpha2j.schedule.app.ui.data;
 
-import cn.alpha2j.schedule.data.entity.TaskEntity;
+import cn.alpha2j.schedule.data.Task;
 
 /**
  * @author alpha
  */
 public class RecyclerViewTaskItem {
-    private TaskEntity task;
+    private Task task;
     private boolean isPinned;
 
     public RecyclerViewTaskItem() {
 
     }
 
-    public RecyclerViewTaskItem(TaskEntity task, boolean isPinned) {
+    public RecyclerViewTaskItem(Task task, boolean isPinned) {
         this.task = task;
         this.isPinned = isPinned;
     }
 
-    public TaskEntity getTask() {
+    public Task getTask() {
         return task;
     }
 
-    public void setTask(TaskEntity task) {
+    public void setTask(Task task) {
         this.task = task;
     }
 

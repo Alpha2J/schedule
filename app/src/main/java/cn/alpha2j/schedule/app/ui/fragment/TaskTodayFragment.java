@@ -4,7 +4,13 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 
+import java.util.List;
+
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.ui.adapter.SwipeableTaskAdapter;
+import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
+import cn.alpha2j.schedule.app.util.TaskAlarm;
+import cn.alpha2j.schedule.data.service.TaskService;
 
 /**
  * @author alpha
@@ -13,17 +19,14 @@ public class TaskTodayFragment extends BaseFragment {
 
     private static final String TAG = "TaskTodayFragment";
 
-    private FloatingActionButton mFloatingActionButton;
-
     private RecyclerView mRecyclerView;
 
-    //    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> unfinishedTaskAdapter;
-//    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> finishedTaskAdapter;
-//    private List<RecyclerViewTaskItem> unfinishedTaskList;
-//    private List<RecyclerViewTaskItem> finishedTaskList;
-//    private TaskService taskService;
-//    private TaskAlarm taskAlarm;
-
+    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> mUnfinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> mFinishedTaskAdapter;
+    private List<RecyclerViewTaskItem> mUnfinishedTaskList;
+    private List<RecyclerViewTaskItem> mFinishedTaskList;
+    private TaskService mTaskService;
+    private TaskAlarm mTaskAlarm;
 
 
     public TaskTodayFragment() {}
@@ -36,5 +39,10 @@ public class TaskTodayFragment extends BaseFragment {
     @Override
     protected void afterCreated(Bundle savedInstanceState) {
 
+        initViews();
+    }
+
+    private void initViews() {
+        mRecyclerView = mRootView.findViewById(R.id.rv_home_task_today_container);
     }
 }
