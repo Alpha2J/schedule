@@ -3,7 +3,8 @@ package cn.alpha2j.schedule.data.repository.base;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.io.Serializable;
+import org.greenrobot.greendao.AbstractDao;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
@@ -11,9 +12,12 @@ import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.annotation.TableName;
 
 /**
+ * 换用greendao框架, 不再使用这个类来进行持久化
+ *
  * @author alpha
  */
-public abstract class SqliteGenericRepository<T, ID extends Serializable> extends BaseGenericRepository<T, ID> {
+@Deprecated
+public abstract class SqliteGenericRepository<T, DAO extends AbstractDao<T, Long>> extends BaseGenericRepository<T, DAO> {
 
     protected ScheduleDatabaseHelper mDatabaseHelper;
 
@@ -24,7 +28,7 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
         String tableName = null;
 
         //如果实体标注了@TableName, 那么使用标注的表值
-        Annotation[] annotations = entityClass.getAnnotations();
+        Annotation[] annotations = mEntityClass.getAnnotations();
         for (Annotation annotation : annotations) {
             if (annotation instanceof TableName) {
                 tableName = ((TableName)annotation).value();
@@ -34,7 +38,7 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
 
         //如果没有标注, 那么使用实体名字
         if(tableName == null) {
-            tableName = entityClass.getSimpleName();
+            tableName = mEntityClass.getSimpleName();
         }
 
         //设置表名
@@ -50,12 +54,12 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
      * @return
      */
     @Override
-    public T save(T entity) {
+    public Long save(T entity) {
 
         SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
-        Field[] fields = entityClass.getDeclaredFields();
+        Field[] fields = mEntityClass.getDeclaredFields();
         try {
             for (Field field : fields) {
                 field.setAccessible(true);
@@ -75,7 +79,7 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
             e.printStackTrace();
         }
 
-        return entity;
+        return -1L;
     }
 
     @Override
@@ -84,12 +88,12 @@ public abstract class SqliteGenericRepository<T, ID extends Serializable> extend
     }
 
     @Override
-    public T findOne(ID id) {
+    public T findOne(Long id) {
         return null;
     }
 
     @Override
-    public Iterable<T> findAll(Iterable<ID> ids) {
+    public Iterable<T> findAll(Iterable<Long> ids) {
         return null;
     }
 

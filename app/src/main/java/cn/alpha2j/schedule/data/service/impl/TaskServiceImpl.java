@@ -70,13 +70,13 @@ public class TaskServiceImpl implements TaskService {
             }
         }
 
-        return taskRepository.save(taskEntity).getId();
+        return taskRepository.save(taskEntity);
     }
 
     @Override
     public List<Task> findAllForToday() {
 
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
 
         return convert(taskRepository.findTaskEntitiesByTaskDate(todayBegin));
     }
@@ -84,7 +84,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findAllUnfinishedForToday() {
 
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
 
         return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, false));
     }
@@ -92,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findAllFinishedForToday() {
 
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getMillisOfSecond();
+        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
 
         return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true));
     }
@@ -100,13 +100,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void setDone(Task task) {
 
-        taskRepository.updateTaskEntity(task.getId(), "done", true);
+        long id = task.getId();
+        TaskEntity taskEntity = taskRepository.findOne(id);
+        taskEntity.setDone(true);
+        taskRepository.update(taskEntity);
     }
 
     @Override
     public void setUnDone(Task task) {
 
-        taskRepository.updateTaskEntity(task.getId(),"done", false);
+        long id = task.getId();
+        TaskEntity taskEntity = taskRepository.findOne(id);
+        taskEntity.setDone(false);
+        taskRepository.update(taskEntity);
     }
 
     private List<Task> convert(List<TaskEntity> taskEntities) {

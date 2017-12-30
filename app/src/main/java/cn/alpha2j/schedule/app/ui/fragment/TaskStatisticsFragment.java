@@ -11,6 +11,11 @@ public class TaskStatisticsFragment extends BaseFragment {
     private static final String TAG = "TaskStatisticsFragment";
 
     @Override
+    protected boolean hasView() {
+        return true;
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.fragment_statistics;
     }

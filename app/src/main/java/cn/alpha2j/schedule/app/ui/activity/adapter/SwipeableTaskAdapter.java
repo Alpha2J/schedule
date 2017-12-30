@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.app.ui.adapter;
+package cn.alpha2j.schedule.app.ui.activity.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,10 +17,8 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
-import java.util.List;
-
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.RecyclerViewTaskItem;
+import cn.alpha2j.schedule.app.ui.data.AbstractDataProvider;
 
 /**
  * 可左右滑动的RecyclerView Adapter
@@ -32,7 +30,7 @@ public class SwipeableTaskAdapter
 
     private static final String TAG = "SwipeableTaskAdapter";
 
-    private List<RecyclerViewTaskItem> taskItemList;
+    private AbstractDataProvider mDataProvider;
 
     /**
      * 在item上完成了各种事件后会回调该接口中的相应方法
@@ -47,8 +45,9 @@ public class SwipeableTaskAdapter
      */
     private View.OnClickListener deleteButtonOnClickListener;
 
-    public SwipeableTaskAdapter(List<RecyclerViewTaskItem> taskItemList) {
-        this.taskItemList = taskItemList;
+    public SwipeableTaskAdapter(AbstractDataProvider dataProvider) {
+
+        this.mDataProvider = dataProvider;
 
         taskItemOnClickListener = view -> {
             onItemClick(view);
@@ -75,7 +74,8 @@ public class SwipeableTaskAdapter
 
     @Override
     public long getItemId(int position) {
-        return taskItemList.get(position).getTask().getId();
+
+        return mDataProvider.getItem(position).getId();
     }
 
     /**
@@ -92,7 +92,7 @@ public class SwipeableTaskAdapter
          * 在item移除后会立即调用
          * @param position
          */
-        void onItemRemoved(int position, RecyclerViewTaskItem taskItem);
+        void onItemRemoved(int position);
 
         /**
          * 在item固定后会立即调用
@@ -108,12 +108,12 @@ public class SwipeableTaskAdapter
         void onItemViewClicked(View view, int target);
     }
 
-    public List<RecyclerViewTaskItem> getTaskItemList() {
-        return taskItemList;
+    public AbstractDataProvider getDataProvider() {
+        return mDataProvider;
     }
 
-    public void setTaskItemList(List<RecyclerViewTaskItem> taskItemList) {
-        this.taskItemList = taskItemList;
+    public void setDataProvider(AbstractDataProvider dataProvider) {
+        mDataProvider = dataProvider;
     }
 
     public EventListener getEventListener() {
@@ -145,17 +145,18 @@ public class SwipeableTaskAdapter
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_task_item, parent, false);
         SwipeableItemViewHolder viewHolder = new SwipeableItemViewHolder(view);
 
-        viewHolder.container.setOnClickListener(taskItemOnClickListener);
-        viewHolder.deleteButton.setOnClickListener(deleteButtonOnClickListener);
+        viewHolder.mContainer.setOnClickListener(taskItemOnClickListener);
+        viewHolder.mDeleteButton.setOnClickListener(deleteButtonOnClickListener);
 
-        return new SwipeableItemViewHolder(view);
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(SwipeableItemViewHolder holder, int position) {
-        final RecyclerViewTaskItem item = taskItemList.get(position);
 
-        holder.textView.setText(item.getTask().getTitle());
+        final AbstractDataProvider.Data item = mDataProvider.getItem(position);
+
+        holder.mTextView.setText(item.getText());
 
         final int swipeState = holder.getSwipeStateFlags();
 
@@ -170,7 +171,7 @@ public class SwipeableTaskAdapter
                 bgResId = R.drawable.bg_item_normal_state;
             }
 
-            holder.container.setBackgroundResource(bgResId);
+            holder.mContainer.setBackgroundResource(bgResId);
         }
 
         //设置向左滑动的最大距离
@@ -184,7 +185,7 @@ public class SwipeableTaskAdapter
 
     @Override
     public int getItemCount() {
-        return taskItemList.size();
+        return mDataProvider.getCount();
     }
 
     @Override
@@ -197,14 +198,14 @@ public class SwipeableTaskAdapter
 
         switch (type) {
             case Swipeable.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND :
-                holder.behindView.setVisibility(View.GONE);
+                holder.mBehindView.setVisibility(View.GONE);
                 holder.itemView.setBackgroundResource(R.drawable.recycler_view_item_swipe_neutral_bg);
                 break;
             case Swipeable.DRAWABLE_SWIPE_LEFT_BACKGROUND :
-                holder.behindView.setVisibility(View.VISIBLE);
+                holder.mBehindView.setVisibility(View.VISIBLE);
                 break;
             case Swipeable.DRAWABLE_SWIPE_RIGHT_BACKGROUND :
-                holder.behindView.setVisibility(View.GONE);
+                holder.mBehindView.setVisibility(View.GONE);
                 holder.itemView.setBackgroundResource(R.drawable.recycler_view_item_swipe_right_bg);
                 break;
             default:
@@ -217,7 +218,7 @@ public class SwipeableTaskAdapter
             case Swipeable.RESULT_SWIPED_LEFT :
                 return new SwipeLeftResultAction(this, position);
             case Swipeable.RESULT_SWIPED_RIGHT :
-                if(taskItemList.get(position).isPinned()) {
+                if(mDataProvider.getItem(position).isPinned()) {
                     return new UnPinResultAction(this, position);
                 } else {
                     return new SwipeRemoveActionResult(this, position);
@@ -234,23 +235,23 @@ public class SwipeableTaskAdapter
 
     public static class SwipeableItemViewHolder extends AbstractSwipeableItemViewHolder {
 
-        private FrameLayout container;
-        private RelativeLayout behindView;
-        private TextView textView;
-        private Button deleteButton;
+        private FrameLayout mContainer;
+        private RelativeLayout mBehindView;
+        private TextView mTextView;
+        private Button mDeleteButton;
 
         public SwipeableItemViewHolder(View itemView) {
             super(itemView);
 
-            container = (FrameLayout) itemView.findViewById(R.id.container);
-            behindView = (RelativeLayout) itemView.findViewById(R.id.behind_views);
-            textView = (TextView) itemView.findViewById(R.id.task_item_text);
-            deleteButton = (Button) itemView.findViewById(R.id.task_item_delete_button);
+            mContainer = itemView.findViewById(R.id.container);
+            mBehindView = itemView.findViewById(R.id.behind_views);
+            mTextView = itemView.findViewById(R.id.task_item_text);
+            mDeleteButton = itemView.findViewById(R.id.task_item_delete_button);
         }
 
         @Override
         public View getSwipeableContainerView() {
-            return container;
+            return mContainer;
         }
     }
 
@@ -258,25 +259,26 @@ public class SwipeableTaskAdapter
      * 向左移动, 显示下面的按钮
      */
     private static class SwipeLeftResultAction extends SwipeResultActionMoveToSwipedDirection {
-        private SwipeableTaskAdapter adapter;
-        private final int position;
-        private boolean setPinned;
+
+        private SwipeableTaskAdapter mAdapter;
+        private final int mPosition;
+        private boolean mPinned;
 
         SwipeLeftResultAction(SwipeableTaskAdapter adapter, int position) {
-            this.adapter = adapter;
-            this.position = position;
-            setPinned = false;
+            this.mAdapter = adapter;
+            this.mPosition = position;
+            this.mPinned = false;
         }
 
         @Override
         protected void onPerformAction() {
             super.onPerformAction();
 
-            RecyclerViewTaskItem item = adapter.taskItemList.get(position);
+            AbstractDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(!item.isPinned()) {
                 item.setPinned(true);
-                adapter.notifyItemChanged(position);
-                setPinned = true;
+                mAdapter.notifyItemChanged(mPosition);
+                mPinned = true;
             }
         }
 
@@ -284,8 +286,8 @@ public class SwipeableTaskAdapter
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
 
-            if(setPinned && adapter.eventListener != null) {
-                adapter.eventListener.onItemPinned(position);
+            if(mPinned && mAdapter.eventListener != null) {
+                mAdapter.eventListener.onItemPinned(mPosition);
             }
         }
 
@@ -293,7 +295,7 @@ public class SwipeableTaskAdapter
         protected void onCleanUp() {
             super.onCleanUp();
 
-            adapter = null;
+            mAdapter = null;
         }
     }
 
@@ -301,29 +303,29 @@ public class SwipeableTaskAdapter
      * 删除该项
      */
     private static class SwipeRemoveActionResult extends SwipeResultActionRemoveItem {
-        private SwipeableTaskAdapter adapter;
-        private final int position;
-        private RecyclerViewTaskItem taskItem;
+
+        private SwipeableTaskAdapter mAdapter;
+        private final int mPosition;
 
         SwipeRemoveActionResult(SwipeableTaskAdapter adapter, int position) {
-            this.adapter = adapter;
-            this.position = position;
+            this.mAdapter = adapter;
+            this.mPosition = position;
         }
 
         @Override
         protected void onPerformAction() {
             super.onPerformAction();
 
-            taskItem = adapter.taskItemList.remove(position);
-            adapter.notifyItemRemoved(position);
+            mAdapter.mDataProvider.removeItem(mPosition);
+            mAdapter.notifyItemRemoved(mPosition);
         }
 
         @Override
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
 
-            if(adapter.eventListener != null) {
-                adapter.eventListener.onItemRemoved(position, taskItem);
+            if(mAdapter.eventListener != null) {
+                mAdapter.eventListener.onItemRemoved(mPosition);
             }
         }
 
@@ -331,7 +333,7 @@ public class SwipeableTaskAdapter
         protected void onCleanUp() {
             super.onCleanUp();
 
-            adapter = null;
+            mAdapter = null;
         }
     }
 
@@ -339,22 +341,23 @@ public class SwipeableTaskAdapter
      * 还原成初始状态, 没有打开显示下面的按钮
      */
     private static class UnPinResultAction extends SwipeResultActionDefault {
-        private SwipeableTaskAdapter adapter;
-        private final int position;
+
+        private SwipeableTaskAdapter mAdapter;
+        private final int mPosition;
 
         UnPinResultAction(SwipeableTaskAdapter adapter, int position) {
-            this.adapter = adapter;
-            this.position = position;
+            this.mAdapter = adapter;
+            this.mPosition = position;
         }
 
         @Override
         protected void onPerformAction() {
             super.onPerformAction();
 
-            RecyclerViewTaskItem item = adapter.taskItemList.get(position);
+            AbstractDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(item.isPinned()) {
                 item.setPinned(false);
-                adapter.notifyItemChanged(position);
+                mAdapter.notifyItemChanged(mPosition);
             }
         }
 
@@ -362,7 +365,7 @@ public class SwipeableTaskAdapter
         protected void onCleanUp() {
             super.onCleanUp();
 
-            adapter = null;
+            mAdapter = null;
         }
     }
 }

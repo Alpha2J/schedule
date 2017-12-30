@@ -1,4 +1,4 @@
-package cn.alpha2j.schedule.app.ui.adapter;
+package cn.alpha2j.schedule.app.ui.activity.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

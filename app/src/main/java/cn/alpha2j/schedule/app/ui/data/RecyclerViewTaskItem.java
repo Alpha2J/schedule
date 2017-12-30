@@ -5,6 +5,7 @@ import cn.alpha2j.schedule.data.Task;
 /**
  * @author alpha
  */
+@Deprecated
 public class RecyclerViewTaskItem {
     private Task task;
     private boolean isPinned;

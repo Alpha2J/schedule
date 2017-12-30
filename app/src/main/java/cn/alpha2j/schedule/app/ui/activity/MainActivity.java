@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,26 +16,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.observer.DataObserver;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
+import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
+import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskStatisticsFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.ui.data.creator.TodayFinishedDataProviderCreator;
+import cn.alpha2j.schedule.app.ui.data.creator.TodayUnfinishedDataProviderCreator;
 
 /**
  * @author alpha
  * Created on 2017/11/4.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, TaskDataProvider.TaskDataProviderGetter {
 
-    private interface FragmentConstant {
+    public interface FragmentConstant {
         String FRAGMENT_TAG = "FragmentTag";
         String FRAGMENT_TAG_TASK_TODAY = "TaskTodayFragment";
         String FRAGMENT_TAG_TASK_OVERVIEW = "TaskOverviewFragment";
         String FRAGMENT_TAG_TASK_STATISTICS = "TaskStatisticsFragment";
+
+        String FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA = "TaskTodayUnfinishedDataFragment";
+        String FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA = "TaskTodayFinishedDataFragment";
     }
 
     private DrawerLayout mDrawerLayout;
@@ -50,12 +59,22 @@ public class MainActivity extends AppCompatActivity
 
     private String mCurrentFragment;
 
+    private List<DataObserver> mObservers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initActivity();
+
+        //添加数据存储的Fragment
+        //已经完成的任务
+        BaseFragment finishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayFinishedDataProviderCreator());
+        getSupportFragmentManager().beginTransaction().add(finishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA).commit();
+        //未完成的任务
+        BaseFragment unfinishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayUnfinishedDataProviderCreator());
+        getSupportFragmentManager().beginTransaction().add(unfinishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA).commit();
 
         //如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
 //        否则, 获取销毁前显示的Fragment, 将它显示出来
@@ -174,6 +193,22 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public TaskDataProvider getFinishedTaskDataProvider() {
+
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA);
+
+        return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
+    }
+
+    @Override
+    public TaskDataProvider getUnfinishedTaskDataProvider() {
+
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA);
+
+        return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
     }
 
     private void initActivity() {

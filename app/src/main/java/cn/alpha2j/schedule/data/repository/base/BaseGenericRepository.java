@@ -1,16 +1,17 @@
 package cn.alpha2j.schedule.data.repository.base;
 
-import java.io.Serializable;
+import org.greenrobot.greendao.AbstractDao;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
  * @author alpha
  */
-public abstract class BaseGenericRepository<T, ID extends Serializable> implements GenericRepository<T, ID> {
+public abstract class BaseGenericRepository<T, DAO extends AbstractDao<T, Long>> implements GenericRepository<T, DAO> {
 
-    protected final Class<T> entityClass;
-    protected final Class<ID> idClass;
+    protected final Class<T> mEntityClass;
+    protected final Class<DAO> mDAOClass;
 
     @SuppressWarnings("unchecked")
     public BaseGenericRepository() {
@@ -30,7 +31,7 @@ public abstract class BaseGenericRepository<T, ID extends Serializable> implemen
 
         ParameterizedType type = (ParameterizedType) genericSuperclass;
         Type[] arguments = type.getActualTypeArguments();
-        this.entityClass = (Class<T>) arguments[0];
-        this.idClass = (Class<ID>) arguments[1];
+        this.mEntityClass = (Class<T>) arguments[0];
+        this.mDAOClass = (Class<DAO>) arguments[1];
     }
 }

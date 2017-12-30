@@ -1,8 +1,8 @@
 package cn.alpha2j.schedule.data.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
-
-import java.io.Serializable;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * 表示与持久化交互的TaskEntity实体
@@ -10,10 +10,13 @@ import java.io.Serializable;
  * @author alpha
  * Created on 2017/11/4.
  */
-@Entity
+@Entity(
+        nameInDb = "Schedule_Task"
+)
 public class TaskEntity {
-    
-    private long id;
+
+    @Id(autoincrement = true)
+    private Long id;
     private String title;
     private String description;
 
@@ -37,9 +40,12 @@ public class TaskEntity {
      */
     private boolean done;
 
-    public TaskEntity() {}
+    @Generated(hash = 397975341)
+    public TaskEntity() {
+    }
 
-    public TaskEntity(long id, String title, String description, long taskDate, boolean alarm, long taskAlarmDateTime, boolean done) {
+    @Generated(hash = 515043977)
+    public TaskEntity(Long id, String title, String description, long taskDate, boolean alarm, long taskAlarmDateTime, boolean done) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,11 +55,11 @@ public class TaskEntity {
         this.done = done;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -103,5 +109,13 @@ public class TaskEntity {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public boolean getAlarm() {
+        return this.alarm;
+    }
+
+    public boolean getDone() {
+        return this.done;
     }
 }
