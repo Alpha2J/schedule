@@ -21,7 +21,7 @@ import me.shaohui.bottomdialog.BaseBottomDialog;
  */
 public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClickListener {
 
-    private OnTaskAddedListener mOnTaskAddedListener;
+    private OnTaskCreatedListener mOnTaskCreatedListener;
     private EditText mTaskTitle;
 
     @Override
@@ -37,8 +37,8 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        //快速生成Task, 包含 Task 的Title, 时间为当天
 
+        //快速生成Task, 包含 Task 的Title, 时间为当天
         Task task = new Task();
         task.setTitle(mTaskTitle.getText().toString());
         task.setDescription(null);
@@ -49,36 +49,42 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
         ScheduleDateTime taskDate = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
         task.setTaskDate(taskDate);
 
-        //进行持久化
-        TaskService taskService = TaskServiceImpl.getInstance();
-        long taskId = taskService.addTask(task);
-
-        if(taskId != -1) {
-            Toast.makeText(MyApplication.getContext(), "添加成功", Toast.LENGTH_SHORT).show();
-
-            task.setId(taskId);
-
-            //持久化成功后回调方法
-            if(mOnTaskAddedListener != null) {
-                mOnTaskAddedListener.onTaskAdded(task);
-            }
-        } else {
-            Toast.makeText(MyApplication.getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+        if(mOnTaskCreatedListener != null) {
+            mOnTaskCreatedListener.onTaskCreated(task);
         }
+
+//        更正, 不再在这里进行持久化, 获取到用户输入数据后用监听器通知监听者
+//        进行持久化
+//        TaskService taskService = TaskServiceImpl.getInstance();
+//        long taskId = taskService.addTask(task);
+//
+//        if(taskId != -1) {
+//            Toast.makeText(MyApplication.getContext(), "添加成功", Toast.LENGTH_SHORT).show();
+//
+//            task.setId(taskId);
+//
+//            //持久化成功后回调方法
+//            if(mOnTaskAddedListener != null) {
+//                mOnTaskAddedListener.onTaskAdded(task);
+//            }
+//        } else {
+//            Toast.makeText(MyApplication.getContext(), "添加失败", Toast.LENGTH_SHORT).show();
+//        }
 
         this.dismiss();
     }
 
-    public void setOnTaskAddedListener(OnTaskAddedListener onTaskAddedListener) {
-        this.mOnTaskAddedListener = onTaskAddedListener;
+    public void setOnTaskCreatedListener(OnTaskCreatedListener onTaskCreatedListener) {
+        this.mOnTaskCreatedListener = onTaskCreatedListener;
     }
 
-    public interface OnTaskAddedListener {
+    public interface OnTaskCreatedListener {
 
         /**
-         * Task 持久化成功后回调
+         * 获取到用户输入的信息后回调
+         *
          * @param task
          */
-        void onTaskAdded(Task task);
+        void onTaskCreated(Task task);
     }
 }

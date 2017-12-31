@@ -137,10 +137,10 @@ public class TaskDataProvider extends AbstractDataProvider {
         }
     }
 
-    public interface TaskDataProviderGetter {
+    public interface TaskTodayDataProviderGetter {
 
-        TaskDataProvider getFinishedTaskDataProvider();
+        TaskDataProvider getTodayFinishedTaskDataProvider();
 
-        TaskDataProvider getUnfinishedTaskDataProvider();
+        TaskDataProvider getTodayUnfinishedTaskDataProvider();
     }
 }

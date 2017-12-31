@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractDataProvider implements Serializable {
 
-    public static abstract class Data {
+    public static abstract class Data implements Serializable {
 
         public abstract long getId();
 

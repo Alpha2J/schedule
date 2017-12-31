@@ -5,12 +5,15 @@ import android.support.annotation.NonNull;
 import org.joda.time.Instant;
 import org.joda.time.LocalDateTime;
 
+import java.io.Serializable;
+
 /**
  * 表示项目中的时间类, 不能改变日期和时间.
  *
  * @author alpha
  */
-public class ScheduleDateTime {
+public class ScheduleDateTime implements Serializable {
+
     private Instant mInstant;
 
     /**

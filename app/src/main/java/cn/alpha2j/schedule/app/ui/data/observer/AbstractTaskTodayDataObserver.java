@@ -5,12 +5,13 @@ import android.widget.Toast;
 
 import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskAdapter;
+import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
 
 /**
  * 今日任务的RecyclerView的Adapter的观察者, 如果adapter里面的数据发生改变, 那么这里做出相应的动作
  * @author alpha
  */
-public abstract class AbstractTaskTodayDataObserver implements DataObserver {
+public abstract class AbstractTaskTodayDataObserver implements TaskDataObserver {
 
     protected RecyclerViewAdapterGetter mRecyclerViewAdapterGetter;
 
@@ -19,8 +20,8 @@ public abstract class AbstractTaskTodayDataObserver implements DataObserver {
     }
 
     @Override
-    public void notifyDataAdd() {
-
+    public void notifyDataAdd(TaskDataProvider.TaskData taskData) {
+        Toast.makeText(MyApplication.getContext(), "a new task added" + taskData.getTask().getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

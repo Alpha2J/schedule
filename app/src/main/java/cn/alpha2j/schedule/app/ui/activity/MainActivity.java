@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
-import cn.alpha2j.schedule.app.ui.data.observer.DataObserver;
+import cn.alpha2j.schedule.app.ui.data.observer.TaskDataObserver;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
@@ -28,15 +28,15 @@ import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskStatisticsFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.creator.TodayFinishedDataProviderCreator;
-import cn.alpha2j.schedule.app.ui.data.creator.TodayUnfinishedDataProviderCreator;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
 
 /**
  * @author alpha
  * Created on 2017/11/4.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TaskDataProvider.TaskDataProviderGetter {
+        implements NavigationView.OnNavigationItemSelectedListener, TaskDataProvider.TaskTodayDataProviderGetter {
 
     public interface FragmentConstant {
         String FRAGMENT_TAG = "FragmentTag";
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     private String mCurrentFragment;
 
-    private List<DataObserver> mObservers;
+    private List<TaskDataObserver> mObservers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +68,15 @@ public class MainActivity extends AppCompatActivity
 
         initActivity();
 
-        //添加数据存储的Fragment
-        //已经完成的任务
-        BaseFragment finishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayFinishedDataProviderCreator());
+//        添加数据存储的Fragment
+//        已经完成的任务
+        BaseFragment finishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayFinishedDataProviderGenerator());
         getSupportFragmentManager().beginTransaction().add(finishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA).commit();
-        //未完成的任务
-        BaseFragment unfinishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayUnfinishedDataProviderCreator());
+//        未完成的任务
+        BaseFragment unfinishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayUnfinishedDataProviderGenerator());
         getSupportFragmentManager().beginTransaction().add(unfinishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA).commit();
 
-        //如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
+//        如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
 //        否则, 获取销毁前显示的Fragment, 将它显示出来
         if(savedInstanceState == null) {
             mCurrentFragment = FragmentConstant.FRAGMENT_TAG_TASK_TODAY;
@@ -126,25 +126,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            //HomeAsUp按钮的id就是 android.R.id.home
+//            HomeAsUp按钮的id就是 android.R.id.home
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.activity_main_menu_add_item:
                 AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
                 addTaskBottomDialog.setOnTaskAddedListener(task -> {
-
+                    if(mTaskTodayFragment != null) {
+                        mTaskTodayFragment.notifyNewTaskAdd(task);
+                    }
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
-
-//                AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
-//                addTaskBottomDialog.setOnTaskAddedListener(task -> {
-//                    unfinishedTaskList.add(new RecyclerViewTaskItem(task, false));
-//                    unfinishedTaskAdapter.notifyDataSetChanged();
-//                    recyclerView.scrollToPosition(unfinishedTaskList.size() - 1);
-//                    taskAlarm.addTask(task);
-//                });
-//                addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
             case R.id.activity_main_menu_normal_setting_item:
                 Toast.makeText(this, "点击了toolbar上的设置图标", Toast.LENGTH_SHORT).show();
@@ -196,7 +189,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public TaskDataProvider getFinishedTaskDataProvider() {
+    public TaskDataProvider getTodayFinishedTaskDataProvider() {
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA);
 
@@ -204,7 +197,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public TaskDataProvider getUnfinishedTaskDataProvider() {
+    public TaskDataProvider getTodayUnfinishedTaskDataProvider() {
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA);
 
@@ -212,19 +205,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initActivity() {
-        //初始化MainActivity所需控件
+//        初始化MainActivity所需控件
         initViews();
 
-        //添加material design 的Toolbar
+//        添加material design 的Toolbar
         addToolbar();
 
-        //为左侧抽屉添加点击事件的图标
+//        为左侧抽屉添加点击事件的图标
         changeDisplayHomeAsUpIcon();
 
-        //左侧抽屉NavigationView的相关设置
+//        左侧抽屉NavigationView的相关设置
         initNavigationViewData();
 
-        //为floatingactionbutton添加监听事件
+//        为floatingactionbutton添加监听事件
         setFloatingActionButtonListener();
     }
 

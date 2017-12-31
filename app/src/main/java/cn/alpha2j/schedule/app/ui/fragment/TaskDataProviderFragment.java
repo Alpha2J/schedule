@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import cn.alpha2j.schedule.app.ui.data.AbstractDataProvider;
-import cn.alpha2j.schedule.app.ui.data.creator.DataProviderCreator;
+import cn.alpha2j.schedule.app.ui.data.generator.DataProviderGenerator;
 
 /**
  * @author alpha
@@ -15,7 +15,7 @@ public class TaskDataProviderFragment extends BaseFragment {
 
     private AbstractDataProvider mDataProvider;
 
-    public static TaskDataProviderFragment newInstance(DataProviderCreator dataProviderCreator) {
+    public static TaskDataProviderFragment newInstance(DataProviderGenerator dataProviderCreator) {
 
         TaskDataProviderFragment fragment = new TaskDataProviderFragment();
 

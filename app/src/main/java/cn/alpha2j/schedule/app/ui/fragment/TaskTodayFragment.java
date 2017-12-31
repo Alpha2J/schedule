@@ -18,13 +18,18 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.activity.MainActivity;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskAdapter;
-import cn.alpha2j.schedule.app.ui.data.observer.DataObserver;
+import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.observer.TaskDataObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.AbstractTaskTodayDataObserver;
+import cn.alpha2j.schedule.app.ui.data.observer.TaskTodayFinishedDataObserver;
+import cn.alpha2j.schedule.app.ui.data.observer.TaskTodayUnfinishedDataObserver;
+import cn.alpha2j.schedule.data.Task;
 
 /**
  * @author alpha
  */
-public class TaskTodayFragment extends BaseFragment implements AbstractTaskTodayDataObserver.RecyclerViewAdapterGetter {
+public class TaskTodayFragment extends BaseFragment
+        implements AbstractTaskTodayDataObserver.RecyclerViewAdapterGetter {
 
     private static final String TAG = "TaskTodayFragment";
 
@@ -37,25 +42,16 @@ public class TaskTodayFragment extends BaseFragment implements AbstractTaskToday
     private ComposedAdapter mComposedAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private DataObserver mUnfinishedTaskObserver;
-    private DataObserver mFinishedTaskObserver;
+    private TaskDataObserver mUnfinishedTaskObserver;
+    private TaskDataObserver mFinishedTaskObserver;
 
-    public TaskTodayFragment() {}
+//    测试完其他的再把这个改回来
+//    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
 
-    public static TaskTodayFragment newInstance() {
 
-        TaskTodayFragment taskTodayFragment = new TaskTodayFragment();
-
-//        注册监听器
-        
-//        Bundle args = new Bundle();
-//        DataObserver unfinishedTaskObserver =
-//        , DataObserver finishedTaskObserver
-//        args.putSerializable("unfinishedTaskObserver", unfinishedTaskObserver);
-//        args.putSerializable("finishedTaskObserver", finishedTaskObserver);
-//        taskTodayFragment.setArguments(args);
-
-        return taskTodayFragment;
+    public TaskTodayFragment() {
+        mUnfinishedTaskObserver = new TaskTodayUnfinishedDataObserver(this);
+        mFinishedTaskObserver = new TaskTodayFinishedDataObserver(this);
     }
 
     @Override
@@ -82,8 +78,8 @@ public class TaskTodayFragment extends BaseFragment implements AbstractTaskToday
 
     private void initData() {
 
-        mUnfinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getUnfinishedTaskDataProvider());
-        mFinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getFinishedTaskDataProvider());
+        mUnfinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider());
+        mFinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider());
         mUnfinishedRVSManager = new RecyclerViewSwipeManager();
         mFinishedRVSManager = new RecyclerViewSwipeManager();
 
@@ -95,13 +91,13 @@ public class TaskTodayFragment extends BaseFragment implements AbstractTaskToday
                 mUnfinishedTaskObserver.notifyDataDelete();
 
                 Snackbar snackbar = Snackbar.make(
-                        mRootView.findViewById(R.id.cl_home_content_container),
+                        getActivity().findViewById(R.id.cl_home_content_container),
                         "一个任务已被标记为完成",
                         Snackbar.LENGTH_SHORT
                 );
 
                 snackbar.setAction("撤销", view -> {
-                    ((MainActivity)getActivity()).getUnfinishedTaskDataProvider().undoLastRemoval();
+                    ((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().undoLastRemoval();
                     mFinishedTaskObserver.notifyUndoLastDataDelete();
                 });
 
@@ -136,7 +132,7 @@ public class TaskTodayFragment extends BaseFragment implements AbstractTaskToday
                 );
 
                 snackbar.setAction("撤销", view -> {
-                    ((MainActivity)getActivity()).getUnfinishedTaskDataProvider().undoLastRemoval();
+                    ((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().undoLastRemoval();
                     mFinishedTaskObserver.notifyUndoLastDataDelete();
                 });
 
@@ -190,5 +186,9 @@ public class TaskTodayFragment extends BaseFragment implements AbstractTaskToday
     @Override
     public RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> getUnfinishedTaskAdapter() {
         return this.mUnfinishedTaskAdapter;
+    }
+
+    public void notifyNewTaskAdd(Task task) {
+        mUnfinishedTaskObserver.notifyDataAdd(new TaskDataProvider.TaskData(task, false));
     }
 }

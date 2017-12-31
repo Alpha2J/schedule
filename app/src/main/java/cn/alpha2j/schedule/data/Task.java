@@ -12,6 +12,11 @@ import cn.alpha2j.schedule.time.ScheduleDateTime;
  * @author alpha
  */
 public class Task implements Serializable {
+
+    /**
+     * 在TaskEntity中用的是Long, 可以让GreenDao识别设置自动增长键.
+     * 但是这里为long, 可以让程序在使用的时候避免发生空指针
+     */
     private long id;
     private String title;
     private String description;
