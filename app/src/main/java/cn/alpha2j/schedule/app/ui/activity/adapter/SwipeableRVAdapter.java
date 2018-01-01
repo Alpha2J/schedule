@@ -24,9 +24,9 @@ import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
  * 可左右滑动的RecyclerView Adapter
  * @author alpha
  */
-public class SwipeableRecyclerViewAdapter
-        extends RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder>
-        implements SwipeableItemAdapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> {
+public class SwipeableRVAdapter
+        extends RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder>
+        implements SwipeableItemAdapter<SwipeableRVAdapter.SwipeableItemViewHolder> {
 
     private static final String TAG = "SwipeableRVAdapter";
 
@@ -45,7 +45,7 @@ public class SwipeableRecyclerViewAdapter
      */
     private View.OnClickListener mDeleteButtonOnClickListener;
 
-    public SwipeableRecyclerViewAdapter(DataProvider dataProvider) {
+    public SwipeableRVAdapter(DataProvider dataProvider) {
 
         this.mDataProvider = dataProvider;
 
@@ -266,11 +266,11 @@ public class SwipeableRecyclerViewAdapter
      */
     private static class SwipeLeftResultAction extends SwipeResultActionMoveToSwipedDirection {
 
-        private SwipeableRecyclerViewAdapter mAdapter;
+        private SwipeableRVAdapter mAdapter;
         private final int mPosition;
         private boolean mPinned;
 
-        SwipeLeftResultAction(SwipeableRecyclerViewAdapter adapter, int position) {
+        SwipeLeftResultAction(SwipeableRVAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
             this.mPinned = false;
@@ -311,10 +311,10 @@ public class SwipeableRecyclerViewAdapter
      */
     private static class SwipeRemoveActionResult extends SwipeResultActionRemoveItem {
 
-        private SwipeableRecyclerViewAdapter mAdapter;
+        private SwipeableRVAdapter mAdapter;
         private final int mPosition;
 
-        SwipeRemoveActionResult(SwipeableRecyclerViewAdapter adapter, int position) {
+        SwipeRemoveActionResult(SwipeableRVAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
         }
@@ -349,10 +349,10 @@ public class SwipeableRecyclerViewAdapter
      */
     private static class UnPinResultAction extends SwipeResultActionDefault {
 
-        private SwipeableRecyclerViewAdapter mAdapter;
+        private SwipeableRVAdapter mAdapter;
         private final int mPosition;
 
-        UnPinResultAction(SwipeableRecyclerViewAdapter adapter, int position) {
+        UnPinResultAction(SwipeableRVAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
         }

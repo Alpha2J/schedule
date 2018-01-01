@@ -2,16 +2,28 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import java.io.Serializable;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 
 /**
  * @author alpha
  */
 public interface DataProviderObserver extends Serializable {
 
-    void notifyDataAdd(TaskDataProvider.TaskData taskData);
+    /**
+     * 当DataProvider新增完数据后执行
+     * @param data
+     */
+    void notifyDataAdd(DataProvider.Data data);
 
-    void notifyDataDelete();
+    /**
+     * 当DataProvider删除完数据后执行
+     *
+     * @param data
+     */
+    void notifyDataDelete(DataProvider.Data data);
 
+    /**
+     * 取消上次的删除操作
+     */
     void notifyUndoLastDataDelete();
 }
