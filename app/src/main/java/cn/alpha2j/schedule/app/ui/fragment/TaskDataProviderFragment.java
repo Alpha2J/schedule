@@ -3,7 +3,7 @@ package cn.alpha2j.schedule.app.ui.fragment;
 import android.os.Bundle;
 import android.util.Log;
 
-import cn.alpha2j.schedule.app.ui.data.AbstractDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 import cn.alpha2j.schedule.app.ui.data.generator.DataProviderGenerator;
 
 /**
@@ -13,13 +13,13 @@ public class TaskDataProviderFragment extends BaseFragment {
 
     private static final String TAG = "TaskDataProviderFrag";
 
-    private AbstractDataProvider mDataProvider;
+    private DataProvider mDataProvider;
 
     public static TaskDataProviderFragment newInstance(DataProviderGenerator dataProviderCreator) {
 
         TaskDataProviderFragment fragment = new TaskDataProviderFragment();
 
-        AbstractDataProvider dataProvider = dataProviderCreator.create();
+        DataProvider dataProvider = dataProviderCreator.generate();
         Bundle args = new Bundle();
         args.putSerializable("dataProvider", dataProvider);
         fragment.setArguments(args);
@@ -27,7 +27,7 @@ public class TaskDataProviderFragment extends BaseFragment {
         return fragment;
     }
 
-    public AbstractDataProvider getDataProvider() {
+    public DataProvider getDataProvider() {
         return mDataProvider;
     }
 
@@ -45,7 +45,7 @@ public class TaskDataProviderFragment extends BaseFragment {
     protected void afterCreated(Bundle savedInstanceState) {
 
         if (mDataProvider == null) {
-            mDataProvider = (AbstractDataProvider) getArguments().get("dataProvider");
+            mDataProvider = (DataProvider) getArguments().get("dataProvider");
             Log.d(TAG, "afterCreated: 获取了DataProvider");
         }
     }

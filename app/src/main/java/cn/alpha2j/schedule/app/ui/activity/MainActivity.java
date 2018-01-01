@@ -19,8 +19,8 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
-import cn.alpha2j.schedule.app.ui.data.observer.TaskDataObserver;
+import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     private String mCurrentFragment;
 
-    private List<TaskDataObserver> mObservers;
+    private List<DataProviderObserver> mObservers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.activity_main_menu_add_item:
                 AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
-                addTaskBottomDialog.setOnTaskAddedListener(task -> {
+                addTaskBottomDialog.setOnTaskCreatedListener(task -> {
                     if(mTaskTodayFragment != null) {
                         mTaskTodayFragment.notifyNewTaskAdd(task);
                     }

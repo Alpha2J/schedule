@@ -17,9 +17,9 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.activity.MainActivity;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
-import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskAdapter;
-import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
-import cn.alpha2j.schedule.app.ui.data.observer.TaskDataObserver;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRecyclerViewAdapter;
+import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.AbstractTaskTodayDataObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TaskTodayFinishedDataObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TaskTodayUnfinishedDataObserver;
@@ -35,15 +35,15 @@ public class TaskTodayFragment extends BaseFragment
 
     private RecyclerView mRecyclerView;
 
-    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> mUnfinishedTaskAdapter;
-    private RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> mFinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> mUnfinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> mFinishedTaskAdapter;
     private RecyclerViewSwipeManager mUnfinishedRVSManager;
     private RecyclerViewSwipeManager mFinishedRVSManager;
     private ComposedAdapter mComposedAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private TaskDataObserver mUnfinishedTaskObserver;
-    private TaskDataObserver mFinishedTaskObserver;
+    private DataProviderObserver mUnfinishedTaskObserver;
+    private DataProviderObserver mFinishedTaskObserver;
 
 //    测试完其他的再把这个改回来
 //    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
@@ -78,13 +78,13 @@ public class TaskTodayFragment extends BaseFragment
 
     private void initData() {
 
-        mUnfinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider());
-        mFinishedTaskAdapter = new SwipeableTaskAdapter(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider());
+        mUnfinishedTaskAdapter = new SwipeableRecyclerViewAdapter(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider());
+        mFinishedTaskAdapter = new SwipeableRecyclerViewAdapter(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider());
         mUnfinishedRVSManager = new RecyclerViewSwipeManager();
         mFinishedRVSManager = new RecyclerViewSwipeManager();
 
         //设置监听事件
-        ((SwipeableTaskAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableTaskAdapter.EventListener() {
+        ((SwipeableRecyclerViewAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableRecyclerViewAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
 
@@ -111,7 +111,7 @@ public class TaskTodayFragment extends BaseFragment
 
             @Override
             public void onItemViewClicked(View view, int target) {
-                if(target == SwipeableTaskAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+                if(target == SwipeableRecyclerViewAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
                     Toast.makeText(getContext(), "点击了未完成的item", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "点击了未完成的delete", Toast.LENGTH_SHORT).show();
@@ -119,7 +119,7 @@ public class TaskTodayFragment extends BaseFragment
             }
         });
 
-        ((SwipeableTaskAdapter)mFinishedTaskAdapter).setEventListener(new SwipeableTaskAdapter.EventListener() {
+        ((SwipeableRecyclerViewAdapter)mFinishedTaskAdapter).setEventListener(new SwipeableRecyclerViewAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
 
@@ -179,12 +179,12 @@ public class TaskTodayFragment extends BaseFragment
     }
 
     @Override
-    public RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> getFinishedTaskAdapter() {
+    public RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> getFinishedTaskAdapter() {
         return this.mFinishedTaskAdapter;
     }
 
     @Override
-    public RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder> getUnfinishedTaskAdapter() {
+    public RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> getUnfinishedTaskAdapter() {
         return this.mUnfinishedTaskAdapter;
     }
 

@@ -18,42 +18,42 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.AbstractDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 
 /**
  * 可左右滑动的RecyclerView Adapter
  * @author alpha
  */
-public class SwipeableTaskAdapter
-        extends RecyclerView.Adapter<SwipeableTaskAdapter.SwipeableItemViewHolder>
-        implements SwipeableItemAdapter<SwipeableTaskAdapter.SwipeableItemViewHolder> {
+public class SwipeableRecyclerViewAdapter
+        extends RecyclerView.Adapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder>
+        implements SwipeableItemAdapter<SwipeableRecyclerViewAdapter.SwipeableItemViewHolder> {
 
-    private static final String TAG = "SwipeableTaskAdapter";
+    private static final String TAG = "SwipeableRVAdapter";
 
-    private AbstractDataProvider mDataProvider;
+    private DataProvider mDataProvider;
 
     /**
      * 在item上完成了各种事件后会回调该接口中的相应方法
      */
-    private EventListener eventListener;
+    private EventListener mEventListener;
     /**
      * 包裹着item的container的点击事件
      */
-    private View.OnClickListener taskItemOnClickListener;
+    private View.OnClickListener mItemOnClickListener;
     /**
      * 在包裹着item的container的下面层的button的点击事件
      */
-    private View.OnClickListener deleteButtonOnClickListener;
+    private View.OnClickListener mDeleteButtonOnClickListener;
 
-    public SwipeableTaskAdapter(AbstractDataProvider dataProvider) {
+    public SwipeableRecyclerViewAdapter(DataProvider dataProvider) {
 
         this.mDataProvider = dataProvider;
 
-        taskItemOnClickListener = view -> {
+        mItemOnClickListener = view -> {
             onItemClick(view);
         };
 
-        deleteButtonOnClickListener = view -> {
+        mDeleteButtonOnClickListener = view -> {
             onDeleteButtonClick(view);
         };
 
@@ -61,14 +61,14 @@ public class SwipeableTaskAdapter
     }
 
     private void onItemClick(View view) {
-        if(eventListener != null) {
-            eventListener.onItemViewClicked(view, EventListener.TASK_ITEM_CLICK_EVENT);
+        if(mEventListener != null) {
+            mEventListener.onItemViewClicked(view, EventListener.TASK_ITEM_CLICK_EVENT);
         }
     }
 
     private void onDeleteButtonClick(View view) {
-        if(eventListener != null) {
-            eventListener.onItemViewClicked(view, EventListener.DELETE_BUTTON_CLICK_EVENT);
+        if(mEventListener != null) {
+            mEventListener.onItemViewClicked(view, EventListener.DELETE_BUTTON_CLICK_EVENT);
         }
     }
 
@@ -84,6 +84,7 @@ public class SwipeableTaskAdapter
     private interface Swipeable extends SwipeableItemConstants {}
 
     public interface EventListener {
+
         int TASK_ITEM_CLICK_EVENT = 0;
 
         int DELETE_BUTTON_CLICK_EVENT = 1;
@@ -108,45 +109,46 @@ public class SwipeableTaskAdapter
         void onItemViewClicked(View view, int target);
     }
 
-    public AbstractDataProvider getDataProvider() {
+    public DataProvider getDataProvider() {
         return mDataProvider;
     }
 
-    public void setDataProvider(AbstractDataProvider dataProvider) {
+    public void setDataProvider(DataProvider dataProvider) {
         mDataProvider = dataProvider;
     }
 
     public EventListener getEventListener() {
-        return eventListener;
+        return mEventListener;
     }
 
     public void setEventListener(EventListener eventListener) {
-        this.eventListener = eventListener;
+        this.mEventListener = eventListener;
     }
 
-    public View.OnClickListener getTaskItemOnClickListener() {
-        return taskItemOnClickListener;
+    public View.OnClickListener getItemOnClickListener() {
+        return mItemOnClickListener;
     }
 
-    public void setTaskItemOnClickListener(View.OnClickListener taskItemOnClickListener) {
-        this.taskItemOnClickListener = taskItemOnClickListener;
+    public void setItemOnClickListener(View.OnClickListener itemOnClickListener) {
+        this.mItemOnClickListener = itemOnClickListener;
     }
 
     public View.OnClickListener getDeleteButtonOnClickListener() {
-        return deleteButtonOnClickListener;
+        return mDeleteButtonOnClickListener;
     }
 
     public void setDeleteButtonOnClickListener(View.OnClickListener deleteButtonOnClickListener) {
-        this.deleteButtonOnClickListener = deleteButtonOnClickListener;
+        this.mDeleteButtonOnClickListener = deleteButtonOnClickListener;
     }
 
     @Override
     public SwipeableItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_task_item, parent, false);
         SwipeableItemViewHolder viewHolder = new SwipeableItemViewHolder(view);
 
-        viewHolder.mContainer.setOnClickListener(taskItemOnClickListener);
-        viewHolder.mDeleteButton.setOnClickListener(deleteButtonOnClickListener);
+        viewHolder.mContainer.setOnClickListener(mItemOnClickListener);
+        viewHolder.mDeleteButton.setOnClickListener(mDeleteButtonOnClickListener);
 
         return viewHolder;
     }
@@ -154,7 +156,7 @@ public class SwipeableTaskAdapter
     @Override
     public void onBindViewHolder(SwipeableItemViewHolder holder, int position) {
 
-        final AbstractDataProvider.Data item = mDataProvider.getItem(position);
+        final DataProvider.Data item = mDataProvider.getItem(position);
 
         holder.mTextView.setText(item.getText());
 
@@ -185,11 +187,13 @@ public class SwipeableTaskAdapter
 
     @Override
     public int getItemCount() {
+
         return mDataProvider.getCount();
     }
 
     @Override
     public int onGetSwipeReactionType(SwipeableItemViewHolder holder, int position, int x, int y) {
+
         return Swipeable.REACTION_CAN_SWIPE_BOTH_H;
     }
 
@@ -214,6 +218,7 @@ public class SwipeableTaskAdapter
 
     @Override
     public SwipeResultAction onSwipeItem(SwipeableItemViewHolder holder, int position, int result) {
+
         switch (result) {
             case Swipeable.RESULT_SWIPED_LEFT :
                 return new SwipeLeftResultAction(this, position);
@@ -251,6 +256,7 @@ public class SwipeableTaskAdapter
 
         @Override
         public View getSwipeableContainerView() {
+
             return mContainer;
         }
     }
@@ -260,11 +266,11 @@ public class SwipeableTaskAdapter
      */
     private static class SwipeLeftResultAction extends SwipeResultActionMoveToSwipedDirection {
 
-        private SwipeableTaskAdapter mAdapter;
+        private SwipeableRecyclerViewAdapter mAdapter;
         private final int mPosition;
         private boolean mPinned;
 
-        SwipeLeftResultAction(SwipeableTaskAdapter adapter, int position) {
+        SwipeLeftResultAction(SwipeableRecyclerViewAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
             this.mPinned = false;
@@ -272,9 +278,10 @@ public class SwipeableTaskAdapter
 
         @Override
         protected void onPerformAction() {
+
             super.onPerformAction();
 
-            AbstractDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            DataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(!item.isPinned()) {
                 item.setPinned(true);
                 mAdapter.notifyItemChanged(mPosition);
@@ -286,8 +293,8 @@ public class SwipeableTaskAdapter
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
 
-            if(mPinned && mAdapter.eventListener != null) {
-                mAdapter.eventListener.onItemPinned(mPosition);
+            if(mPinned && mAdapter.mEventListener != null) {
+                mAdapter.mEventListener.onItemPinned(mPosition);
             }
         }
 
@@ -304,10 +311,10 @@ public class SwipeableTaskAdapter
      */
     private static class SwipeRemoveActionResult extends SwipeResultActionRemoveItem {
 
-        private SwipeableTaskAdapter mAdapter;
+        private SwipeableRecyclerViewAdapter mAdapter;
         private final int mPosition;
 
-        SwipeRemoveActionResult(SwipeableTaskAdapter adapter, int position) {
+        SwipeRemoveActionResult(SwipeableRecyclerViewAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
         }
@@ -324,8 +331,8 @@ public class SwipeableTaskAdapter
         protected void onSlideAnimationEnd() {
             super.onSlideAnimationEnd();
 
-            if(mAdapter.eventListener != null) {
-                mAdapter.eventListener.onItemRemoved(mPosition);
+            if(mAdapter.mEventListener != null) {
+                mAdapter.mEventListener.onItemRemoved(mPosition);
             }
         }
 
@@ -342,10 +349,10 @@ public class SwipeableTaskAdapter
      */
     private static class UnPinResultAction extends SwipeResultActionDefault {
 
-        private SwipeableTaskAdapter mAdapter;
+        private SwipeableRecyclerViewAdapter mAdapter;
         private final int mPosition;
 
-        UnPinResultAction(SwipeableTaskAdapter adapter, int position) {
+        UnPinResultAction(SwipeableRecyclerViewAdapter adapter, int position) {
             this.mAdapter = adapter;
             this.mPosition = position;
         }
@@ -354,7 +361,7 @@ public class SwipeableTaskAdapter
         protected void onPerformAction() {
             super.onPerformAction();
 
-            AbstractDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            DataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(item.isPinned()) {
                 item.setPinned(false);
                 mAdapter.notifyItemChanged(mPosition);

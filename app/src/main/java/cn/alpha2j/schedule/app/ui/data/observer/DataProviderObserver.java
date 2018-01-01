@@ -2,12 +2,12 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import java.io.Serializable;
 
-import cn.alpha2j.schedule.app.ui.data.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 
 /**
  * @author alpha
  */
-public interface TaskDataObserver extends Serializable {
+public interface DataProviderObserver extends Serializable {
 
     void notifyDataAdd(TaskDataProvider.TaskData taskData);
 
