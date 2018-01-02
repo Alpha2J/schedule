@@ -2,13 +2,9 @@ package cn.alpha2j.schedule.app.ui.dialog;
 
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.data.Task;
-import cn.alpha2j.schedule.data.service.TaskService;
-import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
 import me.shaohui.bottomdialog.BaseBottomDialog;

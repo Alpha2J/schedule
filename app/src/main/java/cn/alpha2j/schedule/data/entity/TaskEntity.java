@@ -3,7 +3,6 @@ package cn.alpha2j.schedule.data.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * 表示与持久化交互的TaskEntity实体

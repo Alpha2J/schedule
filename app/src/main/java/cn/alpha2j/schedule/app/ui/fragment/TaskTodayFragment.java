@@ -18,11 +18,13 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.activity.MainActivity;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
-import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
 import cn.alpha2j.schedule.app.ui.data.observer.AbstractTodayTaskDataProviderObserver;
+import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayFinishedTaskDataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayUnfinishedTaskDataProviderObserver;
+import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 
 /**
@@ -45,25 +47,16 @@ public class TaskTodayFragment extends BaseFragment
     private DataProviderObserver mUnfinishedTaskObserver;
     private DataProviderObserver mFinishedTaskObserver;
 
-//    不再保存TaskTodayDataProviderGetter对象
-//    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
+    private TaskDataProvider mTodayUnfinishedTaskDataProvider;
+    private TaskDataProvider mTodayFinishedTaskDataProvider;
 
     public TaskTodayFragment() {
         mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
         mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
-    }
 
-//    不再保存TaskTodayDataProviderGetter对象
-//    public static TaskTodayFragment newInstance(TaskDataProvider.TaskTodayDataProviderGetter taskTodayDataProviderGetter) {
-//
-//        TaskTodayFragment fragment = new TaskTodayFragment();
-//
-//        Bundle args = new Bundle();
-//        args.putSerializable("taskTodayDataProviderGetter", taskTodayDataProviderGetter);
-//        fragment.setArguments(args);
-//
-//        return fragment;
-//    }
+        mTodayUnfinishedTaskDataProvider = new TodayUnfinishedDataProviderGenerator().generate();
+        mTodayFinishedTaskDataProvider = new TodayFinishedDataProviderGenerator().generate();
+    }
 
     @Override
     protected boolean hasView() {
@@ -78,12 +71,6 @@ public class TaskTodayFragment extends BaseFragment
     @Override
     protected void afterCreated(Bundle savedInstanceState) {
 
-//        不再保存TaskTodayDataProviderGetter对象
-//        if(mTaskTodayDataProviderGetter == null) {
-//            mTaskTodayDataProviderGetter = (TaskDataProvider.TaskTodayDataProviderGetter) getArguments().get("taskTodayDataProviderGetter");
-//            Log.d(TAG, "afterCreated: 获取了TaskTodayDataProviderGetter");
-//        }
-
         initViews();
         initData();
     }
@@ -95,8 +82,8 @@ public class TaskTodayFragment extends BaseFragment
 
     private void initData() {
 
-        mUnfinishedTaskAdapter = new SwipeableRVAdapter(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider());
-        mFinishedTaskAdapter = new SwipeableRVAdapter(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider());
+        mUnfinishedTaskAdapter = new SwipeableRVAdapter(mTodayUnfinishedTaskDataProvider);
+        mFinishedTaskAdapter = new SwipeableRVAdapter(mTodayFinishedTaskDataProvider);
         mUnfinishedRVSManager = new RecyclerViewSwipeManager();
         mFinishedRVSManager = new RecyclerViewSwipeManager();
 
@@ -104,8 +91,8 @@ public class TaskTodayFragment extends BaseFragment
         ((SwipeableRVAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableRVAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
-
-                mUnfinishedTaskObserver.notifyDataRemove(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().getLastRemoval());
+//                当数据从未完成的Adapter中删除后, 需要将删除的数据添加到已完成的Adapter中, 且添加到最后一个
+                mUnfinishedTaskObserver.notifyDataRemove();
 
                 Snackbar snackbar = Snackbar.make(
                         getActivity().findViewById(R.id.cl_home_content_container),
@@ -139,7 +126,7 @@ public class TaskTodayFragment extends BaseFragment
             @Override
             public void onItemRemoved(int position) {
 
-                mFinishedTaskObserver.notifyDataRemove(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider().getLastRemoval());
+                mFinishedTaskObserver.notifyDataRemove();
 
                 Snackbar snackbar = Snackbar.make(
                         getActivity().findViewById(R.id.cl_home_content_container),
@@ -148,7 +135,6 @@ public class TaskTodayFragment extends BaseFragment
                 );
 
                 snackbar.setAction("撤销", view -> {
-                    ((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().undoLastRemoval();
                     mFinishedTaskObserver.notifyUndoLastDataRemove();
                 });
 
@@ -195,7 +181,10 @@ public class TaskTodayFragment extends BaseFragment
     }
 
     public void notifyNewTaskAdd(Task task) {
-        mUnfinishedTaskObserver.notifyDataAdd(new TaskDataProvider.TaskData(task, false));
+        //需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
+        Log.d(TAG, "notifyNewTaskAdd: isNull" + (getActivity() == null));
+        mTodayUnfinishedTaskDataProvider.addItem(new TaskDataProvider.TaskData(task, false));
+        mUnfinishedTaskObserver.notifyDataAdd();
     }
 
     @Override

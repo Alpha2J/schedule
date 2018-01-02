@@ -12,7 +12,7 @@ public class TodayUnfinishedTaskDataProviderPersistenceDecorator extends Abstrac
     }
 
     @Override
-    public String getTaskDataProviderType() {
+    public String getTaskDataProviderPersistenceDecoratorType() {
         return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED;
     }
 }

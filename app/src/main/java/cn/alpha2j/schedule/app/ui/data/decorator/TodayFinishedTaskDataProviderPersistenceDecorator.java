@@ -12,7 +12,7 @@ public class TodayFinishedTaskDataProviderPersistenceDecorator extends AbstractT
     }
 
     @Override
-    public String getTaskDataProviderType() {
+    public String getTaskDataProviderPersistenceDecoratorType() {
 
         return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
     }

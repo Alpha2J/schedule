@@ -1,6 +1,7 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -10,7 +11,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +20,9 @@ import com.idescout.sql.SqlScoutServer;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
+import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
@@ -27,16 +30,13 @@ import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskStatisticsFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
-import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
-import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
 
 /**
  * @author alpha
  * Created on 2017/11/4.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, TaskDataProvider.TaskTodayDataProviderGetter {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -63,16 +63,6 @@ public class MainActivity extends AppCompatActivity
 
         initActivity();
 
-//        添加数据存储的Fragment
-//        已经完成的任务
-        BaseFragment finishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayFinishedDataProviderGenerator());
-        getSupportFragmentManager().beginTransaction().add(finishedTaskDataProviderFrag, FC.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA).commit();
-//        未完成的任务
-        BaseFragment unfinishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayUnfinishedDataProviderGenerator());
-        getSupportFragmentManager().beginTransaction().add(unfinishedTaskDataProviderFrag, FC.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA).commit();
-
-//        如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
-//        否则, 获取销毁前显示的Fragment, 将它显示出来
         if(savedInstanceState == null) {
             mCurrentFragment = FC.FRAGMENT_TAG_TASK_TODAY;
             displayFragment(mCurrentFragment);
@@ -181,22 +171,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public TaskDataProvider getTodayFinishedTaskDataProvider() {
-
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FC.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA);
-
-        return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
-    }
-
-    @Override
-    public TaskDataProvider getTodayUnfinishedTaskDataProvider() {
-
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FC.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA);
-
-        return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
     }
 
     private void initActivity() {

@@ -3,8 +3,8 @@ package cn.alpha2j.schedule.app.ui.fragment;
 import android.os.Bundle;
 import android.util.Log;
 
-import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 import cn.alpha2j.schedule.app.ui.data.generator.DataProviderGenerator;
+import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 
 /**
  * @author alpha
