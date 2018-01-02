@@ -15,7 +15,6 @@ import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDec
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.activity.MainActivity;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;

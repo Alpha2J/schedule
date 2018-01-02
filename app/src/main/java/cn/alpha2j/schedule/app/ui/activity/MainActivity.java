@@ -21,12 +21,8 @@ import com.idescout.sql.SqlScoutServer;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
-import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
-import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskStatisticsFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;

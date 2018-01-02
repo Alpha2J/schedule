@@ -2,8 +2,6 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import java.io.Serializable;
 
-import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
-
 /**
  * @author alpha
  */
