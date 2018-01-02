@@ -39,38 +39,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public long addTask(Task task) {
-        if(task == null) {
-            throw new NullPointerException("task 不能为null");
-        }
 
-        TaskEntity taskEntity = new TaskEntity();
-        taskEntity.setAlarm(task.isAlarm());
-        taskEntity.setDescription(task.getDescription());
-        taskEntity.setDone(task.isDone());
-        taskEntity.setTitle(task.getTitle());
+        return taskRepository.save(convertToTaskEntity(task));
+    }
 
-        //对任务的时间进行处理, 确保任务的时间是当天零点
-        ScheduleDateTime taskScheduleDateTime = task.getTaskDate();
-        if (taskScheduleDateTime == null) {
-            taskScheduleDateTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
-        } else {
-            taskScheduleDateTime = DefaultScheduleDateBuilder.of(taskScheduleDateTime).toDateBegin().getResult();
-        }
-        long taskDate = taskScheduleDateTime.getEpochMillisecond();
-        taskEntity.setTaskDate(taskDate);
+    @Override
+    public long addOrUpdateTask(Task task) {
 
-        //对任务的提醒时间进行处理, 确保提醒时间精确到分钟
-        if (task.isAlarm() == true) {
-            ScheduleDateTime alarmScheduleDateTime = task.getTaskAlarmDateTime();
-            if (alarmScheduleDateTime == null) {
-                throw new AlarmDateTimeCanNotBeNullException("如果想要进行提醒, 那么需要设置提醒时间");
-            } else {
-                long taskAlarmDateTime = DefaultScheduleTimeBuilder.of(alarmScheduleDateTime).toMinuteStart().getResult().getEpochMillisecond();
-                taskEntity.setTaskAlarmDateTime(taskAlarmDateTime);
-            }
-        }
-
-        return taskRepository.save(taskEntity);
+        return taskRepository.saveOrUpdate(convertToTaskEntity(task));
     }
 
     @Override
@@ -141,5 +117,40 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskDate(taskDate);
 
         return task;
+    }
+
+    private TaskEntity convertToTaskEntity(Task task) {
+        if(task == null) {
+            throw new NullPointerException("task 不能为null");
+        }
+
+        TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setAlarm(task.isAlarm());
+        taskEntity.setDescription(task.getDescription());
+        taskEntity.setDone(task.isDone());
+        taskEntity.setTitle(task.getTitle());
+
+        //对任务的时间进行处理, 确保任务的时间是当天零点
+        ScheduleDateTime taskScheduleDateTime = task.getTaskDate();
+        if (taskScheduleDateTime == null) {
+            taskScheduleDateTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
+        } else {
+            taskScheduleDateTime = DefaultScheduleDateBuilder.of(taskScheduleDateTime).toDateBegin().getResult();
+        }
+        long taskDate = taskScheduleDateTime.getEpochMillisecond();
+        taskEntity.setTaskDate(taskDate);
+
+        //对任务的提醒时间进行处理, 确保提醒时间精确到分钟
+        if (task.isAlarm() == true) {
+            ScheduleDateTime alarmScheduleDateTime = task.getTaskAlarmDateTime();
+            if (alarmScheduleDateTime == null) {
+                throw new AlarmDateTimeCanNotBeNullException("如果想要进行提醒, 那么需要设置提醒时间");
+            } else {
+                long taskAlarmDateTime = DefaultScheduleTimeBuilder.of(alarmScheduleDateTime).toMinuteStart().getResult().getEpochMillisecond();
+                taskEntity.setTaskAlarmDateTime(taskAlarmDateTime);
+            }
+        }
+
+        return taskEntity;
     }
 }

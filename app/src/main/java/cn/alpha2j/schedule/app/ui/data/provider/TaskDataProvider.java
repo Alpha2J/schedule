@@ -1,5 +1,6 @@
 package cn.alpha2j.schedule.app.ui.data.provider;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -184,7 +185,10 @@ public class TaskDataProvider implements DataProvider {
         String TYPE_TODAY_TASK_FINISHED = "TYPE_TODAY_FINISHED_TASK_DATA_PROVIDER";
     }
 
-    public interface TaskTodayDataProviderGetter {
+    /**
+     * 需要放到Bundle里面进行传输, 实现Serializable接口
+     */
+    public interface TaskTodayDataProviderGetter extends Serializable {
 
         /**
          * 获取含有今日已完成数据的TaskDataProvider

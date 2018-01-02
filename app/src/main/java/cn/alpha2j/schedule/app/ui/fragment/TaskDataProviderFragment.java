@@ -15,11 +15,11 @@ public class TaskDataProviderFragment extends BaseFragment {
 
     private DataProvider mDataProvider;
 
-    public static TaskDataProviderFragment newInstance(DataProviderGenerator dataProviderCreator) {
+    public static TaskDataProviderFragment newInstance(DataProviderGenerator dataProviderGenerator) {
 
         TaskDataProviderFragment fragment = new TaskDataProviderFragment();
 
-        DataProvider dataProvider = dataProviderCreator.generate();
+        DataProvider dataProvider = dataProviderGenerator.generate();
         Bundle args = new Bundle();
         args.putSerializable("dataProvider", dataProvider);
         fragment.setArguments(args);

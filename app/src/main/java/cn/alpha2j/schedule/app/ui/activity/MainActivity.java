@@ -16,11 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
-import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
 import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskDataProviderFragment;
@@ -38,16 +36,6 @@ import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGene
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, TaskDataProvider.TaskTodayDataProviderGetter {
 
-    public interface FragmentConstant {
-        String FRAGMENT_TAG = "FragmentTag";
-        String FRAGMENT_TAG_TASK_TODAY = "TaskTodayFragment";
-        String FRAGMENT_TAG_TASK_OVERVIEW = "TaskOverviewFragment";
-        String FRAGMENT_TAG_TASK_STATISTICS = "TaskStatisticsFragment";
-
-        String FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA = "TaskTodayUnfinishedDataFragment";
-        String FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA = "TaskTodayFinishedDataFragment";
-    }
-
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private FloatingActionButton mFloatingActionButton;
@@ -59,7 +47,10 @@ public class MainActivity extends AppCompatActivity
 
     private String mCurrentFragment;
 
-    private List<DataProviderObserver> mObservers;
+    /**
+     * 将接口简化
+     */
+    private interface FC extends BaseFragment.FragmentConstant {}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,18 +62,18 @@ public class MainActivity extends AppCompatActivity
 //        添加数据存储的Fragment
 //        已经完成的任务
         BaseFragment finishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayFinishedDataProviderGenerator());
-        getSupportFragmentManager().beginTransaction().add(finishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA).commit();
+        getSupportFragmentManager().beginTransaction().add(finishedTaskDataProviderFrag, FC.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA).commit();
 //        未完成的任务
         BaseFragment unfinishedTaskDataProviderFrag = TaskDataProviderFragment.newInstance(new TodayUnfinishedDataProviderGenerator());
-        getSupportFragmentManager().beginTransaction().add(unfinishedTaskDataProviderFrag, FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA).commit();
+        getSupportFragmentManager().beginTransaction().add(unfinishedTaskDataProviderFrag, FC.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA).commit();
 
 //        如果当前的活动没有被销毁过, 那么直接创建Fragment, 且默认第一个显示的为当天消息的Fragment
 //        否则, 获取销毁前显示的Fragment, 将它显示出来
         if(savedInstanceState == null) {
-            mCurrentFragment = FragmentConstant.FRAGMENT_TAG_TASK_TODAY;
+            mCurrentFragment = FC.FRAGMENT_TAG_TASK_TODAY;
             displayFragment(mCurrentFragment);
         } else {
-            mCurrentFragment = savedInstanceState.getString(FragmentConstant.FRAGMENT_TAG);
+            mCurrentFragment = savedInstanceState.getString(FC.FRAGMENT_TAG);
 //            这个方法不用了, 因为activity重建的时候里面什么东西都没有, 只需要获得相应的fragment就可以了
 //            removeAllAndDisplayFragments(mCurrentFragment);
 //            用这个方法代替
@@ -90,13 +81,13 @@ public class MainActivity extends AppCompatActivity
         }
         //设置选中项
         switch (mCurrentFragment) {
-            case FragmentConstant.FRAGMENT_TAG_TASK_TODAY :
+            case FC.FRAGMENT_TAG_TASK_TODAY :
                 mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW :
+            case FC.FRAGMENT_TAG_TASK_OVERVIEW :
                 mNavigationView.setCheckedItem(R.id.activity_main_menu_task_overview_item);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS :
+            case FC.FRAGMENT_TAG_TASK_STATISTICS :
                 mNavigationView.setCheckedItem(R.id.activity_main_menu_task_statistics_item);
                 break;
             default:
@@ -110,9 +101,9 @@ public class MainActivity extends AppCompatActivity
 //        将当前fragment 的类型传入
 //        做if判断好像有点臃余, 不过能增加健壮性
         if(mCurrentFragment != null) {
-            outState.putString(FragmentConstant.FRAGMENT_TAG, this.mCurrentFragment);
+            outState.putString(FC.FRAGMENT_TAG, this.mCurrentFragment);
         } else {
-            outState.putString(FragmentConstant.FRAGMENT_TAG, FragmentConstant.FRAGMENT_TAG_TASK_TODAY);
+            outState.putString(FC.FRAGMENT_TAG, FC.FRAGMENT_TAG_TASK_TODAY);
         }
     }
 
@@ -156,17 +147,17 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.activity_main_menu_task_today_item :
                 Toast.makeText(this, "任务: 今天", Toast.LENGTH_SHORT).show();
-                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_TODAY);
+                displayFragment(FC.FRAGMENT_TAG_TASK_TODAY);
                 break;
             case R.id.activity_main_menu_task_overview_item :
                 Toast.makeText(this, "任务: 总览", Toast.LENGTH_SHORT).show();
 
-                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW);
+                displayFragment(FC.FRAGMENT_TAG_TASK_OVERVIEW);
                 break;
             case R.id.activity_main_menu_task_statistics_item :
                 Toast.makeText(this, "统计", Toast.LENGTH_SHORT).show();
 
-                displayFragment(FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS);
+                displayFragment(FC.FRAGMENT_TAG_TASK_STATISTICS);
                 break;
             case R.id.activity_main_menu_settings_item :
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
@@ -191,7 +182,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public TaskDataProvider getTodayFinishedTaskDataProvider() {
 
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA);
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FC.FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA);
 
         return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
     }
@@ -199,7 +190,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public TaskDataProvider getTodayUnfinishedTaskDataProvider() {
 
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FragmentConstant.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA);
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FC.FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA);
 
         return (TaskDataProvider) ((TaskDataProviderFragment)fragment).getDataProvider();
     }
@@ -257,44 +248,44 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         switch (fragmentTag) {
-            case FragmentConstant.FRAGMENT_TAG_TASK_TODAY :
+            case FC.FRAGMENT_TAG_TASK_TODAY :
                 if(mTaskTodayFragment == null) {
-                    mTaskTodayFragment = new TaskTodayFragment();
-                    mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
+                    mTaskTodayFragment = TaskTodayFragment.newInstance(this);
+                    mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
                 }
 
                 if(mTaskTodayFragment.isAdded()) {
                     transaction.show(mTaskTodayFragment);
                 } else {
-                    transaction.add(R.id.fl_home_fragment_container, mTaskTodayFragment, FragmentConstant.FRAGMENT_TAG_TASK_TODAY);
+                    transaction.add(R.id.fl_home_fragment_container, mTaskTodayFragment, FC.FRAGMENT_TAG_TASK_TODAY);
                 }
 
                 hideOthersFragments(fragmentTag);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW :
+            case FC.FRAGMENT_TAG_TASK_OVERVIEW :
                 if(mTaskOverviewFragment == null) {
                     mTaskOverviewFragment = new TaskOverviewFragment();
-                    mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
+                    mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
                 }
 
                 if(mTaskOverviewFragment.isAdded()) {
                     transaction.show(mTaskOverviewFragment);
                 } else {
-                    transaction.add(R.id.fl_home_fragment_container, mTaskOverviewFragment, FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW);
+                    transaction.add(R.id.fl_home_fragment_container, mTaskOverviewFragment, FC.FRAGMENT_TAG_TASK_OVERVIEW);
                 }
 
                 hideOthersFragments(fragmentTag);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS :
+            case FC.FRAGMENT_TAG_TASK_STATISTICS :
                 if(mTaskStatisticsFragment == null) {
                     mTaskStatisticsFragment = new TaskStatisticsFragment();
-                    mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS, mTaskStatisticsFragment);
+                    mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_STATISTICS, mTaskStatisticsFragment);
                 }
 
                 if(mTaskStatisticsFragment.isAdded()) {
                     transaction.show(mTaskStatisticsFragment);
                 } else {
-                    transaction.add(R.id.fl_home_fragment_container, mTaskStatisticsFragment, FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS);
+                    transaction.add(R.id.fl_home_fragment_container, mTaskStatisticsFragment, FC.FRAGMENT_TAG_TASK_STATISTICS);
                 }
 
                 hideOthersFragments(fragmentTag);
@@ -315,35 +306,35 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         switch (fragmentTag) {
-            case FragmentConstant.FRAGMENT_TAG_TASK_TODAY :
+            case FC.FRAGMENT_TAG_TASK_TODAY :
                 mTaskTodayFragment = new TaskTodayFragment();
-                transaction.replace(R.id.fl_home_fragment_container, mTaskTodayFragment, FragmentConstant.FRAGMENT_TAG_TASK_TODAY);
+                transaction.replace(R.id.fl_home_fragment_container, mTaskTodayFragment, FC.FRAGMENT_TAG_TASK_TODAY);
 
                 if(mMapOfAddedFragments.size() != 0) {
                     mMapOfAddedFragments.clear();
                 }
 
-                mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
+                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW :
+            case FC.FRAGMENT_TAG_TASK_OVERVIEW :
                 mTaskOverviewFragment = new TaskOverviewFragment();
-                transaction.replace(R.id.fl_home_fragment_container, mTaskOverviewFragment, FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW);
+                transaction.replace(R.id.fl_home_fragment_container, mTaskOverviewFragment, FC.FRAGMENT_TAG_TASK_OVERVIEW);
 
                 if(mMapOfAddedFragments.size() != 0) {
                     mMapOfAddedFragments.clear();
                 }
 
-                mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
+                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
                 break;
-            case FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS :
+            case FC.FRAGMENT_TAG_TASK_STATISTICS :
                 mTaskStatisticsFragment = new TaskStatisticsFragment();
-                transaction.replace(R.id.fl_home_fragment_container, mTaskStatisticsFragment, FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS);
+                transaction.replace(R.id.fl_home_fragment_container, mTaskStatisticsFragment, FC.FRAGMENT_TAG_TASK_STATISTICS);
 
                 if(mMapOfAddedFragments.size() != 0) {
                     mMapOfAddedFragments.clear();
                 }
 
-                mMapOfAddedFragments.put(FragmentConstant.FRAGMENT_TAG_TASK_STATISTICS, mTaskStatisticsFragment);
+                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_STATISTICS, mTaskStatisticsFragment);
                 break;
             default:
         }

@@ -47,4 +47,18 @@ public abstract class BaseFragment extends Fragment {
      * @param savedInstanceState
      */
     protected abstract void afterCreated(Bundle savedInstanceState);
+
+    /**
+     * 各个Fragment中使用到的常量, 当新增Fragment时Tag 常量必须增加, 表示该Fragment的名字
+     */
+    public interface FragmentConstant {
+
+        String FRAGMENT_TAG = "FragmentTag";
+        String FRAGMENT_TAG_TASK_TODAY = "TaskTodayFragment";
+        String FRAGMENT_TAG_TASK_OVERVIEW = "TaskOverviewFragment";
+        String FRAGMENT_TAG_TASK_STATISTICS = "TaskStatisticsFragment";
+
+        String FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA = "TaskTodayUnfinishedDataFragment";
+        String FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA = "TaskTodayFinishedDataFragment";
+    }
 }

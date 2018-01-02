@@ -12,7 +12,7 @@ public class TodayUnfinishedTaskDataProviderObserver extends AbstractTodayTaskDa
     }
 
     @Override
-    public String getTaskDataProviderType() {
+    public String getTodayTaskDataProviderType() {
         return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED;
     }
 

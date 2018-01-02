@@ -4,8 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 编写好time包下的接口后这个工具类不再使用
+ *
  * @author alpha
  */
+@Deprecated
 public class DateUtils {
 
     /**

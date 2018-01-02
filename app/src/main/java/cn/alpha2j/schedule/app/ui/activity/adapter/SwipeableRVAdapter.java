@@ -198,6 +198,11 @@ public class SwipeableRVAdapter
     }
 
     @Override
+    public void onSwipeItemStarted(SwipeableItemViewHolder holder, int position) {
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void onSetSwipeBackground(SwipeableItemViewHolder holder, int position, int type) {
 
         switch (type) {

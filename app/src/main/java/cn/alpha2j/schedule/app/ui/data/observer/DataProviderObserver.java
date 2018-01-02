@@ -20,10 +20,10 @@ public interface DataProviderObserver extends Serializable {
      *
      * @param data
      */
-    void notifyDataDelete(DataProvider.Data data);
+    void notifyDataRemove(DataProvider.Data data);
 
     /**
      * 取消上次的删除操作
      */
-    void notifyUndoLastDataDelete();
+    void notifyUndoLastDataRemove();
 }

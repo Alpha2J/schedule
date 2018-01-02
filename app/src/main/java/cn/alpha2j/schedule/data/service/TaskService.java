@@ -1,5 +1,6 @@
 package cn.alpha2j.schedule.data.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import cn.alpha2j.schedule.data.Task;
@@ -7,7 +8,7 @@ import cn.alpha2j.schedule.data.Task;
 /**
  * @author alpha
  */
-public interface TaskService {
+public interface TaskService extends Serializable {
 
     /**
      * 增加新的Task
@@ -16,6 +17,14 @@ public interface TaskService {
      * @throws NullPointerException task为null
      */
     long addTask(Task task);
+
+    /**
+     * 增加一个Task或者更新该Task
+     *
+     * @param task
+     * @return
+     */
+    long addOrUpdateTask(Task task);
 
     /**
      * 查找属于当天的所有Task

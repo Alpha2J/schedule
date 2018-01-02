@@ -46,6 +46,16 @@ public class GreenDAOGenericRepository<T, DAO extends AbstractDao<T, Long>> exte
         return mDAO.insert(entity);
     }
 
+    @Override
+    public Long saveOrUpdate(T entity) {
+
+        if(entity == null) {
+            throw new NullPointerException("参数entity不能为空");
+        }
+
+        return mDAO.insertOrReplace(entity);
+    }
+
     @NonNull
     @Override
     public Iterable<T> save(@Size(min = 1) Iterable<T> entities) {
@@ -55,7 +65,8 @@ public class GreenDAOGenericRepository<T, DAO extends AbstractDao<T, Long>> exte
 
     @Override
     public T findOne(Long id) {
-        return null;
+
+        return mDAO.loadByRowId(id);
     }
 
     @Override

@@ -5,10 +5,12 @@ import android.support.annotation.Size;
 
 import org.greenrobot.greendao.AbstractDao;
 
+import java.io.Serializable;
+
 /**
  * @author alpha
  */
-public interface GenericRepository<T, DAO extends AbstractDao<T, Long>> {
+public interface GenericRepository<T, DAO extends AbstractDao<T, Long>> extends Serializable {
 
     /**
      * 增加一个实体
@@ -18,6 +20,14 @@ public interface GenericRepository<T, DAO extends AbstractDao<T, Long>> {
      * @throws NullPointerException entity为null
      */
     Long save(T entity);
+
+    /**
+     * 增加或者更新一个实体, 如果标识键在的话那么会更新实体, 如果标识键不存在, 那么插入一个实体
+     *
+     * @param entity
+     * @return
+     */
+    Long saveOrUpdate(T entity);
 
     /**
      * 插入指定数量的实体

@@ -5,8 +5,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
@@ -29,7 +29,7 @@ import cn.alpha2j.schedule.data.Task;
  * @author alpha
  */
 public class TaskTodayFragment extends BaseFragment
-        implements AbstractTodayTaskDataProviderObserver.TaskTodayRecyclerViewAdapterGetter {
+        implements AbstractTodayTaskDataProviderObserver.TaskTodayRVAdapterGetter {
 
     private static final String TAG = "TaskTodayFragment";
 
@@ -45,13 +45,23 @@ public class TaskTodayFragment extends BaseFragment
     private DataProviderObserver mUnfinishedTaskObserver;
     private DataProviderObserver mFinishedTaskObserver;
 
-//    测试完其他的再把这个改回来
-//    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
+    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
 
 
     public TaskTodayFragment() {
         mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
         mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
+    }
+
+    public static TaskTodayFragment newInstance(TaskDataProvider.TaskTodayDataProviderGetter taskTodayDataProviderGetter) {
+
+        TaskTodayFragment fragment = new TaskTodayFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable("taskTodayDataProviderGetter", taskTodayDataProviderGetter);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
@@ -66,6 +76,11 @@ public class TaskTodayFragment extends BaseFragment
 
     @Override
     protected void afterCreated(Bundle savedInstanceState) {
+
+        if(mTaskTodayDataProviderGetter == null) {
+            mTaskTodayDataProviderGetter = (TaskDataProvider.TaskTodayDataProviderGetter) getArguments().get("taskTodayDataProviderGetter");
+            Log.d(TAG, "afterCreated: 获取了TaskTodayDataProviderGetter");
+        }
 
         initViews();
         initData();
@@ -88,7 +103,7 @@ public class TaskTodayFragment extends BaseFragment
             @Override
             public void onItemRemoved(int position) {
 
-                mUnfinishedTaskObserver.notifyDataDelete();
+                mUnfinishedTaskObserver.notifyDataRemove(mTaskTodayDataProviderGetter.getTodayUnfinishedTaskDataProvider().getLastRemoval());
 
                 Snackbar snackbar = Snackbar.make(
                         getActivity().findViewById(R.id.cl_home_content_container),
@@ -97,8 +112,7 @@ public class TaskTodayFragment extends BaseFragment
                 );
 
                 snackbar.setAction("撤销", view -> {
-                    ((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().undoLastRemoval();
-                    mFinishedTaskObserver.notifyUndoLastDataDelete();
+                    mUnfinishedTaskObserver.notifyUndoLastDataRemove();
                 });
 
                 snackbar.show();
@@ -111,11 +125,11 @@ public class TaskTodayFragment extends BaseFragment
 
             @Override
             public void onItemViewClicked(View view, int target) {
-                if(target == SwipeableRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
-                    Toast.makeText(getContext(), "点击了未完成的item", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "点击了未完成的delete", Toast.LENGTH_SHORT).show();
-                }
+//                if(target == SwipeableRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+//                    Toast.makeText(getContext(), "点击了未完成的item", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getContext(), "点击了未完成的delete", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 
@@ -123,17 +137,17 @@ public class TaskTodayFragment extends BaseFragment
             @Override
             public void onItemRemoved(int position) {
 
-                mFinishedTaskObserver.notifyDataDelete();
+                mFinishedTaskObserver.notifyDataRemove(mTaskTodayDataProviderGetter.getTodayFinishedTaskDataProvider().getLastRemoval());
 
                 Snackbar snackbar = Snackbar.make(
-                        mRootView.findViewById(R.id.cl_home_content_container),
+                        getActivity().findViewById(R.id.cl_home_content_container),
                         "一个任务已被标记为未完成",
                         Snackbar.LENGTH_SHORT
                 );
 
                 snackbar.setAction("撤销", view -> {
                     ((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().undoLastRemoval();
-                    mFinishedTaskObserver.notifyUndoLastDataDelete();
+                    mFinishedTaskObserver.notifyUndoLastDataRemove();
                 });
 
                 snackbar.show();
@@ -178,17 +192,17 @@ public class TaskTodayFragment extends BaseFragment
         mFinishedRVSManager.attachRecyclerView(mRecyclerView);
     }
 
+    public void notifyNewTaskAdd(Task task) {
+        mUnfinishedTaskObserver.notifyDataAdd(new TaskDataProvider.TaskData(task, false));
+    }
+
     @Override
-    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getFinishedTaskAdapter() {
+    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayFinishedRVAdapter() {
         return this.mFinishedTaskAdapter;
     }
 
     @Override
-    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getUnfinishedTaskAdapter() {
+    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayUnfinishedRVAdapter() {
         return this.mUnfinishedTaskAdapter;
-    }
-
-    public void notifyNewTaskAdd(Task task) {
-        mUnfinishedTaskObserver.notifyDataAdd(new TaskDataProvider.TaskData(task, false));
     }
 }

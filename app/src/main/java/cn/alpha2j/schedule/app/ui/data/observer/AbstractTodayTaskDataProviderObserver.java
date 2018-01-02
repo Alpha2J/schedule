@@ -49,25 +49,61 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
         swipeableRVAdapter.notifyItemInserted(dataProvider.getCount() - 1);
     }
 
+    /**
+     * 当删除未完成的数据时, 需要将删除的数据添加到已完成的数据集中, 只是前端逻辑, 数据层不用做, 数据层已经在装饰器中写好了
+     * 如果是unfinished的remove, 那么需要将传进来的data加入到finished中
+     * @param data
+     */
     @Override
-    public void notifyDataDelete(DataProvider.Data data) {
-//
-//        if (!(data instanceof TaskDataProvider.TaskData)) {
-//            throw new IllegalArgumentException("参数类型不正确");
-//        }
-//
-//        switch (getTaskDataProviderType()) {
-//            case TaskDataProvider.Pro
-//        }
+    public void notifyDataRemove(DataProvider.Data data) {
 
+        switch (getTodayTaskDataProviderType()) {
+            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+                SwipeableRVAdapter finishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+                finishedAdapter.getDataProvider().addItem(data);
+                finishedAdapter.notifyItemInserted(finishedAdapter.getDataProvider().getCount() - 1);
+
+                break;
+            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+                SwipeableRVAdapter unfinishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+                unfinishedAdapter.getDataProvider().addItem(data);
+                unfinishedAdapter.notifyItemInserted(unfinishedAdapter.getDataProvider().getCount() - 1);
+
+                break;
+            default:
+        }
     }
 
     @Override
-    public void notifyUndoLastDataDelete() {
+    public void notifyUndoLastDataRemove() {
 
+        SwipeableRVAdapter unfinishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+        SwipeableRVAdapter finishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+        int lastInsertedPosition = -1;
+
+        switch (getTodayTaskDataProviderType()) {
+            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+                lastInsertedPosition = unfinishedAdapter.getDataProvider().undoLastRemoval();
+                unfinishedAdapter.notifyItemInserted(lastInsertedPosition);
+
+                //删除上次插入已完成的数据
+                finishedAdapter.getDataProvider().removeItem(finishedAdapter.getDataProvider().getCount() - 1);
+                finishedAdapter.notifyItemRemoved(finishedAdapter.getDataProvider().getCount());
+                break;
+            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+                lastInsertedPosition = finishedAdapter.getDataProvider().undoLastRemoval();
+                finishedAdapter.notifyItemInserted(lastInsertedPosition);
+
+                //删除上次插入的为完成数据
+                unfinishedAdapter.getDataProvider().removeItem(unfinishedAdapter.getDataProvider().getCount() - 1);
+                unfinishedAdapter.notifyItemRemoved(unfinishedAdapter.getDataProvider().getCount());
+
+                break;
+            default:
+        }
     }
 
-    public abstract String getTaskDataProviderType();
+    public abstract String getTodayTaskDataProviderType();
 
     public interface TaskTodayRVAdapterGetter {
 

@@ -5,9 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
+ * 换用GreenDao, 不再使用该类
  * @author alpha
  * Created on 2017/11/4.
  */
+@Deprecated
 public class ScheduleDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TASK = "CREATE TABLE Schedule_Task (" +

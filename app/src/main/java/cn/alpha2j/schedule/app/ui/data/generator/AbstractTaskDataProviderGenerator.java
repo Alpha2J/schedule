@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.alpha2j.schedule.app.ui.data.decorator.TodayFinishedTaskDataProviderPersistenceDecorator;
+import cn.alpha2j.schedule.app.ui.data.decorator.TodayUnfinishedTaskDataProviderPersistenceDecorator;
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.service.TaskService;
@@ -20,18 +22,19 @@ public abstract class AbstractTaskDataProviderGenerator implements DataProviderG
     @Override
     public TaskDataProvider generate() {
 
+//        实际返回的使他们的装饰器类型
         TaskDataProvider taskDataProvider = null;
 
         TaskService taskService = TaskServiceImpl.getInstance();
         switch (getTaskDataProviderType()) {
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
                 List<Task> unfinishedTasks = taskService.findAllUnfinishedForToday();
-                taskDataProvider = new TaskDataProvider(convert(unfinishedTasks));
+                taskDataProvider = new TodayUnfinishedTaskDataProviderPersistenceDecorator(new TaskDataProvider(convert(unfinishedTasks)));
 
                 break;
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 List<Task> finishedTasks = taskService.findAllFinishedForToday();
-                taskDataProvider = new TaskDataProvider(convert(finishedTasks));
+                taskDataProvider = new TodayFinishedTaskDataProviderPersistenceDecorator(new TaskDataProvider(convert(finishedTasks)));
 
                 break;
             default:
