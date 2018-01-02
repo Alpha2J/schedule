@@ -16,8 +16,9 @@ public class Task implements Serializable {
     /**
      * 在TaskEntity中用的是Long, 可以让GreenDao识别设置自动增长键.
      * 但是这里为long, 可以让程序在使用的时候避免发生空指针
+     * 2018 01 02更正, 使用回Long, 如果不适当的时候调用使用id应该让他进行空指针运行时报异常
      */
-    private long id;
+    private Long id;
     private String title;
     private String description;
     /**
@@ -39,7 +40,7 @@ public class Task implements Serializable {
 
     public Task() {}
 
-    public Task(long id, String title, String description, ScheduleDateTime taskDate, boolean isAlarm, ScheduleDateTime taskAlarmDateTime, boolean isDone) {
+    public Task(Long id, String title, String description, ScheduleDateTime taskDate, boolean isAlarm, ScheduleDateTime taskAlarmDateTime, boolean isDone) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -49,11 +50,11 @@ public class Task implements Serializable {
         this.isDone = isDone;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

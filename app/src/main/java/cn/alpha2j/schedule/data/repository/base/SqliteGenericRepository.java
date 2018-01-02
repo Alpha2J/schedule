@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 
 import cn.alpha2j.schedule.MyApplication;
 import cn.alpha2j.schedule.annotation.TableName;
+import cn.alpha2j.schedule.data.entity.EntityIdentifier;
 
 /**
  * 换用greendao框架, 不再使用这个类来进行持久化
@@ -17,7 +18,7 @@ import cn.alpha2j.schedule.annotation.TableName;
  * @author alpha
  */
 @Deprecated
-public abstract class SqliteGenericRepository<T, DAO extends AbstractDao<T, Long>> extends BaseGenericRepository<T, DAO> {
+public abstract class SqliteGenericRepository<T extends EntityIdentifier, DAO extends AbstractDao<T, Long>> extends BaseGenericRepository<T, DAO> {
 
     protected ScheduleDatabaseHelper mDatabaseHelper;
 
@@ -54,7 +55,7 @@ public abstract class SqliteGenericRepository<T, DAO extends AbstractDao<T, Long
      * @return
      */
     @Override
-    public Long save(T entity) {
+    public long save(T entity) {
 
         SQLiteDatabase database = mDatabaseHelper.getWritableDatabase();
 
@@ -80,45 +81,5 @@ public abstract class SqliteGenericRepository<T, DAO extends AbstractDao<T, Long
         }
 
         return -1L;
-    }
-
-    @Override
-    public Iterable<T> save(Iterable<T> entities) {
-        return null;
-    }
-
-    @Override
-    public T findOne(Long id) {
-        return null;
-    }
-
-    @Override
-    public Iterable<T> findAll(Iterable<Long> ids) {
-        return null;
-    }
-
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    @Override
-    public void delete() {
-
-    }
-
-    @Override
-    public void delete(T entity) {
-
-    }
-
-    @Override
-    public void delete(Iterable<? extends T> entities) {
-
-    }
-
-    @Override
-    public void deleteAll() {
-
     }
 }

@@ -35,6 +35,8 @@ public class TaskRepositoryImpl extends GreenDAOGenericRepository<TaskEntity, Ta
     @Override
     public List<TaskEntity> findTaskEntitiesByTaskDate(long taskDate) {
 
+//        不清楚这个lib在没有结果时返回的是null还是size为0的list, 以后如果发现是null那么记得回来这里更改
+//        new一个ArrayList然后再addAll, 最后return, 下面方法也是一样
         return mDAO.queryBuilder()
                 .where(TaskEntityDao.Properties.TaskDate.eq(taskDate))
                 .list();

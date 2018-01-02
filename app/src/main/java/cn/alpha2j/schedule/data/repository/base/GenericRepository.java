@@ -1,64 +1,73 @@
 package cn.alpha2j.schedule.data.repository.base;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Size;
-
 import org.greenrobot.greendao.AbstractDao;
 
-import java.io.Serializable;
+import cn.alpha2j.schedule.data.entity.EntityIdentifier;
+import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
 
 /**
  * @author alpha
  */
-public interface GenericRepository<T, DAO extends AbstractDao<T, Long>> extends Serializable {
+public interface GenericRepository<T extends EntityIdentifier, DAO extends AbstractDao<T, Long>> {
 
     /**
      * 增加一个实体
      *
-     * @param entity 需要增加的实体
-     * @return 插入后的entity, 具有插入后的id, 插入失败返回null
-     * @throws NullPointerException entity为null
+     * @param entity 被增加的实体
+     * @return 插入后的实体的行id
+     * @throws NullPointerException entity 为null
      */
-    Long save(T entity);
+    long save(T entity);
 
     /**
-     * 增加或者更新一个实体, 如果标识键在的话那么会更新实体, 如果标识键不存在, 那么插入一个实体
+     * 增加或者更新一个实体.
+     * 如果标识主键在的话那么会更新实体.
+     * 如果标识主键不存在, 那么插入一个实体
      *
-     * @param entity
-     * @return
+     * @param entity 进行操作的实体
+     * @return 更新前的id或者插入后的id
+     * @throws NullPointerException 参数entity为空
      */
-    Long saveOrUpdate(T entity);
+    long saveOrUpdate(T entity);
 
     /**
-     * 插入指定数量的实体
+     * 利用id主键获取一个实体
      *
-     * @param entities
-     * @return 插入成功后的实体, 带有id, 插入失败返回的iterable长度为0
-     * @throws NullPointerException 传入的参数为空
-     * @throws IllegalArgumentException 传入的参数不符合最小长度
+     * @param id 主键
+     * @return 获取到的实体, 为null 如果实体不存在
+     * @throws IllegalArgumentException 参数id小于0
      */
-    @NonNull
-    Iterable<T> save(@Size(min = 1) Iterable<T> entities);
+    T findOne(long id);
 
     /**
-     * 获取一个实体
-     *
-     * @param id
-     * @return
+     * 数据表中存在该实体的总数
+     * @return 实体总数
      */
-    T findOne(Long id);
-
-    Iterable<T> findAll(Iterable<Long> ids);
-
     long count();
 
-    void delete();
-
+    /**
+     * 删除指定实体
+     *
+     * @param entity 指定的实体, 需要带有id
+     *
+     * @throws NullPointerException 参数entity为空
+     * @throws PrimaryKeyNotExistException 传入的实体不存在标识主键(id)
+     * @throws IllegalArgumentException 传入的实体的标识主键不合法(小于0)
+     */
     void delete(T entity);
 
-    void delete(Iterable<? extends T> entities);
-
+    /**
+     * 删除全部实体
+     */
     void deleteAll();
 
+    /**
+     * 更新实体, 传入的主键id必须存在
+     *
+     * @param entity 需要更新的实体
+     * @throws NullPointerException
+     * @throws PrimaryKeyNotExistException 传入的实体不存在标识主键(id)
+     * @throws IllegalArgumentException 传入的实体的标识主键不合法(小于0)
+     */
     void update(T entity);
 }

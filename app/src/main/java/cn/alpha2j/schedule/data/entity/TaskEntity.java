@@ -3,6 +3,7 @@ package cn.alpha2j.schedule.data.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Transient;
 
 /**
  * 表示与持久化交互的TaskEntity实体
@@ -13,7 +14,7 @@ import org.greenrobot.greendao.annotation.Id;
 @Entity(
         nameInDb = "Schedule_Task"
 )
-public class TaskEntity {
+public class TaskEntity implements EntityIdentifier {
 
     @Id(autoincrement = true)
     private Long id;
@@ -117,5 +118,10 @@ public class TaskEntity {
 
     public boolean getDone() {
         return this.done;
+    }
+
+    @Override
+    public Long getIdentifier() {
+        return getId();
     }
 }

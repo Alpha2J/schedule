@@ -45,24 +45,25 @@ public class TaskTodayFragment extends BaseFragment
     private DataProviderObserver mUnfinishedTaskObserver;
     private DataProviderObserver mFinishedTaskObserver;
 
-    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
-
+//    不再保存TaskTodayDataProviderGetter对象
+//    private TaskDataProvider.TaskTodayDataProviderGetter mTaskTodayDataProviderGetter;
 
     public TaskTodayFragment() {
         mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
         mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
     }
 
-    public static TaskTodayFragment newInstance(TaskDataProvider.TaskTodayDataProviderGetter taskTodayDataProviderGetter) {
-
-        TaskTodayFragment fragment = new TaskTodayFragment();
-
-        Bundle args = new Bundle();
-        args.putSerializable("taskTodayDataProviderGetter", taskTodayDataProviderGetter);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
+//    不再保存TaskTodayDataProviderGetter对象
+//    public static TaskTodayFragment newInstance(TaskDataProvider.TaskTodayDataProviderGetter taskTodayDataProviderGetter) {
+//
+//        TaskTodayFragment fragment = new TaskTodayFragment();
+//
+//        Bundle args = new Bundle();
+//        args.putSerializable("taskTodayDataProviderGetter", taskTodayDataProviderGetter);
+//        fragment.setArguments(args);
+//
+//        return fragment;
+//    }
 
     @Override
     protected boolean hasView() {
@@ -77,10 +78,11 @@ public class TaskTodayFragment extends BaseFragment
     @Override
     protected void afterCreated(Bundle savedInstanceState) {
 
-        if(mTaskTodayDataProviderGetter == null) {
-            mTaskTodayDataProviderGetter = (TaskDataProvider.TaskTodayDataProviderGetter) getArguments().get("taskTodayDataProviderGetter");
-            Log.d(TAG, "afterCreated: 获取了TaskTodayDataProviderGetter");
-        }
+//        不再保存TaskTodayDataProviderGetter对象
+//        if(mTaskTodayDataProviderGetter == null) {
+//            mTaskTodayDataProviderGetter = (TaskDataProvider.TaskTodayDataProviderGetter) getArguments().get("taskTodayDataProviderGetter");
+//            Log.d(TAG, "afterCreated: 获取了TaskTodayDataProviderGetter");
+//        }
 
         initViews();
         initData();
@@ -103,7 +105,7 @@ public class TaskTodayFragment extends BaseFragment
             @Override
             public void onItemRemoved(int position) {
 
-                mUnfinishedTaskObserver.notifyDataRemove(mTaskTodayDataProviderGetter.getTodayUnfinishedTaskDataProvider().getLastRemoval());
+                mUnfinishedTaskObserver.notifyDataRemove(((MainActivity)getActivity()).getTodayUnfinishedTaskDataProvider().getLastRemoval());
 
                 Snackbar snackbar = Snackbar.make(
                         getActivity().findViewById(R.id.cl_home_content_container),
@@ -137,7 +139,7 @@ public class TaskTodayFragment extends BaseFragment
             @Override
             public void onItemRemoved(int position) {
 
-                mFinishedTaskObserver.notifyDataRemove(mTaskTodayDataProviderGetter.getTodayFinishedTaskDataProvider().getLastRemoval());
+                mFinishedTaskObserver.notifyDataRemove(((MainActivity)getActivity()).getTodayFinishedTaskDataProvider().getLastRemoval());
 
                 Snackbar snackbar = Snackbar.make(
                         getActivity().findViewById(R.id.cl_home_content_container),

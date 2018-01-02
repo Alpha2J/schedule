@@ -6,89 +6,29 @@
     android:orientation="vertical"
     android:paddingLeft="10dp">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="标题:"/>
-
-        <EditText
-            android:id="@+id/task_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="描述:"/>
-
-        <EditText
-            android:id="@+id/task_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="日期:"/>
-
-        <EditText
-            android:id="@+id/edit_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:inputType="none"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Switch
-            android:id="@+id/is_alarm_switch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:text="是否提醒"
-            android:checked="true"/>
-
-        <EditText
-            android:id="@+id/edit_alarm_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:inputType="none"/>
-    </LinearLayout>
+    <Button
+        android:id="@+id/btn_atp_saveOrUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="saveOrUpdate"
+        />
 
     <Button
-        android:id="@+id/add_task_confirm"
-        android:layout_width="match_parent"
+        android:id="@+id/btn_atp_update"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="确定添加"/>
+        android:text="update"
+        />
 
+    <Button
+        android:id="@+id/btn_atp_add_with_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="addWithId"/>
+
+    <Button
+        android:id="@+id/btn_atp_addOrUpdate_with_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="addOrUpdateWithId"/>
 </LinearLayout>

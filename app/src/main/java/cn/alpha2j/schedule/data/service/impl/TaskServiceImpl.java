@@ -9,6 +9,7 @@ import cn.alpha2j.schedule.data.repository.TaskRepository;
 import cn.alpha2j.schedule.data.repository.impl.TaskRepositoryImpl;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.exception.AlarmDateTimeCanNotBeNullException;
+import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
@@ -37,24 +38,47 @@ public class TaskServiceImpl implements TaskService {
         return taskService;
     }
 
+    /**
+     * 增加一个新的Task, 就算这个task设置了id也不会更新该id的task, 会直接忽略id
+     *
+     * @param task 需要增加的task, 不能为null
+     * @return
+     */
     @Override
     public long addTask(Task task) {
+
+        if (task == null) {
+            throw new NullPointerException("task不能为空");
+        }
 
         return taskRepository.save(convertToTaskEntity(task));
     }
 
+    /**
+     * 新增或者更新一个task, 如果设置了id, 且该id的数据存在, 那么更新该条数据.
+     * 如果该id的数据不存在, 那么会插入一条该id的数据.
+     *
+     * 如果id数据不存在, 那么直接新增一条数据, id为自增
+     *
+     * @param task 不能为null
+     * @return
+     */
     @Override
     public long addOrUpdateTask(Task task) {
 
-        return taskRepository.saveOrUpdate(convertToTaskEntity(task));
-    }
+        if (task == null) {
+            throw new NullPointerException("task不能为空");
+        }
 
-    @Override
-    public List<Task> findAllForToday() {
-
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
-
-        return convert(taskRepository.findTaskEntitiesByTaskDate(todayBegin));
+//        如果id为空, 那么说明数据
+        Long id = task.getId();
+        if(id == null) {
+            return addTask(task);
+        } else {
+            TaskEntity taskEntity = convertToTaskEntity(task);
+            taskEntity.setId(id);
+            return taskRepository.saveOrUpdate(taskEntity);
+        }
     }
 
     @Override
@@ -76,7 +100,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void setDone(Task task) {
 
-        long id = task.getId();
+        if (task == null) {
+            throw new NullPointerException("task不能为空");
+        }
+
+        Long id = task.getId();
+        if (id == null) {
+            throw new PrimaryKeyNotExistException("参数task不存在标识主键id");
+        }
+
+        if (id < 0) {
+            throw new IllegalArgumentException("传入的参数的标识主键id小于0");
+        }
+
         TaskEntity taskEntity = taskRepository.findOne(id);
         taskEntity.setDone(true);
         taskRepository.update(taskEntity);
@@ -85,7 +121,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void setUnDone(Task task) {
 
-        long id = task.getId();
+        if (task == null) {
+            throw new NullPointerException("task不能为空");
+        }
+
+        Long id = task.getId();
+        if (id == null) {
+            throw new PrimaryKeyNotExistException("参数task不存在标识主键id");
+        }
+
+        if (id < 0) {
+            throw new IllegalArgumentException("传入的参数的标识主键id小于0");
+        }
+
         TaskEntity taskEntity = taskRepository.findOne(id);
         taskEntity.setDone(false);
         taskRepository.update(taskEntity);

@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.idescout.sql.SqlScoutServer;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SqlScoutServer.create(this, getPackageName());
 
         initActivity();
 
@@ -250,7 +254,7 @@ public class MainActivity extends AppCompatActivity
         switch (fragmentTag) {
             case FC.FRAGMENT_TAG_TASK_TODAY :
                 if(mTaskTodayFragment == null) {
-                    mTaskTodayFragment = TaskTodayFragment.newInstance(this);
+                    mTaskTodayFragment = new TaskTodayFragment();
                     mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
                 }
 
