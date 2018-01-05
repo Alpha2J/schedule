@@ -21,7 +21,7 @@ public class TaskReminder {
 
     private static final String TAG = "TaskReminder";
 
-    public void remindeTask(Task task) {
+    public void remindTask(Task task) {
 
         AlarmManager alarmManager = (AlarmManager) MyApplication.getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(TaskReminderConstant.TASK_TIME_OUT_RECEIVER_ACTION);
@@ -31,7 +31,7 @@ public class TaskReminder {
         Log.d(TAG, "remindeTask: 添加了新的任务提醒");
     }
 
-    public void cancelRemindeTask(Task task) {
+    public void cancelRemindTask(Task task) {
 
         AlarmManager alarmManager = (AlarmManager) MyApplication.getContext().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(TaskReminderConstant.TASK_TIME_OUT_RECEIVER_ACTION);

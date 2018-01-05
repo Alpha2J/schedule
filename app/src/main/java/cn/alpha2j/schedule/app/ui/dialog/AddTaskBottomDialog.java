@@ -7,6 +7,7 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
+import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 import me.shaohui.bottomdialog.BaseBottomDialog;
 
 /**
@@ -38,8 +39,13 @@ public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClic
         Task task = new Task();
         task.setTitle(mTaskTitle.getText().toString());
         task.setDescription(null);
-        task.setAlarm(false);
-        task.setTaskAlarmDateTime(null);
+//        TODO: 测试, 将提醒时间设置为一分钟后, 测试完后记得删除
+        task.setAlarm(true);
+        int nowMinute = ScheduleDateTime.now().getMinuteOfHour();
+        ScheduleDateTime taskAlarmDateTime = DefaultScheduleTimeBuilder.now().toMinute(nowMinute + 1).getResult();
+        task.setTaskAlarmDateTime(taskAlarmDateTime);
+//        task.setAlarm(false);
+//        task.setTaskAlarmDateTime(null);
         task.setDone(false);
 
         ScheduleDateTime taskDate = DefaultScheduleDateBuilder.now().toDateBegin().getResult();

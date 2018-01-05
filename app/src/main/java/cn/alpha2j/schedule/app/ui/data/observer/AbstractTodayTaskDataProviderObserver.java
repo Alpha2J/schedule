@@ -2,6 +2,7 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import android.support.v7.widget.RecyclerView;
 
+import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
@@ -18,10 +19,12 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
 
     protected TaskTodayRVAdapterGetter mTaskTodayRVAdapterGetter;
     protected TaskService mTaskService;
+    protected TaskDataReminder mTaskDataReminder;
 
     public AbstractTodayTaskDataProviderObserver(TaskTodayRVAdapterGetter taskTodayRVAdapterGetter) {
         this.mTaskTodayRVAdapterGetter = taskTodayRVAdapterGetter;
         this.mTaskService = TaskServiceImpl.getInstance();
+        mTaskDataReminder = new TaskDataReminder();
     }
 
     /**
@@ -30,16 +33,20 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
     @Override
     public void notifyDataAdd() {
 
-        SwipeableRVAdapter adapter;
+        SwipeableRVAdapter adapter = null;
+//        当adapter设置的时候将这个设置为true, 表示adapter不会为null
+        boolean adapterSet = false;
 //        当数据增加的时候, 这个监听器方法要做的事情有:
 //        用mTaskTodayRVAdapterGetter获取相应的adapter, 然后通知对应的adapter, 告诉他数据增加了, 刷新前端显示
         switch (getTodayTaskDataProviderObserverType()) {
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 adapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+                adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
                 break;
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 adapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+                adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
                 break;
             default:

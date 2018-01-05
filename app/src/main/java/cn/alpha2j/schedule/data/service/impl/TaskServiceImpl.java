@@ -70,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
             throw new NullPointerException("task不能为空");
         }
 
-//        如果id为空, 那么说明数据
+//        如果id为空, 那么说明数据从来未插入过数据库, 是新的数据, 或者是自己设置的id
         Long id = task.getId();
         if(id == null) {
             return addTask(task);

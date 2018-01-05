@@ -15,6 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDec
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
@@ -49,12 +50,16 @@ public class TaskTodayFragment extends BaseFragment
     private TaskDataProvider mTodayUnfinishedTaskDataProvider;
     private TaskDataProvider mTodayFinishedTaskDataProvider;
 
+    private TaskDataReminder mTaskDataReminder;
+
     public TaskTodayFragment() {
         mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
         mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
 
         mTodayUnfinishedTaskDataProvider = new TodayUnfinishedDataProviderGenerator().generate();
         mTodayFinishedTaskDataProvider = new TodayFinishedDataProviderGenerator().generate();
+
+        mTaskDataReminder = new TaskDataReminder();
     }
 
     @Override
@@ -72,6 +77,7 @@ public class TaskTodayFragment extends BaseFragment
 
         initViews();
         initData();
+        addToReminder();
     }
 
     private void initViews() {
@@ -86,7 +92,7 @@ public class TaskTodayFragment extends BaseFragment
         mUnfinishedRVSManager = new RecyclerViewSwipeManager();
         mFinishedRVSManager = new RecyclerViewSwipeManager();
 
-        //设置监听事件
+//        设置监听事件
         ((SwipeableRVAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableRVAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
@@ -113,11 +119,11 @@ public class TaskTodayFragment extends BaseFragment
 
             @Override
             public void onItemViewClicked(View view, int target) {
-//                if(target == SwipeableRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
-//                    Toast.makeText(getContext(), "点击了未完成的item", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(getContext(), "点击了未完成的delete", Toast.LENGTH_SHORT).show();
-//                }
+                if(target == SwipeableRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+
+                } else {
+
+                }
             }
         });
 
@@ -163,7 +169,7 @@ public class TaskTodayFragment extends BaseFragment
 //        这里关闭它为了让item的回滚动画更好地工作
         animator.setSupportsChangeAnimations(false);
 
-        //将设置附加到RecyclerView中
+//        将设置附加到RecyclerView中
         mRecyclerView.setAdapter(mComposedAdapter);
 
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -171,19 +177,31 @@ public class TaskTodayFragment extends BaseFragment
 
         mRecyclerView.setItemAnimator(animator);
 
-        //为每个item添加下划线
+//        为每个item添加下划线
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
 
-        //为RecyclerView关联每个Adapter的Manager
+//        为RecyclerView关联每个Adapter的Manager
         mUnfinishedRVSManager.attachRecyclerView(mRecyclerView);
         mFinishedRVSManager.attachRecyclerView(mRecyclerView);
     }
 
+//    TODO: 可以使用Observer模式来优化
+    private void addToReminder() {
+//        有一个问题, 当fragment重建的时候, 再次执行这个方法, 那么会不会多次设置一个task的提醒?
+//        应该不会, AlarmManager是根据id判断的, 待实验.
+        int count = mTodayUnfinishedTaskDataProvider.getCount();
+        for (int i = 0; i < count; i++) {
+            TaskDataProvider.TaskData taskData = mTodayUnfinishedTaskDataProvider.getItem(i);
+            mTaskDataReminder.remind(taskData);
+        }
+    }
+
     public void notifyNewTaskAdd(Task task) {
-        //需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
-        Log.d(TAG, "notifyNewTaskAdd: isNull" + (getActivity() == null));
+//        需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
         mTodayUnfinishedTaskDataProvider.addItem(new TaskDataProvider.TaskData(task, false));
         mUnfinishedTaskObserver.notifyDataAdd();
+//        TODO: 以后可以使用Observer模式来优化
+        addToReminder();
     }
 
     @Override
