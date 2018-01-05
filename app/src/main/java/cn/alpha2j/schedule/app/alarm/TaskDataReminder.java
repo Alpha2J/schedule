@@ -48,12 +48,15 @@ public class TaskDataReminder {
         }
 
         mTaskReminder.cancelRemindTask(taskData.getTask());
-        Log.d(TAG, "cancelRemindTaskData: 取消了任务提醒, id: "  + taskData.getTask().getId());
+//        TODO: 测试完删除
+        long now = ScheduleDateTime.now().getEpochMillisecond();
+        Log.d(TAG, "cancelRemindTaskData: 取消了任务提醒, id: "  + taskData.getTask().getId() + " 时间: " + now);
     }
 
     private boolean shouldRemind(ScheduleDateTime scheduleDateTime) {
 
         if(scheduleDateTime == null) {
+            Log.d(TAG, "shouldRemind: ScheduleDateTime参数为空, 不应该提醒.");
             return false;
         }
 

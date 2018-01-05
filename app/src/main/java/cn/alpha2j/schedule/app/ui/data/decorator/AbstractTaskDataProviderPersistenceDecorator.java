@@ -61,16 +61,16 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
      * @param position
      */
     @Override
-    public void removeItem(int position) {
+    public TaskData removeItem(int position) {
 
         TaskService taskService = TaskServiceImpl.getInstance();
 
-        mTaskDataProvider.removeItem(position);
+        TaskData lastRemovedItem = mTaskDataProvider.removeItem(position);
 
 //        将数据从未完成删除或者从已经完成删除, 只需要将他们从自己的TaskDataProvider中删除, 然后更新数据
 //        将响应数据更新为已完成或者未完成
 //        同时还要更新前台的数据
-        Task task = mTaskDataProvider.getLastRemoval().getTask();
+        Task task = lastRemovedItem.getTask();
         switch (getTaskDataProviderPersistenceDecoratorType()) {
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
                 task.setDone(true);
@@ -82,6 +82,8 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
                 break;
             default:
         }
+
+        return lastRemovedItem;
     }
 
     @Override

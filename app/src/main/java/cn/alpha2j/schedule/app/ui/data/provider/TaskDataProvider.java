@@ -82,10 +82,12 @@ public class TaskDataProvider implements DataProvider {
     }
 
     @Override
-    public void removeItem(int position) {
+    public TaskData removeItem(int position) {
 
         mLastRemovedData = mDataset.remove(position);
         mLastRemovedPosition = position;
+
+        return mLastRemovedData;
     }
 
     @Override

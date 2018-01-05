@@ -77,7 +77,7 @@ public class TaskTodayFragment extends BaseFragment
 
         initViews();
         initData();
-        addToReminder();
+        initNotification();
     }
 
     private void initViews() {
@@ -185,14 +185,15 @@ public class TaskTodayFragment extends BaseFragment
         mFinishedRVSManager.attachRecyclerView(mRecyclerView);
     }
 
-//    TODO: 可以使用Observer模式来优化
-    private void addToReminder() {
-//        有一个问题, 当fragment重建的时候, 再次执行这个方法, 那么会不会多次设置一个task的提醒?
-//        应该不会, AlarmManager是根据id判断的, 待实验.
+    /**
+     * 当fragment初始化完成后需要将所有未完成的task遍历一遍, 如果需要通知且时间合适的话就添加到通知管理
+     */
+    private void initNotification() {
+        TaskDataReminder taskDataReminder = new TaskDataReminder();
         int count = mTodayUnfinishedTaskDataProvider.getCount();
         for (int i = 0; i < count; i++) {
             TaskDataProvider.TaskData taskData = mTodayUnfinishedTaskDataProvider.getItem(i);
-            mTaskDataReminder.remind(taskData);
+            taskDataReminder.remind(taskData);
         }
     }
 
@@ -200,8 +201,6 @@ public class TaskTodayFragment extends BaseFragment
 //        需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
         mTodayUnfinishedTaskDataProvider.addItem(new TaskDataProvider.TaskData(task, false));
         mUnfinishedTaskObserver.notifyDataAdd();
-//        TODO: 以后可以使用Observer模式来优化
-        addToReminder();
     }
 
     @Override

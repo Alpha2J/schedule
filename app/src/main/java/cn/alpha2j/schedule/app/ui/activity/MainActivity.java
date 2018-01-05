@@ -325,7 +325,8 @@ public class MainActivity extends AppCompatActivity
 
                 if(fragment != null) {
                     if(fragment.isAdded()) {
-                        transaction.remove(fragment);
+                        transaction.hide(fragment);
+//                        transaction.remove(fragment);
                     }
                 }
             }

@@ -62,7 +62,7 @@ public interface DataProvider extends Serializable {
      * 移除指定数据项
      * @param position
      */
-    void removeItem(int position);
+    Data removeItem(int position);
 
     /**
      * 交换数据项
