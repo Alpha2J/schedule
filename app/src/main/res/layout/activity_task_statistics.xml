@@ -30,9 +30,10 @@
                     android:paddingBottom="5dp">
 
                     <TextView
+                        android:id="@+id/tv_statistics_header_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="2018-01"
+                        android:text="0000 - 00"
                         android:textSize="17sp"/>
                 </LinearLayout>
 
@@ -43,13 +44,14 @@
                     android:paddingBottom="5dp">
 
                     <TextView
+                        android:id="@+id/tv_statistics_header_total"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="总数量 1555"
+                        android:text="总数量 0"
                         android:textSize="15sp"/>
 
-                    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
@@ -69,17 +71,19 @@
                     android:paddingBottom="5dp">
 
                     <TextView
+                        android:id="@+id/tv_statistics_header_finished"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="已完成 1000"
+                        android:text="已完成 0"
                         android:textSize="15sp"/>
 
-                    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/rcpb_statistics_header_finished_pb"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        app:rcProgress="30"
+                        app:rcProgress="0"
                         app:rcMax="100"
                         app:rcRadius="10dp"
                         app:rcBackgroundPadding="1dp"
@@ -94,17 +98,19 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_statistics_header_unfinished"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="未完成 555"
+                        android:text="未完成 0"
                         android:textSize="15sp"/>
 
-                    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+                    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                        android:id="@+id/rcpb_statistics_header_unfinished_pb"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        app:rcProgress="70"
+                        app:rcProgress="0"
                         app:rcMax="100"
                         app:rcRadius="10dp"
                         app:rcBackgroundPadding="1dp"
@@ -126,20 +132,34 @@
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:background="@color/colorCyan">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tl_statistic_page_title"
+            <lecho.lib.hellocharts.view.ColumnChartView
+                android:id="@+id/ccv_statistics_chart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_statistic_page_container"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <lecho.lib.hellocharts.view.PreviewColumnChartView
+                android:id="@+id/pccv_statistics_preview_chart"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
         </LinearLayout>
 

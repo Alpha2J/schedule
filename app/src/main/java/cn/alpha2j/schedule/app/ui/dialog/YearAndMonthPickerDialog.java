@@ -68,6 +68,12 @@ public class YearAndMonthPickerDialog extends DialogFragment {
 
     public interface OnYearAndMonthSetListener {
 
-        void onYearAndMonthSet(int year, int month);
+        /**
+         * 当年和月设置好了后会回调这个方法, 如果监听器存在
+         *
+         * @param year 年
+         * @param monthOfYear 月, 从1 开始
+         */
+        void onYearAndMonthSet(int year, int monthOfYear);
     }
 }

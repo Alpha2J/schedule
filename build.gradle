@@ -18,10 +18,6 @@ allprojects {
     repositories {
         jcenter()
         google()
-//        添加sqlscout插件依赖
-        maven {
-            url 'http://www.idescout.com/maven/repo/'
-        }
     }
 }
 
