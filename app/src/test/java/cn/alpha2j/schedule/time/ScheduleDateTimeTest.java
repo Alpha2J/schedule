@@ -2,6 +2,8 @@ package cn.alpha2j.schedule.time;
 
 import org.junit.Test;
 
+import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
+
 /**
  * @author alpha
  */
@@ -23,5 +25,11 @@ public class ScheduleDateTimeTest {
         System.out.println("scheduleDateTime1.getEpochSecond(): " + scheduleDateTime1.getEpochSecond());
         System.out.println("scheduleDateTime1.getEpochMillisecond(): " + scheduleDateTime1.getEpochMillisecond());
         System.out.println("scheduleDateTime1: " + scheduleDateTime1);
+    }
+
+    @Test
+    public void testDayNumber() {
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(2017, 2, 5).getResult();
+        System.out.println("这个月的天数是: " + scheduleDateTime.getMonthDayNumber());
     }
 }

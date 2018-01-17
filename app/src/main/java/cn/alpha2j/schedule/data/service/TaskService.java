@@ -41,6 +41,14 @@ public interface TaskService {
     List<Task> findAllFinishedForToday();
 
     /**
+     * 查找属于某年和某月的所有数据, 包括已经完成的和没有完成的
+     * @param year 年
+     * @param monthOfYear 月份 1到12
+     * @return list.size()不为null
+     */
+    List<Task> findAllForYearAndMonth(int year, int monthOfYear);
+
+    /**
      * 将该Task的状态设置为已完成
      * @param task 需要设置的task, 不能为空
      * @throws NullPointerException 参数task为空
@@ -57,4 +65,8 @@ public interface TaskService {
      * @throws IllegalArgumentException 传入的参数的标识主键id小于0
      */
     void setUnDone(Task task);
+
+    int countFinishedForDate(int year, int monthOfYear, int dayOfMonth);
+
+    int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth);
 }

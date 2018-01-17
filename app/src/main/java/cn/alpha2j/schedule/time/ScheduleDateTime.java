@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import org.joda.time.Instant;
 import org.joda.time.LocalDateTime;
+import org.joda.time.MonthDay;
 
 import java.io.Serializable;
 
@@ -133,6 +134,17 @@ public class ScheduleDateTime implements Serializable {
         LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
 
         return localDateTime.getMillisOfSecond();
+    }
+
+    /**
+     * 获取该ScheduleDateTime对象所表示的时间的月份的天数
+     * @return
+     */
+    public int getMonthDayNumber() {
+
+        LocalDateTime localDateTime = new LocalDateTime(getEpochMillisecond());
+
+        return localDateTime.dayOfMonth().getMaximumValue();
     }
 
     @Override

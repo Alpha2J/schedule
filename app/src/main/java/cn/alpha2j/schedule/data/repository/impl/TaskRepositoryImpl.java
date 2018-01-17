@@ -50,4 +50,13 @@ public class TaskRepositoryImpl extends GreenDAOGenericRepository<TaskEntity, Ta
 
         return queryBuilder.list();
     }
+
+    @Override
+    public long countTaskEntitiesByTaskDateAndDone(long taskDate, boolean done) {
+
+        QueryBuilder<TaskEntity> queryBuilder = mDAO.queryBuilder();
+        queryBuilder.where(TaskEntityDao.Properties.TaskDate.eq(taskDate), TaskEntityDao.Properties.Done.eq(done));
+
+        return queryBuilder.count();
+    }
 }

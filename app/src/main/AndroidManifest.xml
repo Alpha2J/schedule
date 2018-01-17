@@ -30,6 +30,10 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".app.ui.activity.UserProfileActivity" />
+        <activity android:name=".app.ui.activity.SettingActivity" />
+        <activity android:name=".app.ui.activity.TaskStatisticsActivity" />
+        <activity android:name=".app.ui.activity.TestActivity"></activity>
     </application>
 
 </manifest>

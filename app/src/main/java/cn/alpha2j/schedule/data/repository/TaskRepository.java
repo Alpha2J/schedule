@@ -27,4 +27,13 @@ public interface TaskRepository extends GenericRepository<TaskEntity, TaskEntity
      * @return 结果集, 永远不会为null
      */
     List<TaskEntity> findTaskEntitiesByTaskDateAndDone(long taskDate, boolean done);
+
+    /**
+     * 获取指定日期的完成或者未完成的任务数量
+     *
+     * @param taskDate utc时间毫秒数
+     * @param done 是否已经完成
+     * @return 符合条件的数量, 如果没找到返回0
+     */
+    long countTaskEntitiesByTaskDateAndDone(long taskDate, boolean done);
 }

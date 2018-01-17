@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.activity_main_menu_normal_setting_item:
                 Toast.makeText(this, "点击了toolbar上的设置图标", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.menu_item_home_test :
+                Intent testActivity = new Intent(getApplicationContext(), TestActivity.class);
+                startActivity(testActivity);
             default:
         }
 
@@ -145,9 +148,11 @@ public class MainActivity extends AppCompatActivity
                 displayFragment(FC.FRAGMENT_TAG_TASK_OVERVIEW);
                 break;
             case R.id.activity_main_menu_task_statistics_item :
-                Toast.makeText(this, "统计", Toast.LENGTH_SHORT).show();
-
-                displayFragment(FC.FRAGMENT_TAG_TASK_STATISTICS);
+//                Toast.makeText(this, "统计", Toast.LENGTH_SHORT).show();
+//
+//                displayFragment(FC.FRAGMENT_TAG_TASK_STATISTICS);
+                Intent intent = new Intent(this, TaskStatisticsActivity.class);
+                startActivity(intent);
                 break;
             case R.id.activity_main_menu_settings_item :
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
@@ -325,8 +330,9 @@ public class MainActivity extends AppCompatActivity
 
                 if(fragment != null) {
                     if(fragment.isAdded()) {
-                        transaction.hide(fragment);
-//                        transaction.remove(fragment);
+//                        TODO: 测试完成后可以试下hide方法
+//                        transaction.hide(fragment);
+                        transaction.remove(fragment);
                     }
                 }
             }

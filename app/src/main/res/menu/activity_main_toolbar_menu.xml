@@ -14,4 +14,9 @@
         android:title="AppSetting"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/menu_item_home_test"
+        android:title="Test Activity"
+        app:showAsAction="never"/>
+
 </menu>

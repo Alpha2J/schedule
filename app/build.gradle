@@ -44,6 +44,7 @@ dependencies {
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
     compile 'joda-time:joda-time:2.9.9'
     compile 'org.greenrobot:greendao:3.2.2'
+    compile 'com.akexorcist:RoundCornerProgressBar:2.0.3'
 //    添加sqlscout插件依赖
     compile 'com.idescout.sql:sqlscout-server:2.0'
     testCompile 'junit:junit:4.12'

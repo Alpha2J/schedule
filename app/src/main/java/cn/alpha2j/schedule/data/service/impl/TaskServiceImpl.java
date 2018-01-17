@@ -1,6 +1,7 @@
 package cn.alpha2j.schedule.data.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.alpha2j.schedule.data.Task;
@@ -97,6 +98,28 @@ public class TaskServiceImpl implements TaskService {
         return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true));
     }
 
+    /**
+     * 没写完
+     * @param year 年
+     * @param monthOfYear 月份 1到12
+     * @return
+     */
+    @Override
+    public List<Task> findAllForYearAndMonth(int year, int monthOfYear) {
+
+        List<Task> resultList = new ArrayList<>();
+
+        int dayBegin = 1;
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayBegin).getResult();
+        int maxDay = scheduleDateTime.getMonthDayNumber();
+        for (int i = dayBegin; i <= maxDay; i++) {
+            scheduleDateTime = DefaultScheduleDateBuilder.of(scheduleDateTime).toDayOfMonth(i).getResult();
+            resultList.addAll(convert(taskRepository.findTaskEntitiesByTaskDate(scheduleDateTime.getEpochMillisecond())));
+        }
+
+        return resultList;
+    }
+
     @Override
     public void setDone(Task task) {
 
@@ -137,6 +160,22 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = taskRepository.findOne(id);
         taskEntity.setDone(false);
         taskRepository.update(taskEntity);
+    }
+
+    @Override
+    public int countFinishedForDate(int year, int monthOfYear, int dayOfMonth) {
+
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).getResult();
+
+        return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), true);
+    }
+
+    @Override
+    public int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth) {
+
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).getResult();
+
+        return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), false);
     }
 
     private List<Task> convert(List<TaskEntity> taskEntities) {
