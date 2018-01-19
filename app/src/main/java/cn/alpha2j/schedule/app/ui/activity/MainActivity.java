@@ -16,7 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.idescout.sql.SqlScoutServer;
+import com.facebook.stetho.Stetho;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        继承Stetho
+        Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
         initActivity();

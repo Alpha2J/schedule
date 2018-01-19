@@ -1,5 +1,6 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.YearAndMonthPickerDialog;
@@ -19,13 +21,19 @@ import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SubcolumnValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
+import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewColumnChartView;
+import lecho.lib.hellocharts.view.PreviewLineChartView;
 
 /**
  * 任务统计显示图, 当进入这个activity的时候显示的是当月的数据
@@ -33,14 +41,16 @@ import lecho.lib.hellocharts.view.PreviewColumnChartView;
  */
 public class TaskStatisticsActivity extends BaseActivity implements YearAndMonthPickerDialog.OnYearAndMonthSetListener {
 
+    private static final String TAG = "TaskStatisticsActivity";
+
     private TaskService mTaskService;
 
     private TextView mDateTextView;
     private TextView mTotalNumberTextView;
     private TextView mFinishedNumberTextView;
     private TextView mUnfinishedNumberTextView;
-    private ColumnChartView mChartView;
-    private PreviewColumnChartView mPreviewChartView;
+    private LineChartView mChartView;
+    private PreviewLineChartView mPreviewChartView;
     private RoundCornerProgressBar mFinishedProgressBar;
     private RoundCornerProgressBar mUnfinishedProgressBar;
 
@@ -51,8 +61,8 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
     private int mFinishedNumber;
     private int mUnfinishedNumber;
 
-    private ColumnChartData mData;
-    private ColumnChartData mPreviewData;
+    private LineChartData mData;
+    private LineChartData mPreviewData;
 
     private ArrayList<TaskDateData> mTaskDateDataArrayList;
 
@@ -61,6 +71,7 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         mYear = year;
         mMonthOfYear = monthOfYear;
 
+        resetData();
         showData();
     }
 
@@ -86,8 +97,8 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         mTotalNumberTextView = findViewById(R.id.tv_statistics_header_total);
         mFinishedNumberTextView = findViewById(R.id.tv_statistics_header_finished);
         mUnfinishedNumberTextView = findViewById(R.id.tv_statistics_header_unfinished);
-        mChartView = findViewById(R.id.ccv_statistics_chart);
-        mPreviewChartView = findViewById(R.id.pccv_statistics_preview_chart);
+        mChartView = findViewById(R.id.lcv_statistics_chart);
+        mPreviewChartView = findViewById(R.id.plcv_statistics_preview_chart);
         mFinishedProgressBar = findViewById(R.id.rcpb_statistics_header_finished_pb);
         mUnfinishedProgressBar = findViewById(R.id.rcpb_statistics_header_unfinished_pb);
     }
@@ -144,9 +155,9 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         }
 
 //        设置数量
-        mTotalNumber = totalFinishedNumber + totalUnfinishedNumber;
         mFinishedNumber = totalFinishedNumber;
         mUnfinishedNumber = totalUnfinishedNumber;
+        mTotalNumber = mFinishedNumber + mUnfinishedNumber;
 
 //        设置头部数据
 //        设置左边数据显示
@@ -156,8 +167,8 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         mUnfinishedNumberTextView.setText("未完成 " + mUnfinishedNumber);
 //        设置右边进度条
         if (mTotalNumber != 0) {
-            mFinishedProgressBar.setProgress(mFinishedNumber / mTotalNumber);
-            mUnfinishedProgressBar.setProgress(mUnfinishedNumber / mTotalNumber);
+            mFinishedProgressBar.setProgress(100 * mFinishedNumber / mTotalNumber);
+            mUnfinishedProgressBar.setProgress(100 * mUnfinishedNumber / mTotalNumber);
         }
     }
 
@@ -166,49 +177,80 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
      */
     private void showChartData() {
 
-        mData = new ColumnChartData(generateColumns());
+        mData = new LineChartData(generateLines());
         mData.setAxisXBottom(new Axis().setName("日期"));
-        mData.setAxisYLeft(new Axis().setHasLines(true));
-//        preview chart 的数据, 且preview chart的颜色用灰色来表示
-        mPreviewData = new ColumnChartData(mData);
-        for (Column column : mPreviewData.getColumns()) {
-            for (SubcolumnValue value : column.getValues()) {
-                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
-            }
+        Axis axisY = new Axis();
+        List<AxisValue> axisValues = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            axisValues.add(new AxisValue(i).setLabel(i + ""));
         }
-        mChartView.setColumnChartData(mData);
-        mChartView.setZoomEnabled(false);
-        mChartView.setScrollEnabled(false);
+        axisY.setValues(axisValues);
+        mData.setAxisYLeft(axisY);
+//        mData.setAxisYLeft(new Axis().setHasLines(true));
+//        preview chart 的数据, 且preview chart的颜色用灰色来表示
+        mPreviewData = new LineChartData(mData);
+        for (Line line : mPreviewData.getLines()) {
+            line.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
+        }
 
-        mPreviewChartView.setColumnChartData(mPreviewData);
+        mChartView.setLineChartData(mData);
+        mChartView.setZoomEnabled(false);
+        mChartView.setScrollEnabled(true);
+
+        mPreviewChartView.setLineChartData(mPreviewData);
         mPreviewChartView.setViewportChangeListener(new SimpleViewportChangeListener());
 
-        previewX(false);
+        previewX(true);
     }
 
-    private List<Column> generateColumns() {
+    private void resetData() {
+
+        mTaskDateDataArrayList = null;
+        mTotalNumberTextView.setText("总数量 0");
+        mFinishedNumberTextView.setText("已完成 0");
+        mFinishedProgressBar.setProgress(0);
+        mUnfinishedNumberTextView.setText("未完成 0");
+        mUnfinishedProgressBar.setProgress(0);
+    }
+
+    private List<Line> generateLines() {
 
         if (mTaskDateDataArrayList == null) {
             throw new FieldUninitException("mTaskDateDataArrayList 域未初始化");
         }
 
-        int columnsNum = mTaskDateDataArrayList.size();
-        List<Column> columns = new ArrayList<>();
-        List<SubcolumnValue> subColumnValues;
-        for (int i = 0; i < columnsNum; i++) {
-            subColumnValues = new ArrayList<>();
+        int pointsNum = mTaskDateDataArrayList.size();
+        List<PointValue> finishedPointValues = new ArrayList<>();
+        List<PointValue> unfinishedPointValues = new ArrayList<>();
+        for (int i = 0; i < pointsNum; i++) {
             TaskDateData taskDateData = mTaskDateDataArrayList.get(i);
-//            一列中, 显示已完成的数量, 然后才是未完成的数量
-            subColumnValues.add(new SubcolumnValue(taskDateData.getFinishedNumber(), ChartUtils.COLOR_GREEN));
-            subColumnValues.add(new SubcolumnValue(taskDateData.getUnfinishedNumber(), ChartUtils.COLOR_RED));
-
-            columns.add(new Column(subColumnValues));
+            finishedPointValues.add(new PointValue(i + 1, taskDateData.getFinishedNumber()));
+            unfinishedPointValues.add(new PointValue(i + 1, taskDateData.getUnfinishedNumber()));
         }
 
-        return columns;
+        Line finishedLine = new Line(finishedPointValues);
+        finishedLine.setColor(ChartUtils.COLOR_GREEN);
+        finishedLine.setHasPoints(false);
+        finishedLine.setCubic(true);
+        Line unfinishedLine = new Line(unfinishedPointValues);
+        unfinishedLine.setColor(ChartUtils.COLOR_RED);
+        unfinishedLine.setHasPoints(false);
+        unfinishedLine.setCubic(true);
+        List<Line> lines = new ArrayList<>();
+        lines.add(finishedLine);
+        lines.add(unfinishedLine);
+
+        return lines;
     }
 
     private void previewX(boolean animate) {
+
+        Viewport v = mChartView.getMaximumViewport();
+        v.bottom = 0;
+        v.top = 4;
+        Log.d(TAG, "previewX: " + v.top + " " + v.bottom + " " + v.left + " " + v.right);
+        mChartView.setMaximumViewport(v);
+        mChartView.setCurrentViewport(v);
 
         Viewport viewport = new Viewport(mChartView.getMaximumViewport());
         float dx = viewport.width() / 4;
@@ -221,6 +263,7 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         }
 
         mPreviewChartView.setZoomType(ZoomType.HORIZONTAL);
+        mPreviewChartView.setPreviewColor(ChartUtils.COLOR_RED);
     }
 
     @Override

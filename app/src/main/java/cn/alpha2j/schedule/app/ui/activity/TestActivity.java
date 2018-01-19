@@ -92,7 +92,7 @@ public class TestActivity extends AppCompatActivity {
 
     private void generateData(int year, int monthOfYear, int dayOfMonth, boolean isFinished) {
         Task task = new Task();
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).getResult();
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult();
         task.setTaskDate(scheduleDateTime);
         task.setTitle("generated task, random id is: " + new Random().nextInt(1000));
         task.setDone(isFinished);
@@ -106,10 +106,10 @@ public class TestActivity extends AppCompatActivity {
     private void generateBulkData() {
         int number = 50;
 
-        int month = 1;
+        int month;
 //        日的话1到28好了
-        int day = 1;
-        boolean isFinished = false;
+        int day;
+        boolean isFinished;
         Random random = new Random(System.currentTimeMillis());
 
         for (int i = 0; i < number; i++) {
@@ -118,7 +118,7 @@ public class TestActivity extends AppCompatActivity {
             isFinished = random.nextBoolean();
             Task task = new Task();
             task.setTitle("Random Bulk Generate");
-            ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(2017, month, day).getResult();
+            ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(2017, month, day).toDateBegin().getResult();
             task.setTaskDate(scheduleDateTime);
             task.setDone(isFinished);
 

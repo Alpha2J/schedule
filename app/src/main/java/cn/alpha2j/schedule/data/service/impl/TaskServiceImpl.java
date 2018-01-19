@@ -165,7 +165,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int countFinishedForDate(int year, int monthOfYear, int dayOfMonth) {
 
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).getResult();
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult();
 
         return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), true);
     }
@@ -173,7 +173,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth) {
 
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).getResult();
+        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult();
 
         return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), false);
     }

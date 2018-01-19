@@ -22,4 +22,9 @@ public class JavaLibTest {
         }
 
     }
+
+    @Test
+    public void testNum() {
+        System.out.println((10.0 / 100.0) * 100);
+    }
 }
