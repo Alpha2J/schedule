@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import org.joda.time.Instant;
 import org.joda.time.LocalDateTime;
-import org.joda.time.MonthDay;
 
 import java.io.Serializable;
 

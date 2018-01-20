@@ -21,7 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
 
         initToolbar();
-        initActivity();
+        initActivity(savedInstanceState);
     }
 
     /**
@@ -32,18 +32,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 调用方法初始化activity
+     *
+     * @param savedInstanceState
      */
-    protected abstract void initActivity();
+    protected abstract void initActivity(@Nullable Bundle savedInstanceState);
 
     private void initToolbar() {
 
         mToolbar = findViewById(R.id.tb_app_tool_bar);
 //        初始化toolbar
-        mToolbar.setTitle("统计分析");
+        mToolbar.setTitle(getToolbarTitle());
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
+
+    /**
+     * 获取toolbar的标题
+     * @return toolbar的标题
+     */
+    protected abstract String getToolbarTitle();
 }

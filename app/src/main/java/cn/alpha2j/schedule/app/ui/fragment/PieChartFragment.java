@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import java.util.List;
 
-import cn.alpha2j.schedule.R;
-
 /**
  * @author alpha
  */

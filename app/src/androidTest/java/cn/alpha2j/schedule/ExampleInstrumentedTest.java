@@ -11,8 +11,6 @@ import cn.alpha2j.schedule.data.entity.TaskEntity;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 
-import static org.junit.Assert.*;
-
 /**
  * Instrumentation test, which will execute on an Android device.
  *

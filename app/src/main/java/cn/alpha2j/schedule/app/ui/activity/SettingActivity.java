@@ -1,7 +1,7 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import cn.alpha2j.schedule.R;
 

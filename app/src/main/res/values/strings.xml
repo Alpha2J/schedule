@@ -8,4 +8,8 @@
     <string name="statistics_unfinished_num">未完成 %1$d</string>
     <!--dialog-->
 
+    <!--activity的toolbar标题-->
+    <string name="activity_toolbar_title_statistics">统计</string>
+    <string name="activity_toolbar_title_main">Schedule</string>
+
 </resources>

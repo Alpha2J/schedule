@@ -83,6 +83,11 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         showData();
     }
 
+    @Override
+    protected String getToolbarTitle() {
+        return getResources().getString(R.string.activity_toolbar_title_statistics);
+    }
+
     /**
      * 初始化各个view
      */

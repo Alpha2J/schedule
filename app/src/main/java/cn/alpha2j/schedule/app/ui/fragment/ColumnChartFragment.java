@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.data.service.TaskService;
-import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Axis;

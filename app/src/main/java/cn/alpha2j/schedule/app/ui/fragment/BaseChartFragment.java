@@ -3,7 +3,6 @@ package cn.alpha2j.schedule.app.ui.fragment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
