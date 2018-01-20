@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Schedule</string>
+    <!--MainActivity-->
     <string name="bottom_dialog_add_task_title_hint">快速创建任务</string>
     <string name="statistics_date_rod">%1$d - %2$d</string>
     <string name="statistics_total_num">总数量 %1$d</string>
     <string name="statistics_finished_num">已完成 %1$d</string>
     <string name="statistics_unfinished_num">未完成 %1$d</string>
+    <!--dialog-->
+
 </resources>

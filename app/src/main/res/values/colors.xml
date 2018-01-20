@@ -6,11 +6,12 @@
     <color name="colorWhite">#FFF</color>
     <color name="colorYellow">#ebe37b</color>
     <color name="colorBlack">#FF252523</color>
+    <color name="colorBlackOpacity87">#de000000</color>
     <color name="colorSilver">#cdcdcd</color>
     <color name="colorBlue">#1565C0</color>
     <color name="colorTeal">#00897b</color>
     <color name="colorGrey">#e0e0e0</color>
-    <color name="colorGreyDark">#aeaeae</color>
+    <color name="colorGreyDark">#dfdfdf</color>
     <color name="colorBlueGrey">#78909c</color>
     <color name="colorCyan">#c3e1d7</color>
     <color name="colorLightBlue">#5ca7b7</color>

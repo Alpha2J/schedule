@@ -8,8 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyEditText" parent="Theme.AppCompat.Light">
+    <style name="Custom.Widget.EditText" parent="Theme.AppCompat.Light">
+        <!--未选中时的颜色-->
         <item name="colorControlNormal">@color/colorPrimary</item>
+        <!--选中时的颜色-->
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 

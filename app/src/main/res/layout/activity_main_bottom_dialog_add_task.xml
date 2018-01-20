@@ -1,75 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:background="@color/colorWhite">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/bottom_dialog_add_done_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_done"/>
-
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_done" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="30dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:paddingTop="50dp">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
             android:background="@drawable/text_view_label_shape"
-            android:paddingBottom="10dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingTop="10dp"
-            android:text="今天"
-            android:textStyle="bold"
-            android:textColor="@color/colorWhite"
-            android:textSize="22sp" />
+            android:gravity="center_vertical"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:text="今 天"
+            android:textColor="@color/colorBlackOpacity87"
+            android:textSize="13sp" />
 
-        <LinearLayout
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/darker_gray" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="30dp">
+            android:paddingLeft="5dp"
+            android:text="快速创建任务"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/text_view_divider_shape" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bottom_dialog_add_task_title_hint"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp" />
-
-            <EditText
-                android:id="@+id/bottom_dialog_task_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/bottom_dialog_add_task_title_hint"
-                android:inputType="text"
-                android:singleLine="false"
-                android:textColor="@color/colorBlack"
-                android:theme="@style/MyEditText" />
-        </LinearLayout>
+        <EditText
+            android:id="@+id/bottom_dialog_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/bottom_dialog_add_task_title_hint"
+            android:maxLength="200"
+            android:lines="2"
+            android:textColor="@color/colorBlack"
+            android:theme="@style/Custom.Widget.EditText" />
     </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
 
+</FrameLayout>
 
