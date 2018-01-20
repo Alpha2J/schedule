@@ -13,7 +13,7 @@
             android:layout_height="match_parent"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:titleEnabled="false">
 
             <LinearLayout
@@ -141,11 +141,11 @@
             android:paddingTop="20dp"
             android:paddingBottom="20dp">
 
-            <lecho.lib.hellocharts.view.LineChartView
-                android:id="@+id/lcv_statistics_chart"
+            <lecho.lib.hellocharts.view.ColumnChartView
+                android:id="@+id/ccv_statistics_chart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <View
                 android:layout_width="match_parent"
@@ -154,11 +154,11 @@
                 android:layout_marginBottom="10dp"
                 android:background="@android:color/darker_gray" />
 
-            <lecho.lib.hellocharts.view.PreviewLineChartView
-                android:id="@+id/plcv_statistics_preview_chart"
+            <lecho.lib.hellocharts.view.PreviewColumnChartView
+                android:id="@+id/pccv_statistics_preview_chart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
 
         </LinearLayout>
 

@@ -15,4 +15,7 @@
     <color name="colorCyan">#c3e1d7</color>
     <color name="colorLightBlue">#5ca7b7</color>
     <color name="colorSecondaryLightBlue">#91e1fc</color>
+    <color name="colorTaskFinished">#bffd8b</color>
+    <color name="colorTaskUnfinished">#fd8b9c</color>
+    <color name="colorChartPreview">#8be9fe</color>
 </resources>

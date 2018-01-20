@@ -1,6 +1,7 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
-import android.util.Log;
+import android.content.res.Resources;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -9,7 +10,6 @@ import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.YearAndMonthPickerDialog;
@@ -18,22 +18,16 @@ import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 import cn.alpha2j.schedule.exception.FieldUninitException;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
-import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.SubcolumnValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
-import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewColumnChartView;
-import lecho.lib.hellocharts.view.PreviewLineChartView;
 
 /**
  * 任务统计显示图, 当进入这个activity的时候显示的是当月的数据
@@ -42,6 +36,7 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
 public class TaskStatisticsActivity extends BaseActivity implements YearAndMonthPickerDialog.OnYearAndMonthSetListener {
 
     private static final String TAG = "TaskStatisticsActivity";
+    private static final String DIALOG_TAG = "StatisticsYearAndMonthPickerDialog";
 
     private TaskService mTaskService;
 
@@ -49,27 +44,27 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
     private TextView mTotalNumberTextView;
     private TextView mFinishedNumberTextView;
     private TextView mUnfinishedNumberTextView;
-    private LineChartView mChartView;
-    private PreviewLineChartView mPreviewChartView;
+    private ColumnChartView mChartView;
+    private PreviewColumnChartView mPreviewChartView;
     private RoundCornerProgressBar mFinishedProgressBar;
     private RoundCornerProgressBar mUnfinishedProgressBar;
 
-    private int mYear;
-    private int mMonthOfYear;
+    private int mCurrentYear;
+    private int mCurrentMonthOfYear;
 
     private int mTotalNumber;
     private int mFinishedNumber;
     private int mUnfinishedNumber;
 
-    private LineChartData mData;
-    private LineChartData mPreviewData;
+    private ColumnChartData mData;
+    private ColumnChartData mPreviewData;
 
     private ArrayList<TaskDateData> mTaskDateDataArrayList;
 
     @Override
     public void onYearAndMonthSet(int year, int monthOfYear) {
-        mYear = year;
-        mMonthOfYear = monthOfYear;
+        mCurrentYear = year;
+        mCurrentMonthOfYear = monthOfYear;
 
         resetData();
         showData();
@@ -97,8 +92,8 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
         mTotalNumberTextView = findViewById(R.id.tv_statistics_header_total);
         mFinishedNumberTextView = findViewById(R.id.tv_statistics_header_finished);
         mUnfinishedNumberTextView = findViewById(R.id.tv_statistics_header_unfinished);
-        mChartView = findViewById(R.id.lcv_statistics_chart);
-        mPreviewChartView = findViewById(R.id.plcv_statistics_preview_chart);
+        mChartView = findViewById(R.id.ccv_statistics_chart);
+        mPreviewChartView = findViewById(R.id.pccv_statistics_preview_chart);
         mFinishedProgressBar = findViewById(R.id.rcpb_statistics_header_finished_pb);
         mUnfinishedProgressBar = findViewById(R.id.rcpb_statistics_header_unfinished_pb);
     }
@@ -109,8 +104,8 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
 
 //        用当前的年和月作为年和月的初始化数据
         ScheduleDateTime now = ScheduleDateTime.now();
-        mYear = now.getYear();
-        mMonthOfYear = now.getMonthOfYear();
+        mCurrentYear = now.getYear();
+        mCurrentMonthOfYear = now.getMonthOfYear();
     }
 
     /**
@@ -128,22 +123,23 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
     private void showHeaderData() {
 
 //        获取当月的数据
-        ScheduleDateTime dateTime = DefaultScheduleDateBuilder.now().toDate(mYear, mMonthOfYear, 1).getResult();
         if (mTaskDateDataArrayList == null) {
             mTaskDateDataArrayList = new ArrayList<>();
         }
+        ScheduleDateTime dateTime = DefaultScheduleDateBuilder.now().toDate(mCurrentYear, mCurrentMonthOfYear, 1).getResult();
         int dayNumberOfMonth = dateTime.getMonthDayNumber();
         int totalFinishedNumber = 0;
         int totalUnfinishedNumber = 0;
         for (int i = 1; i <= dayNumberOfMonth; i++) {
+
             dateTime = DefaultScheduleDateBuilder.of(dateTime).toDayOfMonth(i).getResult();
             long epochMills = dateTime.getEpochMillisecond();
 
             TaskDateData taskDateData = new TaskDateData();
             taskDateData.setDataBelongingDate(epochMills);
 
-            int finishedNumber = mTaskService.countFinishedForDate(mYear, mMonthOfYear, i);
-            int unfinishedNumber = mTaskService.countUnfinishedForDate(mYear, mMonthOfYear, i);
+            int finishedNumber = mTaskService.countFinishedForDate(mCurrentYear, mCurrentMonthOfYear, i);
+            int unfinishedNumber = mTaskService.countUnfinishedForDate(mCurrentYear, mCurrentMonthOfYear, i);
             taskDateData.setFinishedNumber(finishedNumber);
             taskDateData.setUnfinishedNumber(unfinishedNumber);
 
@@ -161,10 +157,11 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
 
 //        设置头部数据
 //        设置左边数据显示
-        mDateTextView.setText(mYear + " - " + mMonthOfYear);
-        mTotalNumberTextView.setText("总数量 " + mTotalNumber);
-        mFinishedNumberTextView.setText("已完成 " + mFinishedNumber);
-        mUnfinishedNumberTextView.setText("未完成 " + mUnfinishedNumber);
+        Resources resources = getResources();
+        mDateTextView.setText(resources.getString(R.string.statistics_date_rod, mCurrentYear, mCurrentMonthOfYear));
+        mTotalNumberTextView.setText(resources.getString(R.string.statistics_total_num, mTotalNumber));
+        mFinishedNumberTextView.setText(resources.getString(R.string.statistics_finished_num, mFinishedNumber));
+        mUnfinishedNumberTextView.setText(resources.getString(R.string.statistics_unfinished_num, mUnfinishedNumber));
 //        设置右边进度条
         if (mTotalNumber != 0) {
             mFinishedProgressBar.setProgress(100 * mFinishedNumber / mTotalNumber);
@@ -177,93 +174,107 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
      */
     private void showChartData() {
 
-        mData = new LineChartData(generateLines());
-        mData.setAxisXBottom(new Axis().setName("日期"));
-        Axis axisY = new Axis();
-        List<AxisValue> axisValues = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            axisValues.add(new AxisValue(i).setLabel(i + ""));
-        }
-        axisY.setValues(axisValues);
-        mData.setAxisYLeft(axisY);
-//        mData.setAxisYLeft(new Axis().setHasLines(true));
+        mData = new ColumnChartData(generateColumns());
+        mData.setStacked(true);
+        mData.setAxisXBottom(new Axis(generateXBottomAxisValues()));
+        mData.setAxisYLeft(new Axis().setHasLines(true));
+
 //        preview chart 的数据, 且preview chart的颜色用灰色来表示
-        mPreviewData = new LineChartData(mData);
-        for (Line line : mPreviewData.getLines()) {
-            line.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
+        mPreviewData = new ColumnChartData(mData);
+        for (Column column : mPreviewData.getColumns()) {
+//            预览表不需要用具体数字来显示数据
+            column.setHasLabels(false);
+            for (SubcolumnValue value : column.getValues()) {
+                value.setColor(ChartUtils.DEFAULT_DARKEN_COLOR);
+            }
         }
 
-        mChartView.setLineChartData(mData);
+//        设置图标属性
+        mChartView.setColumnChartData(mData);
+//        设置图表不能放大缩小
         mChartView.setZoomEnabled(false);
-        mChartView.setScrollEnabled(true);
+//        同时设置图标不能左右滑动, 让previewChart来控制滑动
+        mChartView.setScrollEnabled(false);
 
-        mPreviewChartView.setLineChartData(mPreviewData);
+//        设置预览图标的属性
+        mPreviewChartView.setColumnChartData(mPreviewData);
+//        previewChart也不应该具有放大缩小功能
+        mPreviewChartView.setZoomEnabled(false);
+//        设置允许滑动(向左向右滑动来查看数据)
+        mPreviewChartView.setScrollEnabled(true);
+//        设置滑动框的颜色
+        mPreviewChartView.setPreviewColor(ContextCompat.getColor(this, R.color.colorChartPreview));
         mPreviewChartView.setViewportChangeListener(new SimpleViewportChangeListener());
 
         previewX(true);
     }
 
-    private void resetData() {
-
-        mTaskDateDataArrayList = null;
-        mTotalNumberTextView.setText("总数量 0");
-        mFinishedNumberTextView.setText("已完成 0");
-        mFinishedProgressBar.setProgress(0);
-        mUnfinishedNumberTextView.setText("未完成 0");
-        mUnfinishedProgressBar.setProgress(0);
-    }
-
-    private List<Line> generateLines() {
+    private List<Column> generateColumns() {
 
         if (mTaskDateDataArrayList == null) {
             throw new FieldUninitException("mTaskDateDataArrayList 域未初始化");
         }
 
-        int pointsNum = mTaskDateDataArrayList.size();
-        List<PointValue> finishedPointValues = new ArrayList<>();
-        List<PointValue> unfinishedPointValues = new ArrayList<>();
-        for (int i = 0; i < pointsNum; i++) {
+        int columnsNum = mTaskDateDataArrayList.size();
+        List<Column> columns = new ArrayList<>();
+        List<SubcolumnValue> subColumnValues;
+
+        for (int i = 0; i < columnsNum; i++) {
+            subColumnValues = new ArrayList<>();
             TaskDateData taskDateData = mTaskDateDataArrayList.get(i);
-            finishedPointValues.add(new PointValue(i + 1, taskDateData.getFinishedNumber()));
-            unfinishedPointValues.add(new PointValue(i + 1, taskDateData.getUnfinishedNumber()));
+//            一列中, 显示已完成的数量, 然后才是未完成的数量
+            subColumnValues.add(new SubcolumnValue(taskDateData.getFinishedNumber(), ContextCompat.getColor(this, R.color.colorTaskFinished)));
+            subColumnValues.add(new SubcolumnValue(taskDateData.getUnfinishedNumber(), ContextCompat.getColor(this, R.color.colorTaskUnfinished)));
+
+            Column column = new Column(subColumnValues);
+            column.setHasLabels(true);
+            columns.add(column);
         }
 
-        Line finishedLine = new Line(finishedPointValues);
-        finishedLine.setColor(ChartUtils.COLOR_GREEN);
-        finishedLine.setHasPoints(false);
-        finishedLine.setCubic(true);
-        Line unfinishedLine = new Line(unfinishedPointValues);
-        unfinishedLine.setColor(ChartUtils.COLOR_RED);
-        unfinishedLine.setHasPoints(false);
-        unfinishedLine.setCubic(true);
-        List<Line> lines = new ArrayList<>();
-        lines.add(finishedLine);
-        lines.add(unfinishedLine);
+        return columns;
+    }
 
-        return lines;
+    private List<AxisValue> generateXBottomAxisValues() {
+
+//        日期从1号开始
+        List<AxisValue> axisValues = new ArrayList<>();
+        for (int i = 0; i < mTaskDateDataArrayList.size(); i++) {
+            AxisValue axisValue = new AxisValue(i);
+            axisValue.setLabel(String.valueOf(i + 1));
+            axisValues.add(axisValue);
+        }
+
+        return axisValues;
     }
 
     private void previewX(boolean animate) {
 
-        Viewport v = mChartView.getMaximumViewport();
-        v.bottom = 0;
-        v.top = 4;
-        Log.d(TAG, "previewX: " + v.top + " " + v.bottom + " " + v.left + " " + v.right);
-        mChartView.setMaximumViewport(v);
-        mChartView.setCurrentViewport(v);
+//        将图标的高设置为自动计算出来的1.1倍
+        Viewport chartMaximumViewport = new Viewport(mChartView.getMaximumViewport());
+        chartMaximumViewport.top = chartMaximumViewport.top * 1.2f;
+        mChartView.setMaximumViewport(chartMaximumViewport);
 
-        Viewport viewport = new Viewport(mChartView.getMaximumViewport());
-        float dx = viewport.width() / 4;
-        viewport.inset(dx, 0);
+//        同理preview图标的高也要设置为1.1倍, 但是这里直接用chart的最大viewport作为参数, 所以不用再显示设置了
+        Viewport previewChartMaximumViewport = new Viewport(mChartView.getMaximumViewport());
+        mPreviewChartView.setMaximumViewport(previewChartMaximumViewport);
+
+//        设置previewChart的current显示
+        Viewport previewChartCurrentViewport = new Viewport(mPreviewChartView.getMaximumViewport());
+        float dx = previewChartCurrentViewport.width() / 2.8f;
+        previewChartCurrentViewport.inset(dx, 0);
 
         if(animate) {
-            mPreviewChartView.setCurrentViewportWithAnimation(viewport);
+            mPreviewChartView.setCurrentViewportWithAnimation(previewChartCurrentViewport);
         } else {
-            mPreviewChartView.setCurrentViewport(viewport);
+            mPreviewChartView.setCurrentViewport(previewChartCurrentViewport);
         }
+    }
 
-        mPreviewChartView.setZoomType(ZoomType.HORIZONTAL);
-        mPreviewChartView.setPreviewColor(ChartUtils.COLOR_RED);
+    private void resetData() {
+
+        mTaskDateDataArrayList = null;
+        mFinishedProgressBar.setProgress(0);
+        mUnfinishedProgressBar.setProgress(0);
     }
 
     @Override
@@ -281,12 +292,13 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
                 finish();
                 return true;
             case R.id.activity_task_statistics_set_date :
-                YearAndMonthPickerDialog dialog = new YearAndMonthPickerDialog();
+                YearAndMonthPickerDialog dialog = YearAndMonthPickerDialog.newInstance(mCurrentYear, mCurrentMonthOfYear);
                 dialog.setOnYearAndMonthSetListener(this);
 
-                dialog.show(getSupportFragmentManager(), "YearAndMonthPickerDialog");
+                dialog.show(getSupportFragmentManager(), DIALOG_TAG);
             default:
         }
+
         return super.onOptionsItemSelected(item);
     }
 
