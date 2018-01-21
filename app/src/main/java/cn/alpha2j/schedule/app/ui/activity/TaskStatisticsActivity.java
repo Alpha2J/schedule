@@ -1,6 +1,8 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
 import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,7 +78,7 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
     }
 
     @Override
-    protected void initActivity() {
+    protected void initActivity(@Nullable Bundle savedInstanceState) {
 
         initView();
         initField();

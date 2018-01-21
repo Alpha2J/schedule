@@ -11,12 +11,15 @@
     <color name="colorBlue">#1565C0</color>
     <color name="colorTeal">#00897b</color>
     <color name="colorGrey">#e0e0e0</color>
-    <color name="colorGreyDark">#dfdfdf</color>
+    <color name="colorGreyDark">#dbdbdb</color>
     <color name="colorBlueGrey">#78909c</color>
     <color name="colorCyan">#c3e1d7</color>
     <color name="colorLightBlue">#5ca7b7</color>
     <color name="colorSecondaryLightBlue">#91e1fc</color>
+    <color name="colorGreen">#ff2f8b2a</color>
     <color name="colorTaskFinished">#bffd8b</color>
     <color name="colorTaskUnfinished">#fd8b9c</color>
     <color name="colorChartPreview">#8be9fe</color>
+    <color name="colorTextDark">#343a40</color>
+    <color name="colorTextMuted">#6c757d</color>
 </resources>

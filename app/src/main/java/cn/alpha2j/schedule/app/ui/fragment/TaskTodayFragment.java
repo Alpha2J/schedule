@@ -15,7 +15,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
-import cn.alpha2j.schedule.app.ui.activity.adapter.SectionHeaderAdapter;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SimpleSectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
@@ -158,9 +158,9 @@ public class TaskTodayFragment extends BaseFragment
 
 //        组合各个section
         mComposedAdapter = new ComposedAdapter();
-        mComposedAdapter.addAdapter(new SectionHeaderAdapter("未完成"));
+        mComposedAdapter.addAdapter(new SimpleSectionHeaderAdapter("未完成"));
         mComposedAdapter.addAdapter(mUnfinishedRVSManager.createWrappedAdapter(mUnfinishedTaskAdapter));
-        mComposedAdapter.addAdapter(new SectionHeaderAdapter("已完成"));
+        mComposedAdapter.addAdapter(new SimpleSectionHeaderAdapter("已完成"));
         mComposedAdapter.addAdapter(mFinishedRVSManager.createWrappedAdapter(mFinishedTaskAdapter));
 
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();

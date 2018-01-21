@@ -7,4 +7,4 @@
     android:layout_height="?attr/actionBarSize"
     app:layout_collapseMode="pin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    app:titleTextAppearance="@style/toolBarTitleTextSizeStyle"/>
+    app:titleTextAppearance="@style/CustomToolbarTextSizeStyle"/>

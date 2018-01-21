@@ -5,18 +5,17 @@
     <item
         android:id="@+id/activity_main_menu_add_item"
         android:icon="@drawable/ic_add"
-        android:title="TaskFastAdd"
+        android:title="快速添加任务"
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/activity_main_menu_normal_setting_item"
-        android:icon="@drawable/ic_settings"
+        android:id="@+id/activity_main_menu_normal_sync_item"
         android:title="同步"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_item_home_test"
-        android:title="测试页面"
+        android:title="测试"
         app:showAsAction="never"/>
 
 </menu>

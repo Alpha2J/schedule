@@ -1,5 +1,6 @@
 <resources>
 
+    <!--主题-->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -8,36 +9,43 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Custom.Widget.EditText" parent="Theme.AppCompat.Light">
+    <!--风格-->
+    <!--EditText颜色设置-->
+    <style name="CustomColorEditTextStyle" parent="Theme.AppCompat.Light">
         <!--未选中时的颜色-->
         <item name="colorControlNormal">@color/colorPrimary</item>
         <!--选中时的颜色-->
         <item name="colorControlActivated">@color/colorAccent</item>
     </style>
 
-    <style name="myRecyclerViewStyle">
+    <!--Toolbar的字体大小-->
+    <style name="CustomToolbarTextSizeStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!--RecyclerView的标题的通用部分-->
+    <style name="CustomRVSectionHeaderStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:gravity">start|bottom</item>
+        <item name="android:paddingLeft">7dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <!--RecyclerView的通用部分-->
+    <style name="CustomRVStyle">
         <!-- NOTE: clipChildren should be false on API level 11 or later -->
         <item name="android:clipChildren">false</item>
+        <!--默认值为true, 滚动的时候能明显地看到padding区域, 难看-->
         <item name="android:clipToPadding">false</item>
-        <item name="android:paddingBottom">18dp</item>
-        <item name="android:paddingLeft">18dp</item>
-        <item name="android:paddingRight">18dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingLeft">15dp</item>
         <item name="android:paddingTop">0dp</item>
+        <!--默认值是insideOverlay, 他会覆盖在padding区域内, 很难看-->
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:scrollbars">vertical</item>
     </style>
 
-    <style name="commonListItemStyle">
-    </style>
-
-    <style name="sectionHeaderItemStyle">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
-        <item name="android:gravity">left|bottom</item>
-        <item name="android:paddingBottom">10dp</item>
-        <item name="android:paddingLeft">7dp</item>
-    </style>
-
-    <style name="toolBarTitleTextSizeStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">16sp</item>
+    <style name="CustomRVItemStyle">
     </style>
 </resources>

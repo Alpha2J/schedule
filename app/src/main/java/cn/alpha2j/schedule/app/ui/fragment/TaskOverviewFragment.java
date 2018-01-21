@@ -8,6 +8,7 @@ import cn.alpha2j.schedule.R;
  * @author alpha
  */
 public class TaskOverviewFragment extends BaseFragment {
+
     private static final String TAG = "TaskOverviewFragment";
 
     @Override

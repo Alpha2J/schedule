@@ -16,14 +16,14 @@ import me.shaohui.bottomdialog.BaseBottomDialog;
  * @author alpha
  * Created on 2017/11/4.
  */
-public class AddTaskBottomDialog extends BaseBottomDialog implements View.OnClickListener {
+public class TaskFastAddBottomDialog extends BaseBottomDialog implements View.OnClickListener {
 
     private OnTaskCreatedListener mOnTaskCreatedListener;
     private EditText mTaskTitle;
 
     @Override
     public int getLayoutRes() {
-        return R.layout.activity_main_bottom_dialog_add_task;
+        return R.layout.dialog_task_fast_add;
     }
 
     @Override

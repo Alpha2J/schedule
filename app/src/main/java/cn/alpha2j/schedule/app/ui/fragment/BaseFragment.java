@@ -11,6 +11,7 @@ import android.view.ViewGroup;
  * @author alpha
  */
 public abstract class BaseFragment extends Fragment {
+
     protected View mRootView;
 
     @Nullable
@@ -32,7 +33,7 @@ public abstract class BaseFragment extends Fragment {
 
     /**
      * 是否有视图, 如果有, 那么会使用getLayoutId() 的值创建视图
-     * @return
+     * @return true 有视图; false 没有视图
      */
     protected abstract boolean hasView();
 
@@ -56,9 +57,5 @@ public abstract class BaseFragment extends Fragment {
         String FRAGMENT_TAG = "FragmentTag";
         String FRAGMENT_TAG_TASK_TODAY = "TaskTodayFragment";
         String FRAGMENT_TAG_TASK_OVERVIEW = "TaskOverviewFragment";
-        String FRAGMENT_TAG_TASK_STATISTICS = "TaskStatisticsFragment";
-
-        String FRAGMENT_TAG_TASK_TODAY_UNFINISHED_DATA = "TaskTodayUnfinishedDataFragment";
-        String FRAGMENT_TAG_TASK_TODAY_FINISHED_DATA = "TaskTodayFinishedDataFragment";
     }
 }

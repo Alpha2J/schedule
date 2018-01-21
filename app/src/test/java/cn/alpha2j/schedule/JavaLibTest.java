@@ -27,4 +27,23 @@ public class JavaLibTest {
     public void testNum() {
         System.out.println((10.0 / 100.0) * 100);
     }
+
+    /**
+     * 测试当switch的参数为string类型, 且为null时, 会不会抛出异常
+     *
+     * 结果, 如果为null, 直接抛空指针异常
+     */
+    @Test
+    public void testSwitchNull() {
+
+        String str = null;
+        switch (str) {
+            case "str":
+                System.out.println("str");
+                break;
+            default:
+                System.out.println("in default");
+
+        }
+    }
 }

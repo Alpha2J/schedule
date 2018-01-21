@@ -7,23 +7,33 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
+        <!--改变menu-->
         <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+        <!--改变图标-->
         <!--<item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>-->
     </style>
 
+    <!--设置点击toolbar上的三点出来的menu的style-->
     <style name="OverflowMenuStyle" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
+        <!--出来的menu是否覆盖那三点-->
         <item name="overlapAnchor">false</item>
+        <!--menu 的背景色-->
         <item name="android:popupBackground">@color/colorPrimary</item>
+        <!--menu到toolbar的垂直距离(虽然设置了上面那个为false, 但是如果不设置这个的话默认menu会在垂直上覆盖几dp, 然后右边也会有一些空白)-->
         <item name="android:dropDownVerticalOffset">4dp</item>
         <item name="android:dropDownHorizontalOffset">0dp</item>
     </style>
 
+    <!--改变图标从三点变为指定图标-->
     <style name="OverflowButtonStyle" parent="@android:style/Widget.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_settings</item>
     </style>
 
-    <style name="commonListItemStyle">
+    <!--设置Recycler具有阴影-->
+    <style name="CustomRVItemStyle">
+        <!--阴影深度为2dp-->
         <item name="android:elevation">2dp</item>
+        <!--根据view的大小来描绘阴影-->
         <item name="android:outlineProvider">bounds</item>
     </style>
 </resources>

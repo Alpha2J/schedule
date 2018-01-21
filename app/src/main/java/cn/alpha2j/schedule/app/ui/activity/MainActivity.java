@@ -20,7 +20,7 @@ import com.facebook.stetho.Stetho;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.dialog.AddTaskBottomDialog;
+import cn.alpha2j.schedule.app.ui.dialog.TaskFastAddBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity
 
     private TaskTodayFragment mTaskTodayFragment;
     private TaskOverviewFragment mTaskOverviewFragment;
-    private ConcurrentHashMap<String, Fragment> mMapOfAddedFragments = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Fragment> mMapOfAddedFragments = new ConcurrentHashMap<>();
 
     private String mCurrentFragmentTag;
 
@@ -57,36 +57,18 @@ public class MainActivity extends BaseActivity
 
 //        集成Stetho
         Stetho.initializeWithDefaults(this);
-
+//        初始化view域
         initViews();
-
+//        改变homeAsUp图标
         changeDisplayHomeAsUpIcon();
-
-        initNavigationViewData();
-
+//        初始化NavigationView的数据(设置选中项, 设置监听器)
+        setNavigationViewItemSelectedListener();
+//        设置FloatingActionButton的监听器
         setFloatingActionButtonListener();
-
-//        初始化并显示fragment
-        if (savedInstanceState == null) {
-            mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
-            displayFragment(mCurrentFragmentTag);
-        } else {
-            mCurrentFragmentTag = savedInstanceState.getString(FC.FRAGMENT_TAG);
-//            这个方法不用了, 因为activity重建的时候里面什么东西都没有, 只需要获得相应的fragment就可以了
-//            removeAllAndDisplayFragments(mCurrentFragment);
-//            用这个方法代替
-            displayFragment(mCurrentFragmentTag);
-        }
-        //设置选中项
-        switch (mCurrentFragmentTag) {
-            case FC.FRAGMENT_TAG_TASK_TODAY:
-                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
-                break;
-            case FC.FRAGMENT_TAG_TASK_OVERVIEW:
-                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_overview_item);
-                break;
-            default:
-        }
+//        初始化当前Fragment
+        initCurrentFragment(savedInstanceState);
+//        设置NavigationView选中项
+        setSelectedNavigationItem();
     }
 
     private void initViews() {
@@ -105,9 +87,8 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    private void initNavigationViewData() {
-//        todo: 这里确定是profile?
-        mNavigationView.setCheckedItem(R.id.activity_main_menu_profile_item);
+    private void setNavigationViewItemSelectedListener() {
+
         mNavigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -117,6 +98,41 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void initCurrentFragment(@Nullable Bundle savedInstanceState) {
+
+        if (savedInstanceState == null) {
+            mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
+            displayFragment(mCurrentFragmentTag);
+        } else {
+            mCurrentFragmentTag = savedInstanceState.getString(FC.FRAGMENT_TAG);
+//            这个方法不用了, 因为activity重建的时候里面什么东西都没有, 只需要获得相应的fragment就可以了
+//            removeAllAndDisplayFragments(mCurrentFragment);
+//            用这个方法代替
+            displayFragment(mCurrentFragmentTag);
+        }
+    }
+
+    /**
+     * 设置draw里面的选中项
+     */
+    private void setSelectedNavigationItem() {
+
+        if (mCurrentFragmentTag == null) {
+            mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
+        }
+
+        switch (mCurrentFragmentTag) {
+            case FC.FRAGMENT_TAG_TASK_TODAY:
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
+                break;
+            case FC.FRAGMENT_TAG_TASK_OVERVIEW:
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_overview_item);
+                break;
+            default:
+                mNavigationView.setCheckedItem(R.id.activity_main_menu_task_today_item);
+        }
     }
 
     @Override
@@ -143,23 +159,23 @@ public class MainActivity extends BaseActivity
 
         switch (item.getItemId()) {
             case R.id.activity_main_menu_profile_item:
-                Toast.makeText(this, "个人简介", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "个人中心", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_main_menu_task_today_item:
-                Toast.makeText(this, "任务: 今天", Toast.LENGTH_SHORT).show();
-//                displayFragment(FC.FRAGMENT_TAG_TASK_TODAY);
+
+                mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
+                displayFragment(mCurrentFragmentTag);
                 break;
             case R.id.activity_main_menu_task_overview_item:
-                Toast.makeText(this, "任务: 总览", Toast.LENGTH_SHORT).show();
 
-//                displayFragment(FC.FRAGMENT_TAG_TASK_OVERVIEW);
+                mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_OVERVIEW;
+                displayFragment(mCurrentFragmentTag);
                 break;
             case R.id.activity_main_menu_task_statistics_item:
-//                Toast.makeText(this, "统计", Toast.LENGTH_SHORT).show();
-//
-//                displayFragment(FC.FRAGMENT_TAG_TASK_STATISTICS);
+
                 Intent intent = new Intent(this, TaskStatisticsActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.animation_bottom_in, R.anim.animation_no);
                 break;
             case R.id.activity_main_menu_settings_item:
                 Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
@@ -181,7 +197,7 @@ public class MainActivity extends BaseActivity
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.activity_main_menu_add_item:
-                AddTaskBottomDialog addTaskBottomDialog = new AddTaskBottomDialog();
+                TaskFastAddBottomDialog addTaskBottomDialog = new TaskFastAddBottomDialog();
                 addTaskBottomDialog.setOnTaskCreatedListener(task -> {
                     if (mTaskTodayFragment != null) {
                         mTaskTodayFragment.notifyNewTaskAdd(task);
@@ -189,10 +205,11 @@ public class MainActivity extends BaseActivity
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
-            case R.id.activity_main_menu_normal_setting_item:
-                Toast.makeText(this, "点击了toolbar上的设置图标", Toast.LENGTH_SHORT).show();
+            case R.id.activity_main_menu_normal_sync_item:
+                Toast.makeText(this, "同步", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_item_home_test:
+
                 Intent testActivity = new Intent(getApplicationContext(), TestActivity.class);
                 startActivity(testActivity);
             default:
@@ -201,10 +218,11 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    /**
-     * 将接口简化
-     */
-    private interface FC extends BaseFragment.FragmentConstant {
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        setSelectedNavigationItem();
     }
 
     @Override
@@ -219,6 +237,11 @@ public class MainActivity extends BaseActivity
             outState.putString(FC.FRAGMENT_TAG, FC.FRAGMENT_TAG_TASK_TODAY);
         }
     }
+
+    /**
+     * 将接口简化
+     */
+    private interface FC extends BaseFragment.FragmentConstant {}
 
     private void displayFragment(String fragmentTag) {
 
@@ -260,6 +283,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void hideOthersFragments(String fragmentTag) {
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         for (ConcurrentHashMap.Entry<String, Fragment> entry : mMapOfAddedFragments.entrySet()) {
@@ -268,9 +292,7 @@ public class MainActivity extends BaseActivity
 
                 if(fragment != null) {
                     if(fragment.isAdded()) {
-//                        TODO: 测试完成后可以试下hide方法
-//                        transaction.hide(fragment);
-                        transaction.remove(fragment);
+                        transaction.hide(fragment);
                     }
                 }
             }
@@ -278,52 +300,4 @@ public class MainActivity extends BaseActivity
 
         transaction.commit();
     }
-
-//
-//    /**
-//     * 还有漏洞, 需要将其他的fragment设置为null, 这样在显示fragment的时候才能重新初始化
-//     * (其实好像也不用设置为null, 因为这个方法只在activity重建的时候调用, Activity重建的时候所有字段都是空的)
-//     *
-//     * @param fragmentTag
-//     */
-//    private void removeAllAndDisplayFragments(String fragmentTag) {
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//
-//        switch (fragmentTag) {
-//            case FC.FRAGMENT_TAG_TASK_TODAY :
-//                mTaskTodayFragment = new TaskTodayFragment();
-//                transaction.replace(R.id.fl_home_fragment_container, mTaskTodayFragment, FC.FRAGMENT_TAG_TASK_TODAY);
-//
-//                if(mMapOfAddedFragments.size() != 0) {
-//                    mMapOfAddedFragments.clear();
-//                }
-//
-//                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
-//                break;
-//            case FC.FRAGMENT_TAG_TASK_OVERVIEW :
-//                mTaskOverviewFragment = new TaskOverviewFragment();
-//                transaction.replace(R.id.fl_home_fragment_container, mTaskOverviewFragment, FC.FRAGMENT_TAG_TASK_OVERVIEW);
-//
-//                if(mMapOfAddedFragments.size() != 0) {
-//                    mMapOfAddedFragments.clear();
-//                }
-//
-//                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
-//                break;
-//            case FC.FRAGMENT_TAG_TASK_STATISTICS :
-//                mTaskStatisticsFragment = new TaskStatisticsFragment();
-//                transaction.replace(R.id.fl_home_fragment_container, mTaskStatisticsFragment, FC.FRAGMENT_TAG_TASK_STATISTICS);
-//
-//                if(mMapOfAddedFragments.size() != 0) {
-//                    mMapOfAddedFragments.clear();
-//                }
-//
-//                mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_STATISTICS, mTaskStatisticsFragment);
-//                break;
-//            default:
-//        }
-//
-//        transaction.commit();
-//    }
-//
 }
