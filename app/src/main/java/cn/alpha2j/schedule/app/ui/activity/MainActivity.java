@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity
     private void setFloatingActionButtonListener() {
 
         mFloatingActionButton.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+            Intent intent = new Intent(MainActivity.this, TaskAddActivity.class);
             startActivity(intent);
         });
     }

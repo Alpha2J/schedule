@@ -17,9 +17,11 @@
     <color name="colorLightBlue">#5ca7b7</color>
     <color name="colorSecondaryLightBlue">#91e1fc</color>
     <color name="colorGreen">#ff2f8b2a</color>
+    <color name="colorYellowBg">#fff9930d</color>
     <color name="colorTaskFinished">#bffd8b</color>
     <color name="colorTaskUnfinished">#fd8b9c</color>
     <color name="colorChartPreview">#8be9fe</color>
     <color name="colorTextDark">#343a40</color>
     <color name="colorTextMuted">#6c757d</color>
+    <color name="colorSecondary">#f6a8a7</color>
 </resources>

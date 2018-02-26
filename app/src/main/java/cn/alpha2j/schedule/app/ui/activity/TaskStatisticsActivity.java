@@ -286,6 +286,7 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.activity_task_statistics_toolbar_menu, menu);
 
         return true;

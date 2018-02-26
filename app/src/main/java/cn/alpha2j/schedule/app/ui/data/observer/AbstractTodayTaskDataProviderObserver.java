@@ -3,7 +3,7 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 import android.support.v7.widget.RecyclerView;
 
 import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
-import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
 import cn.alpha2j.schedule.data.service.TaskService;
@@ -33,19 +33,19 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
     @Override
     public void notifyDataAdd() {
 
-        SwipeableRVAdapter adapter = null;
+        SwipeableTaskRVAdapter adapter = null;
 //        当adapter设置的时候将这个设置为true, 表示adapter不会为null
         boolean adapterSet = false;
 //        当数据增加的时候, 这个监听器方法要做的事情有:
 //        用mTaskTodayRVAdapterGetter获取相应的adapter, 然后通知对应的adapter, 告诉他数据增加了, 刷新前端显示
         switch (getTodayTaskDataProviderObserverType()) {
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
-                adapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+                adapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
                 adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
                 break;
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
-                adapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+                adapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
                 adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
                 break;
@@ -70,8 +70,8 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
     public void notifyDataRemove() {
 
 //        首先需要获取删除的那个Adapter的上次删除的数据, 然后将它添加到另一个Adapter中(队尾)
-        SwipeableRVAdapter unfinishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
-        SwipeableRVAdapter finishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+        SwipeableTaskRVAdapter unfinishedAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+        SwipeableTaskRVAdapter finishedAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
 
         switch (getTodayTaskDataProviderObserverType()) {
             case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
@@ -99,8 +99,8 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
     @Override
     public void notifyUndoLastDataRemove() {
 
-        SwipeableRVAdapter unfinishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
-        SwipeableRVAdapter finishedAdapter = (SwipeableRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
+        SwipeableTaskRVAdapter unfinishedAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+        SwipeableTaskRVAdapter finishedAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
         int lastInsertedPosition;
 
         switch (getTodayTaskDataProviderObserverType()) {
@@ -134,8 +134,8 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
 
     public interface TaskTodayRVAdapterGetter {
 
-        RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayFinishedRVAdapter();
+        RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayFinishedRVAdapter();
 
-        RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayUnfinishedRVAdapter();
+        RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayUnfinishedRVAdapter();
     }
 }

@@ -16,7 +16,9 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SimpleSectionHeaderAdapter;
-import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableRVAdapter;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableFinishedTaskRVAdapter;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
+import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableUnfinishedTaskRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayFinishedDataProviderGenerator;
 import cn.alpha2j.schedule.app.ui.data.generator.TodayUnfinishedDataProviderGenerator;
 import cn.alpha2j.schedule.app.ui.data.observer.AbstractTodayTaskDataProviderObserver;
@@ -36,8 +38,8 @@ public class TaskTodayFragment extends BaseFragment
 
     private RecyclerView mRecyclerView;
 
-    private RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> mUnfinishedTaskAdapter;
-    private RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> mFinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> mUnfinishedTaskAdapter;
+    private RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> mFinishedTaskAdapter;
     private RecyclerViewSwipeManager mUnfinishedRVSManager;
     private RecyclerViewSwipeManager mFinishedRVSManager;
     private ComposedAdapter mComposedAdapter;
@@ -86,13 +88,15 @@ public class TaskTodayFragment extends BaseFragment
 
     private void initData() {
 
-        mUnfinishedTaskAdapter = new SwipeableRVAdapter(mTodayUnfinishedTaskDataProvider);
-        mFinishedTaskAdapter = new SwipeableRVAdapter(mTodayFinishedTaskDataProvider);
+//        mUnfinishedTaskAdapter = new SwipeableTaskRVAdapter(mTodayUnfinishedTaskDataProvider);
+//        mFinishedTaskAdapter = new SwipeableTaskRVAdapter(mTodayFinishedTaskDataProvider);
+        mUnfinishedTaskAdapter = new SwipeableUnfinishedTaskRVAdapter(mTodayUnfinishedTaskDataProvider);
+        mFinishedTaskAdapter = new SwipeableFinishedTaskRVAdapter(mTodayFinishedTaskDataProvider);
         mUnfinishedRVSManager = new RecyclerViewSwipeManager();
         mFinishedRVSManager = new RecyclerViewSwipeManager();
 
 //        设置监听事件
-        ((SwipeableRVAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableRVAdapter.EventListener() {
+        ((SwipeableTaskRVAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableTaskRVAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
 //                当数据从未完成的Adapter中删除后, 需要将删除的数据添加到已完成的Adapter中, 且添加到最后一个
@@ -118,7 +122,7 @@ public class TaskTodayFragment extends BaseFragment
 
             @Override
             public void onItemViewClicked(View view, int target) {
-                if(target == SwipeableRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
+                if(target == SwipeableTaskRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
 
                 } else {
 
@@ -126,7 +130,7 @@ public class TaskTodayFragment extends BaseFragment
             }
         });
 
-        ((SwipeableRVAdapter)mFinishedTaskAdapter).setEventListener(new SwipeableRVAdapter.EventListener() {
+        ((SwipeableTaskRVAdapter)mFinishedTaskAdapter).setEventListener(new SwipeableTaskRVAdapter.EventListener() {
             @Override
             public void onItemRemoved(int position) {
 
@@ -203,12 +207,12 @@ public class TaskTodayFragment extends BaseFragment
     }
 
     @Override
-    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayFinishedRVAdapter() {
+    public RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayFinishedRVAdapter() {
         return this.mFinishedTaskAdapter;
     }
 
     @Override
-    public RecyclerView.Adapter<SwipeableRVAdapter.SwipeableItemViewHolder> getTodayUnfinishedRVAdapter() {
+    public RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayUnfinishedRVAdapter() {
         return this.mUnfinishedTaskAdapter;
     }
 }
