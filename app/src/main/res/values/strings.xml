@@ -10,13 +10,18 @@
     <!--TaskAddActivity-->
     <string name="task_add_date">%1$d年%2$d月%3$d日</string>
     <string name="task_add_time">%1$d:%2$d</string>
-    <!--TimeSetterDialog-->
-    <string name="time_setter_dialog_minute">提前%1$d分钟</string>
-    <string name="time_setter_dialog_hour">提前%1$d小时</string>
-    <string name="time_setter_dialog_day">提前%1$d天</string>
+    <string name="task_add_string_today">今天</string>
+    <string name="task_add_string_no_alarm">不提醒</string>
+    <string name="task_add_string_reminder_text">提前%1$d%2$s</string>
+    <string name="task_add_string_new_desc">添加一个描述</string>
+
+    <!--AboutActivity-->
+    <string name="task_about_version_name">版本: %1$s</string>
 
     <!--activity的toolbar标题-->
     <string name="activity_toolbar_title_main">Schedule</string>
     <string name="activity_toolbar_title_statistics">统计</string>
     <string name="activity_toolbar_title_task_add">添加任务</string>
+    <string name="title_activity_settings">设置</string>
+
 </resources>

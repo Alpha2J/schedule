@@ -17,7 +17,7 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.YearAndMonthPickerDialog;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
-import cn.alpha2j.schedule.exception.FieldUninitException;
+import cn.alpha2j.schedule.exception.FieldUnInitException;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
 import lecho.lib.hellocharts.listener.ViewportChangeListener;
@@ -219,7 +219,7 @@ public class TaskStatisticsActivity extends BaseActivity implements YearAndMonth
     private List<Column> generateColumns() {
 
         if (mTaskDateDataArrayList == null) {
-            throw new FieldUninitException("mTaskDateDataArrayList 域未初始化");
+            throw new FieldUnInitException("mTaskDateDataArrayList 域未初始化");
         }
 
         int columnsNum = mTaskDateDataArrayList.size();

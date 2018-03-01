@@ -21,50 +21,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.ui.activity.TaskAddActivity;
 
 /**
  *
  * @author alpha
  *         Created on 2018/2/25.
  */
-public class ReminderTimeSetterDialog extends DialogFragment {
+public class ReminderSetterDialog extends DialogFragment {
 
+    private View mRootView;
     private Switch mSwitch;
     private ImageView mImageView;
     private TextView mTextView;
     private Spinner mTimeSpinner;
     private Spinner mTypeSpinner;
 
-    private ReminderWrapper mReminderWrapper;
+    private TaskAddActivity.ReminderWrapper mReminderWrapper;
 
     private OnReminderSetListener mOnReminderSetListener;
 
-    public ReminderTimeSetterDialog() {
+    public ReminderSetterDialog() {
 
-        mReminderWrapper = new ReminderWrapper();
+        mReminderWrapper = new TaskAddActivity.ReminderWrapper();
     }
 
-    public static ReminderTimeSetterDialog newInstance(ReminderWrapper reminderWrapper) {
+    public static ReminderSetterDialog newInstance(TaskAddActivity.ReminderWrapper reminderWrapper) {
 
-        ReminderTimeSetterDialog dialog = new ReminderTimeSetterDialog();
-//        如果时间小于0或者超过60, 那么直接禁用提醒.
-//        if (time <= 0 || time > 60) {
-//            dialog.setTime(0);
-//            dialog.setType(TimeType.TIME_TYPE_MINUTE);
-//        } else {
-//            dialog.setTime(time);
-//            dialog.setType(type);
-//        }
+        ReminderSetterDialog dialog = new ReminderSetterDialog();
+        dialog.setReminderWrapper(reminderWrapper);
 
         return dialog;
     }
 
-    public void setTime(int time) {
-        mTime = time;
-    }
-
-    public void setType(String type) {
-        mType = type;
+    public void setReminderWrapper(TaskAddActivity.ReminderWrapper reminderWrapper) {
+        mReminderWrapper = reminderWrapper;
     }
 
     public void setOnReminderSetListener(OnReminderSetListener onReminderSetListener) {
@@ -75,25 +66,48 @@ public class ReminderTimeSetterDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View rootView = inflater.inflate(R.layout.dialog_reminder_time_setter, null);
+        initView();
+        initViewData();
 
-//        如果提醒时间为0, 那么关闭提醒,否则打开提醒
-        mSwitch = rootView.findViewById(R.id.s_reminder_dialog_alarm_control);
-        if (mTime == 0) {
-            mSwitch.setChecked(false);
-        } else {
-            mSwitch.setChecked(true);
-        }
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setView(mRootView)
+                .setPositiveButton("确定", (dialog, id) -> {
+//                    如果设置了监听器那么回调
+                    if(mOnReminderSetListener != null) {
+                        mOnReminderSetListener.onReminderSet(mReminderWrapper);
+                    }
+                })
+                .setNegativeButton("取消", (dialog, id) -> {
+                    ReminderSetterDialog.this.getDialog().cancel();
+                });
+
+        return dialogBuilder.create();
+    }
+
+    private void initView() {
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        mRootView = inflater.inflate(R.layout.dialog_reminder_time_setter, null);
+
+        mSwitch = mRootView.findViewById(R.id.s_reminder_dialog_alarm_control);
+        mImageView = mRootView.findViewById(R.id.iv_reminder_dialog_alarm_icon);
+        mTextView = mRootView.findViewById(R.id.tv_reminder_dialog_alarm_show);
+        mTimeSpinner = mRootView.findViewById(R.id.spinner_reminder_dialog_time_num);
+        mTypeSpinner = mRootView.findViewById(R.id.spinner_reminder_dialog_time_type);
+    }
+
+    private void initViewData() {
+
+//        初始化视图数据, 开关是否打开, 显示多少分钟等
+        mSwitch.setChecked(mReminderWrapper.isRemind());
         mSwitch.setOnCheckedChangeListener(((compoundButton, b) -> {
             setViewEnable();
         }));
 
-        mImageView = rootView.findViewById(R.id.iv_reminder_dialog_alarm_icon);
-        mTextView = rootView.findViewById(R.id.tv_reminder_dialog_alarm_show);
+//        初始化文字显示数据
         setDateText();
 
-        mTimeSpinner = rootView.findViewById(R.id.spinner_reminder_dialog_time_num);
+//        初始化下拉框数据
         List<Integer> spinnerTimeList = new ArrayList<>();
         for (int i = 0; i <= 60; i++) {
             spinnerTimeList.add(i);
@@ -101,36 +115,35 @@ public class ReminderTimeSetterDialog extends DialogFragment {
         ArrayAdapter<Integer> spinnerTimeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerTimeList);
         spinnerTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTimeSpinner.setAdapter(spinnerTimeAdapter);
-        mTimeSpinner.setSelection(mTime);
+        mTimeSpinner.setSelection(mReminderWrapper.getNum());
         mTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mTime = spinnerTimeAdapter.getItem(i);
+                mReminderWrapper.setNum(spinnerTimeAdapter.getItem(i));
                 setDateText();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                Toast.makeText(getActivity(), "nothing selected", Toast.LENGTH_SHORT).show();
+
             }
         });
 
-        mTypeSpinner = rootView.findViewById(R.id.spinner_reminder_dialog_time_type);
         List<String> spinnerTypeList = new ArrayList<>();
-        spinnerTypeList.add(TimeType.TIME_TYPE_MINUTE);
-        spinnerTypeList.add(TimeType.TIME_TYPE_HOUR);
-        spinnerTypeList.add(TimeType.TIME_TYPE_DAY);
+        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.MINUTE.getName());
+        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.HOUR.getName());
+        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.DAY.getName());
         ArrayAdapter<String> spinnerTypeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerTypeList);
         spinnerTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTypeSpinner.setAdapter(spinnerTypeAdapter);
-        switch (mType) {
-            case TimeType.TIME_TYPE_MINUTE :
+        switch (mReminderWrapper.getTimeType()) {
+            case MINUTE:
                 mTypeSpinner.setSelection(0);
                 break;
-            case TimeType.TIME_TYPE_HOUR:
+            case HOUR:
                 mTypeSpinner.setSelection(1);
                 break;
-            case TimeType.TIME_TYPE_DAY:
+            case DAY:
                 mTypeSpinner.setSelection(2);
                 break;
             default:
@@ -139,7 +152,19 @@ public class ReminderTimeSetterDialog extends DialogFragment {
         mTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mType = spinnerTypeAdapter.getItem(i);
+                switch (i) {
+                    case 0 :
+                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.MINUTE);
+                        break;
+                    case 1:
+                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.HOUR);;
+                        break;
+                    case 2:
+                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.DAY);
+                        break;
+                    default:
+                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.MINUTE);
+                }
                 setDateText();
             }
 
@@ -149,42 +174,20 @@ public class ReminderTimeSetterDialog extends DialogFragment {
             }
         });
 
-//        根据开关初始化view
         setViewEnable();
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-        dialogBuilder.setView(rootView)
-                .setPositiveButton("确定", (dialog, id) -> {
-//                    如果设置了监听器那么回调
-                    if(mOnReminderSetListener != null) {
-                        mOnReminderSetListener.onReminderSet(mSwitch.isChecked(), mTime, mType);
-                    }
-                })
-                .setNegativeButton("取消", (dialog, id) -> {
-                    ReminderTimeSetterDialog.this.getDialog().cancel();
-                });
-
-        return dialogBuilder.create();
     }
+
 
     private void setDateText() {
 
-        switch (mType) {
-            case TimeType.TIME_TYPE_MINUTE :
-                mTextView.setText(getResources().getString(R.string.time_setter_dialog_minute, mTime));
-                break;
-            case TimeType.TIME_TYPE_HOUR:
-                mTextView.setText(getResources().getString(R.string.time_setter_dialog_hour, mTime));
-                break;
-            case TimeType.TIME_TYPE_DAY:
-                mTextView.setText(getResources().getString(R.string.time_setter_dialog_day, mTime));
-                break;
-            default:
-                mTextView.setText(getResources().getString(R.string.time_setter_dialog_minute, mTime));
-        }
+        mTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType().getName()));
     }
 
     private void setViewEnable() {
+
+//        现将reminderWrapper的状态设置为开关状态
+        mReminderWrapper.setRemind(mSwitch.isChecked());
+
         if (mSwitch.isChecked()) {
 //            如果开关是开的, 那么设置图标为alarm
             mImageView.setImageResource(R.drawable.ic_alarm);
@@ -214,48 +217,6 @@ public class ReminderTimeSetterDialog extends DialogFragment {
          * 点击ok按钮时调用这个方法
          * @param reminderWrapper
          */
-        void onReminderSet(ReminderWrapper reminderWrapper);
-    }
-
-    public static class ReminderWrapper {
-
-        private boolean isRemind;
-
-        private int num;
-
-        private String timeType;
-
-        public boolean isRemind() {
-            return isRemind;
-        }
-
-        public void setRemind(boolean remind) {
-            isRemind = remind;
-        }
-
-        public int getNum() {
-            return num;
-        }
-
-        public void setNum(int num) {
-            this.num = num;
-        }
-
-        public String getTimeType() {
-            return timeType;
-        }
-
-        public void setTimeType(String timeType) {
-            this.timeType = timeType;
-        }
-    }
-
-    public static class TimeType {
-
-        public static final String TIME_TYPE_MINUTE = "分钟";
-
-        public static final String TIME_TYPE_HOUR = "小时";
-
-        public static final String TIME_TYPE_DAY = "天";
+        void onReminderSet(TaskAddActivity.ReminderWrapper reminderWrapper);
     }
 }

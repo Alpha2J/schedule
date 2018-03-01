@@ -158,9 +158,9 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.activity_main_menu_profile_item:
-                Toast.makeText(this, "个人中心", Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.activity_main_menu_profile_item:
+//                Toast.makeText(this, "个人中心", Toast.LENGTH_SHORT).show();
+//                break;
             case R.id.activity_main_menu_task_today_item:
 
                 mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
@@ -173,12 +173,19 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.activity_main_menu_task_statistics_item:
 
-                Intent intent = new Intent(this, TaskStatisticsActivity.class);
-                startActivity(intent);
+                Intent statisticsActivityIntent = new Intent(this, TaskStatisticsActivity.class);
+                startActivity(statisticsActivityIntent);
                 overridePendingTransition(R.anim.animation_bottom_in, R.anim.animation_no);
                 break;
             case R.id.activity_main_menu_settings_item:
-                Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
+
+                Intent settingsActivityIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsActivityIntent);
+                break;
+            case R.id.activity_main_menu_about_item:
+
+                Intent aboutActivityIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutActivityIntent);
                 break;
             default:
         }

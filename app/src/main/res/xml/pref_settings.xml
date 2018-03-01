@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="基本设置">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="bubble_switch"
+            android:title="打开悬浮提示"
+            android:summary="任务到期时桌面悬浮泡泡提示" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="background_keep_alive"
+            android:title="程序保活"
+            android:summary="清除后台无法关闭应用" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_start_switch"
+            android:title="开机自启" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="高级设置">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications_status_bar"
+            android:title="状态栏消息通知" />
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:dependency="notifications_status_bar"
+            android:key="notifications_status_bar_ringtone"
+            android:ringtoneType="notification"
+            android:title="铃声" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notifications_status_bar"
+            android:key="notifications_status_bar_vibrate"
+            android:title="震动"
+            android:summary="提醒时震动" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -3,13 +3,13 @@ package cn.alpha2j.schedule.exception;
 /**
  * @author alpha
  */
-public class FieldUninitException extends RuntimeException {
+public class FieldUnInitException extends RuntimeException {
 
-    public FieldUninitException() {
+    public FieldUnInitException() {
 
     }
 
-    public FieldUninitException(String message) {
+    public FieldUnInitException(String message) {
         super(message);
     }
 }

@@ -2,7 +2,9 @@
 <resources>
     <color name="colorPrimary">#ec524f</color>
     <color name="colorPrimaryDark">#b92c39</color>
-    <color name="colorAccent">#019783</color>
+    <!--<color name="colorAccent">#019783</color>-->
+    <color name="colorAccent">#FFC400</color>
+
     <color name="colorWhite">#FFF</color>
     <color name="colorYellow">#ebe37b</color>
     <color name="colorBlack">#FF252523</color>
@@ -24,4 +26,7 @@
     <color name="colorTextDark">#343a40</color>
     <color name="colorTextMuted">#6c757d</color>
     <color name="colorSecondary">#f6a8a7</color>
+
+    <color name="gray_very_light">#e0e0e0</color>
+    <color name="main_background">#eeeeee</color>
 </resources>

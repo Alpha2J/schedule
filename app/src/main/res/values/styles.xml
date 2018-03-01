@@ -9,6 +9,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--Setting Activity的主题, 因为preference.xml无法设置主题-->
+    <style name="SettingsActivityTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <!--风格-->
     <!--EditText颜色设置-->
     <style name="CustomColorEditTextStyle" parent="Theme.AppCompat.Light">
@@ -50,6 +58,13 @@
         <!--默认值是insideOverlay, 他会覆盖在padding区域内, 很难看-->
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:scrollbars">vertical</item>
+    </style>
+
+    <!--add activity全屏输入Description的dialog style-->
+    <style name="CustomDialogFullscreen" parent="@android:style/Theme.Material.Light.DialogWhenLarge">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
     </style>
 
     <style name="CustomRVItemStyle">

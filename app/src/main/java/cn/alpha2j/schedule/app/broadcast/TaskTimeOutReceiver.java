@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -46,9 +47,10 @@ public class TaskTimeOutReceiver extends BroadcastReceiver {
             notificationManager.notify(0, notification);
         } else {
             notification = new NotificationCompat.Builder(context, String.valueOf(task.getId()))
-                    .setContentTitle("任务时间到了, 你完成了吗")
-                    .setContentText(task.getTitle())
-                    .setSmallIcon(R.drawable.ic_account_circle)
+                    .setContentTitle(task.getTitle())
+                    .setContentText(task.getDescription())
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round))
                     .build();
             notificationManager.notify(task.getId().intValue(), notification);
         }
