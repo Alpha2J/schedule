@@ -1,10 +1,12 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,10 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -238,13 +236,6 @@ public class MainActivity extends BaseActivity
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
-            case R.id.activity_main_menu_normal_sync_item:
-                Toast.makeText(this, "同步", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.menu_item_home_test:
-
-                Intent testActivity = new Intent(getApplicationContext(), TestActivity.class);
-                startActivity(testActivity);
             default:
         }
 

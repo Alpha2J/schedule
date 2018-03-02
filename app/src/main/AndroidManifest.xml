@@ -20,9 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".app.ui.activity.TaskAddActivity" />
-        <activity android:name=".app.ui.activity.UserProfileActivity" />
         <activity android:name=".app.ui.activity.TaskStatisticsActivity" />
-        <activity android:name=".app.ui.activity.TestActivity" />
         <activity android:name=".app.ui.activity.AboutActivity" />
         <activity
             android:name=".app.ui.activity.SettingsActivity"

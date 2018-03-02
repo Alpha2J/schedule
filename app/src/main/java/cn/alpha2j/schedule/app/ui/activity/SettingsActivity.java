@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -108,7 +108,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         addPreferencesFromResource(R.xml.pref_settings);
 
-        bindPreferenceSummaryToValue(findPreference("notifications_status_bar_ringtone"));
+        bindPreferenceSummaryToValue(findPreference("default_remind_time_list"));
+        bindPreferenceSummaryToValue(findPreference("remind_type_list"));
+        bindPreferenceSummaryToValue(findPreference("remind_ringtone"));
     }
 
     /**

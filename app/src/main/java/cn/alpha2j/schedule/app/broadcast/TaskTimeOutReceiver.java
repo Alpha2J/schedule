@@ -51,6 +51,7 @@ public class TaskTimeOutReceiver extends BroadcastReceiver {
                     .setContentText(task.getDescription())
                     .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round))
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
                     .build();
             notificationManager.notify(task.getId().intValue(), notification);
         }
