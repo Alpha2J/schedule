@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dl_home_activity_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/cl_home_content_container"
@@ -40,7 +41,8 @@
         android:layout_gravity="start"
         app:elevation="8px"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/activity_main_nav_view_menu" />
+        app:menu="@menu/activity_main_nav_view_menu"
+        android:fitsSystemWindows="true"/>
 
 </android.support.v4.widget.DrawerLayout>
 

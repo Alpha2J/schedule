@@ -8,14 +8,16 @@
         android:title="快速添加任务"
         app:showAsAction="always"/>
 
-    <item
-        android:id="@+id/activity_main_menu_normal_sync_item"
-        android:title="同步"
-        app:showAsAction="never"/>
+    <!--发布版本不需要测试页面-->
+    <!--版本 1.0 不需要同步-->
+    <!--<item-->
+        <!--android:id="@+id/activity_main_menu_normal_sync_item"-->
+        <!--android:title="同步"-->
+        <!--app:showAsAction="never"/>-->
 
-    <item
-        android:id="@+id/menu_item_home_test"
-        android:title="测试"
-        app:showAsAction="never"/>
+    <!--<item-->
+        <!--android:id="@+id/menu_item_home_test"-->
+        <!--android:title="测试"-->
+        <!--app:showAsAction="never"/>-->
 
 </menu>

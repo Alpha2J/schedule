@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".app.ui.activity.MainActivity"
-            android:label="Schedule">
+            android:label="Schedule"
+            android:theme="@style/CustomNavHeaderInStatusBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -69,4 +69,8 @@
 
     <style name="CustomRVItemStyle">
     </style>
+
+    <!--NavigationVIew的Header部分背景传到通知栏-->
+    <style name="CustomNavHeaderInStatusBar" parent="AppTheme">
+    </style>
 </resources>

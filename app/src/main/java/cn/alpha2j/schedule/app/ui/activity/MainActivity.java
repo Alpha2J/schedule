@@ -1,6 +1,9 @@
 package cn.alpha2j.schedule.app.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,8 +16,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.facebook.stetho.Stetho;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +72,8 @@ public class MainActivity extends BaseActivity
         initViews();
 //        改变homeAsUp图标
         changeDisplayHomeAsUpIcon();
-//        初始化NavigationView的数据(设置选中项, 设置监听器)
+//        初始化NavigationView的数据(初始化头部, 设置列表选中项, 设置监听器)
+        setNavigationViewHeader();
         setNavigationViewItemSelectedListener();
 //        设置FloatingActionButton的监听器
         setFloatingActionButtonListener();
@@ -85,6 +97,20 @@ public class MainActivity extends BaseActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
+    }
+
+    private void setNavigationViewHeader() {
+
+        View view = mNavigationView.getHeaderView(0);
+        FrameLayout frameLayout = view.findViewById(R.id.fl_nav_header_container);
+        Glide.with(this).load(R.drawable.nav_header_bg).asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        Drawable drawable = new BitmapDrawable(resource);
+                        frameLayout.setBackground(drawable);
+                    }
+                });
     }
 
     private void setNavigationViewItemSelectedListener() {
