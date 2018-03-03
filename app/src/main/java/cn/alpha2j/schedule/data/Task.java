@@ -18,91 +18,92 @@ public class Task implements Serializable {
      * 但是这里为long, 可以让程序在使用的时候避免发生空指针
      * 2018 01 02更正, 使用回Long, 如果不适当的时候调用使用id应该让他进行空指针运行时报异常
      */
-    private Long id;
-    private String title;
-    private String description;
+    private Long mId;
+    private String mTitle;
+    private String mDescription;
     /**
      * 任务归属时间
      */
-    private ScheduleDateTime taskDate;
+    private ScheduleDateTime mTime;
 
-    private boolean isAlarm;
+    private boolean mRemind;
 
     /**
      * 任务提醒时间
      */
-    private ScheduleDateTime taskAlarmDateTime;
+    private ScheduleDateTime mRemindTime;
 
     /**
      * 表示该任务是否已完成
      */
-    private boolean isDone;
+    private boolean mDone;
 
-    public Task() {}
+    public Task() {
+    }
 
-    public Task(Long id, String title, String description, ScheduleDateTime taskDate, boolean isAlarm, ScheduleDateTime taskAlarmDateTime, boolean isDone) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.taskDate = taskDate;
-        this.isAlarm = isAlarm;
-        this.taskAlarmDateTime = taskAlarmDateTime;
-        this.isDone = isDone;
+    public Task(Long id, String title, String description, ScheduleDateTime time, boolean remind, ScheduleDateTime remindTime, boolean done) {
+        mId = id;
+        mTitle = title;
+        mDescription = description;
+        mTime = time;
+        mRemind = remind;
+        mRemindTime = remindTime;
+        mDone = done;
     }
 
     public Long getId() {
-        return id;
+        return mId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        mId = id;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        mTitle = title;
     }
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        mDescription = description;
     }
 
-    public ScheduleDateTime getTaskDate() {
-        return taskDate;
+    public ScheduleDateTime getTime() {
+        return mTime;
     }
 
-    public void setTaskDate(ScheduleDateTime taskDate) {
-        this.taskDate = taskDate;
+    public void setTime(ScheduleDateTime time) {
+        mTime = time;
     }
 
-    public boolean isAlarm() {
-        return isAlarm;
+    public boolean isRemind() {
+        return mRemind;
     }
 
-    public void setAlarm(boolean alarm) {
-        isAlarm = alarm;
+    public void setRemind(boolean remind) {
+        mRemind = remind;
     }
 
-    public ScheduleDateTime getTaskAlarmDateTime() {
-        return taskAlarmDateTime;
+    public ScheduleDateTime getRemindTime() {
+        return mRemindTime;
     }
 
-    public void setTaskAlarmDateTime(ScheduleDateTime taskAlarmDateTime) {
-        this.taskAlarmDateTime = taskAlarmDateTime;
+    public void setRemindTime(ScheduleDateTime remindTime) {
+        mRemindTime = remindTime;
     }
 
     public boolean isDone() {
-        return isDone;
+        return mDone;
     }
 
     public void setDone(boolean done) {
-        isDone = done;
+        mDone = done;
     }
 }

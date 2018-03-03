@@ -25,7 +25,7 @@
         <activity
             android:name=".app.ui.activity.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/SettingsActivityTheme"/>
+            android:theme="@style/SettingsActivityTheme" />
 
         <receiver
             android:name=".app.broadcast.TaskTimeOutReceiver"
@@ -35,6 +35,8 @@
                 <action android:name="cn.alpha2j.schedule.receiver.TASK_TIME_OUT" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".app.ui.activity.TestActivity"></activity>
     </application>
 
 </manifest>

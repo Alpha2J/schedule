@@ -65,7 +65,7 @@ public interface GenericRepository<T extends EntityIdentifier, DAO extends Abstr
      * 更新实体, 传入的主键id必须存在
      *
      * @param entity 需要更新的实体
-     * @throws NullPointerException
+     * @throws NullPointerException 参数entity为空
      * @throws PrimaryKeyNotExistException 传入的实体不存在标识主键(id)
      * @throws IllegalArgumentException 传入的实体的标识主键不合法(小于0)
      */

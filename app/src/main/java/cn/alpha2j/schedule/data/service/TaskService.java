@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
+import cn.alpha2j.schedule.exception.RemindTimeCanNotBeNullException;
 
 /**
  * @author alpha
@@ -16,6 +17,8 @@ public interface TaskService {
      * @param task 需要增加的task, 不能为null
      * @return 增加成功的话返回task的id, 失败返回-1
      * @throws NullPointerException task为null
+     * @throws IllegalArgumentException task字段不合法
+     * @throws RemindTimeCanNotBeNullException 设置了提醒, 但是提醒时间为null
      */
     long addTask(Task task);
 
@@ -23,8 +26,10 @@ public interface TaskService {
      * 增加一个Task或者更新该Task
      *
      * @param task 不能为null
-     * @return 增加或更新后对应实体的id
+     * @return 增加或更新后对应实体的id, 失败返回-1
      * @throws NullPointerException task为null
+     * @throws IllegalArgumentException task字段不合法
+     * @throws RemindTimeCanNotBeNullException 设置了提醒, 但是提醒时间为null
      */
     long addOrUpdateTask(Task task);
 
@@ -42,6 +47,7 @@ public interface TaskService {
 
     /**
      * 查找属于某年和某月的所有数据, 包括已经完成的和没有完成的
+     *
      * @param year 年
      * @param monthOfYear 月份 1到12
      * @return list.size()不为null

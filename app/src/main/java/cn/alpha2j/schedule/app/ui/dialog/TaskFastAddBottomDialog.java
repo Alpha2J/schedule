@@ -40,16 +40,16 @@ public class TaskFastAddBottomDialog extends BaseBottomDialog implements View.On
         task.setTitle(mTaskTitle.getText().toString());
         task.setDescription(null);
 //        TODO: 测试, 将提醒时间设置为一分钟后, 测试完后记得删除
-        task.setAlarm(true);
+        task.setRemind(true);
         int nowMinute = ScheduleDateTime.now().getMinuteOfHour();
         ScheduleDateTime taskAlarmDateTime = DefaultScheduleTimeBuilder.now().toMinute(nowMinute + 1).getResult();
-        task.setTaskAlarmDateTime(taskAlarmDateTime);
+        task.setRemindTime(taskAlarmDateTime);
 //        task.setAlarm(false);
 //        task.setTaskAlarmDateTime(null);
         task.setDone(false);
 
         ScheduleDateTime taskDate = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
-        task.setTaskDate(taskDate);
+        task.setTime(taskDate);
 
         if(mOnTaskCreatedListener != null) {
             mOnTaskCreatedListener.onTaskCreated(task);

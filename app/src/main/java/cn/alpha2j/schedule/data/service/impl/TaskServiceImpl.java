@@ -8,7 +8,7 @@ import cn.alpha2j.schedule.data.entity.TaskEntity;
 import cn.alpha2j.schedule.data.repository.TaskRepository;
 import cn.alpha2j.schedule.data.repository.impl.TaskRepositoryImpl;
 import cn.alpha2j.schedule.data.service.TaskService;
-import cn.alpha2j.schedule.exception.AlarmDateTimeCanNotBeNullException;
+import cn.alpha2j.schedule.exception.RemindTimeCanNotBeNullException;
 import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleDateBuilder;
@@ -42,14 +42,12 @@ public class TaskServiceImpl implements TaskService {
      * 增加一个新的Task, 就算这个task设置了id也不会更新该id的task, 会直接忽略id
      *
      * @param task 需要增加的task, 不能为null
-     * @return
+     * @return id
      */
     @Override
     public long addTask(Task task) {
 
-        if (task == null) {
-            throw new NullPointerException("task不能为空");
-        }
+        validateTask(task);
 
         return taskRepository.save(convertToTaskEntity(task));
     }
@@ -61,14 +59,12 @@ public class TaskServiceImpl implements TaskService {
      * 如果id数据不存在, 那么直接新增一条数据, id为自增
      *
      * @param task 不能为null
-     * @return
+     * @return id
      */
     @Override
     public long addOrUpdateTask(Task task) {
 
-        if (task == null) {
-            throw new NullPointerException("task不能为空");
-        }
+        validateTask(task);
 
 //        如果id为空, 那么说明数据从来未插入过数据库, 是新的数据, 或者是自己设置的id
         Long id = task.getId();
@@ -84,17 +80,21 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findAllUnfinishedForToday() {
 
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
+        long startTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
+//        因为底层用的是between...and...语句, 包括上下限, 所以上限需要-1;表示最接近明天的最后一毫秒
+        long endTime = getEndTime(startTime);
 
-        return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, false));
+        return convert(taskRepository.findTaskEntitiesByDoneAndTimeBetween(false, startTime, endTime));
     }
 
     @Override
     public List<Task> findAllFinishedForToday() {
 
-        long todayBegin = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
+        long startTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult().getEpochMillisecond();
+//        因为底层用的是between...and...语句, 包括上下限, 所以上限需要-1;表示最接近明天的最后一毫秒
+        long endTime = getEndTime(startTime);
 
-        return convert(taskRepository.findTaskEntitiesByTaskDateAndDone(todayBegin, true));
+        return convert(taskRepository.findTaskEntitiesByDoneAndTimeBetween(true, startTime, endTime));
     }
 
     /**
@@ -109,11 +109,13 @@ public class TaskServiceImpl implements TaskService {
         List<Task> resultList = new ArrayList<>();
 
         int dayBegin = 1;
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayBegin).getResult();
-        int maxDay = scheduleDateTime.getMonthDayNumber();
+        ScheduleDateTime yearAndMonth = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayBegin).toDateBegin().getResult();
+        int maxDay = yearAndMonth.getMonthDayNumber();
         for (int i = dayBegin; i <= maxDay; i++) {
-            scheduleDateTime = DefaultScheduleDateBuilder.of(scheduleDateTime).toDayOfMonth(i).getResult();
-            resultList.addAll(convert(taskRepository.findTaskEntitiesByTaskDate(scheduleDateTime.getEpochMillisecond())));
+            long startTime = DefaultScheduleDateBuilder.of(yearAndMonth).toDayOfMonth(i).getResult().getEpochMillisecond();
+            long endTime = getEndTime(startTime);
+
+            resultList.addAll(convert(taskRepository.findTaskEntitiesByTimeBetween(startTime, endTime)));
         }
 
         return resultList;
@@ -164,17 +166,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public int countFinishedForDate(int year, int monthOfYear, int dayOfMonth) {
 
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult();
+        long startTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult().getEpochMillisecond();
+        long endTime = getEndTime(startTime);
 
-        return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), true);
+        return (int) taskRepository.countTaskEntitiesByDoneAndTimeBetween(true, startTime, endTime);
     }
 
     @Override
     public int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth) {
 
-        ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult();
+        long startTime = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayOfMonth).toDateBegin().getResult().getEpochMillisecond();
+        long endTime = getEndTime(startTime);
 
-        return (int) taskRepository.countTaskEntitiesByTaskDateAndDone(scheduleDateTime.getEpochMillisecond(), false);
+        return (int) taskRepository.countTaskEntitiesByDoneAndTimeBetween(false, startTime, endTime);
     }
 
     private List<Task> convert(List<TaskEntity> taskEntities) {
@@ -191,52 +195,68 @@ public class TaskServiceImpl implements TaskService {
 
         Task task = new Task();
         task.setId(taskEntity.getId());
-        task.setAlarm(taskEntity.isAlarm());
-        task.setDone(taskEntity.isDone());
         task.setTitle(taskEntity.getTitle());
         task.setDescription(taskEntity.getDescription());
+        task.setDone(taskEntity.isDone());
 
-        ScheduleDateTime taskAlarmDateTime = ScheduleDateTime.of(taskEntity.getTaskAlarmDateTime());
-        task.setTaskAlarmDateTime(taskAlarmDateTime);
+        task.setRemind(taskEntity.isRemind());
+        task.setRemindTime(ScheduleDateTime.of(taskEntity.getRemindTime()));
 
-        ScheduleDateTime taskDate = ScheduleDateTime.of(taskEntity.getTaskDate());
-        task.setTaskDate(taskDate);
+        task.setTime(ScheduleDateTime.of(taskEntity.getTime()));
 
         return task;
     }
 
     private TaskEntity convertToTaskEntity(Task task) {
-        if(task == null) {
-            throw new NullPointerException("task 不能为null");
-        }
 
         TaskEntity taskEntity = new TaskEntity();
-        taskEntity.setAlarm(task.isAlarm());
+        taskEntity.setTitle(task.getTitle());
         taskEntity.setDescription(task.getDescription());
         taskEntity.setDone(task.isDone());
-        taskEntity.setTitle(task.getTitle());
+        taskEntity.setRemind(task.isRemind());
+//        这里如果不进行判断, 可能会抛空指针
+        if(task.isRemind()) {
+            taskEntity.setRemindTime(task.getRemindTime().getEpochMillisecond());
+        }
 
+//        所有Task到TaskEntity的转换都是这里处理
+//        时间精确到分钟, 秒以后的全部去除
         //对任务的时间进行处理, 确保任务的时间是当天零点
-        ScheduleDateTime taskScheduleDateTime = task.getTaskDate();
-        if (taskScheduleDateTime == null) {
-            taskScheduleDateTime = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
+        ScheduleDateTime time = task.getTime();
+        if (time == null) {
+//            如果没有设置时间, 那么将时间设置到当天0时
+            time = DefaultScheduleDateBuilder.now().toDateBegin().getResult();
         } else {
-            taskScheduleDateTime = DefaultScheduleDateBuilder.of(taskScheduleDateTime).toDateBegin().getResult();
+//            如果设置了时间, 那么将时间精确到分
+            time = DefaultScheduleTimeBuilder.of(time).toMinuteStart().getResult();
         }
-        long taskDate = taskScheduleDateTime.getEpochMillisecond();
-        taskEntity.setTaskDate(taskDate);
-
-        //对任务的提醒时间进行处理, 确保提醒时间精确到分钟
-        if (task.isAlarm() == true) {
-            ScheduleDateTime alarmScheduleDateTime = task.getTaskAlarmDateTime();
-            if (alarmScheduleDateTime == null) {
-                throw new AlarmDateTimeCanNotBeNullException("如果想要进行提醒, 那么需要设置提醒时间");
-            } else {
-                long taskAlarmDateTime = DefaultScheduleTimeBuilder.of(alarmScheduleDateTime).toMinuteStart().getResult().getEpochMillisecond();
-                taskEntity.setTaskAlarmDateTime(taskAlarmDateTime);
-            }
-        }
+        taskEntity.setTime(time.getEpochMillisecond());
 
         return taskEntity;
+    }
+
+    private void validateTask(Task task) {
+
+        if(task == null) {
+            throw new NullPointerException("task不能为空");
+        }
+
+//        标题不能为null, 也不能为空串
+        //        任务不能没有所属时间
+        if(task.getTitle() == null || "".equals(task.getTitle()) || task.getTime() == null) {
+            throw new IllegalArgumentException("task字段不合法, title为null或者空串? time字段为null?");
+        }
+
+//        设置了提醒, 但是提醒时间为null
+        if(task.isRemind() && task.getRemindTime() == null) {
+            throw new RemindTimeCanNotBeNullException("设置了提醒, 那么提醒时间不能为null");
+        }
+    }
+
+    private long getEndTime(long startTime) {
+
+        long endTime = (startTime + 24 * 60 * 60 * 1000) - 1;
+
+        return endTime;
     }
 }

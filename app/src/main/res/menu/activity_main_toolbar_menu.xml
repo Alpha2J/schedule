@@ -7,4 +7,9 @@
         android:icon="@drawable/ic_add"
         android:title="快速添加任务"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/activity_main_menu_test_item"
+        android:title="测试页面"
+        app:showAsAction="never" />
 </menu>

@@ -13,6 +13,7 @@ import cn.alpha2j.schedule.data.entity.EntityIdentifier;
 import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
 
 /**
+ * 使用GreenDao作为
  * @author alpha
  */
 public class GreenDAOGenericRepository<T extends EntityIdentifier, DAO extends AbstractDao<T, Long>> extends BaseGenericRepository<T, DAO> {

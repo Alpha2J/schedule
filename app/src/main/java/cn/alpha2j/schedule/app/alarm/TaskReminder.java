@@ -35,7 +35,7 @@ public class TaskReminder {
 
         //这里第二个参数必须不同, 这样才能为不同的任务设置不同的提醒
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MyApplication.getContext(), task.getId().intValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.getTaskAlarmDateTime().getEpochMillisecond(), pendingIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, task.getRemindTime().getEpochMillisecond(), pendingIntent);
         Log.d(TAG, "remindTask: 添加了新的任务提醒");
     }
 

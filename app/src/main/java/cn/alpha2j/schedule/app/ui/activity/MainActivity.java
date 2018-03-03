@@ -236,6 +236,9 @@ public class MainActivity extends BaseActivity
                 });
                 addTaskBottomDialog.show(getSupportFragmentManager());
                 break;
+            case R.id.activity_main_menu_test_item:
+                Intent intent = new Intent(this, TestActivity.class);
+                startActivity(intent);
             default:
         }
 

@@ -25,11 +25,11 @@ public class TaskDataReminder {
     public void remind(TaskDataProvider.TaskData taskData) {
 
 //        如果传入的taskData为空或者该taskData的task为空, 或者task根本不需要提醒, 那么就直接返回
-        if(taskData == null || taskData.getTask() == null || !taskData.getTask().isAlarm()) {
+        if(taskData == null || taskData.getTask() == null || !taskData.getTask().isRemind()) {
             return;
         }
 
-        if(shouldRemind(taskData.getTask().getTaskAlarmDateTime())) {
+        if(shouldRemind(taskData.getTask().getRemindTime())) {
             mTaskReminder.remindTask(taskData.getTask());
 //            TODO: 测试完删除
             long now = ScheduleDateTime.now().getEpochMillisecond();

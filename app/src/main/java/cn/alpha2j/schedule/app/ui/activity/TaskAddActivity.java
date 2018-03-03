@@ -198,13 +198,13 @@ public class TaskAddActivity extends BaseActivity {
                 Task task = new Task();
                 task.setTitle(mTaskTitleEditText.getText().toString());
                 task.setDone(false);
-                task.setTaskDate(mDateAndTimeWrapper.getResult());
+                task.setTime(mDateAndTimeWrapper.getResult());
                 if(mReminderWrapper.isRemind()) {
-                    task.setAlarm(true);
+                    task.setRemind(true);
                     long t = mDateAndTimeWrapper.getResult().getEpochMillisecond() - mReminderWrapper.getResult();
-                    task.setTaskAlarmDateTime(ScheduleDateTime.of(t));
+                    task.setRemindTime(ScheduleDateTime.of(t));
                 } else {
-                    task.setAlarm(false);
+                    task.setRemind(false);
                 }
 
                 task.setDescription(mDescription);
