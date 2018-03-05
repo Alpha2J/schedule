@@ -1,7 +1,7 @@
 package cn.alpha2j.schedule.app.ui.activity.adapter;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 
 /**
  * @author alpha
@@ -9,7 +9,7 @@ import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
  */
 public class SwipeableFinishedTaskRVAdapter extends SwipeableTaskRVAdapter {
 
-    public SwipeableFinishedTaskRVAdapter(DataProvider dataProvider) {
+    public SwipeableFinishedTaskRVAdapter(RVDataProvider dataProvider) {
         super(dataProvider);
     }
 

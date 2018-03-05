@@ -3,6 +3,7 @@ package cn.alpha2j.schedule.data.entity;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.NotNull;
 
 /**
  * 表示与持久化交互的TaskEntity实体
@@ -17,23 +18,23 @@ public class TaskEntity implements EntityIdentifier {
 
     @Id(autoincrement = true)
     private Long id;
+    @NotNull
     private String title;
     private String description;
-
     /**
      * 任务归属时间, 存储的是距离UTC时间1970-01-01T00:00:00 的时间毫秒数.
      */
-    private long taskDate;
+    private long time;
 
     /**
      * 是否提醒
      */
-    private boolean alarm;
+    private boolean remind;
 
     /**
      * 任务提醒时间, 存储的是距离UTC时间1970-01-01T00:00:00 的时间毫秒数.
      */
-    private long taskAlarmDateTime;
+    private long remindTime;
 
     /**
      * 表示该任务是否已完成
@@ -44,14 +45,15 @@ public class TaskEntity implements EntityIdentifier {
     public TaskEntity() {
     }
 
-    @Generated(hash = 515043977)
-    public TaskEntity(Long id, String title, String description, long taskDate, boolean alarm, long taskAlarmDateTime, boolean done) {
+    @Generated(hash = 1230521272)
+    public TaskEntity(Long id, @NotNull String title, String description, long time, boolean remind, long remindTime,
+            boolean done) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.taskDate = taskDate;
-        this.alarm = alarm;
-        this.taskAlarmDateTime = taskAlarmDateTime;
+        this.time = time;
+        this.remind = remind;
+        this.remindTime = remindTime;
         this.done = done;
     }
 
@@ -79,28 +81,28 @@ public class TaskEntity implements EntityIdentifier {
         this.description = description;
     }
 
-    public long getTaskDate() {
-        return taskDate;
+    public long getTime() {
+        return time;
     }
 
-    public void setTaskDate(long taskDate) {
-        this.taskDate = taskDate;
+    public void setTime(long time) {
+        this.time = time;
     }
 
-    public boolean isAlarm() {
-        return alarm;
+    public boolean isRemind() {
+        return remind;
     }
 
-    public void setAlarm(boolean alarm) {
-        this.alarm = alarm;
+    public void setRemind(boolean remind) {
+        this.remind = remind;
     }
 
-    public long getTaskAlarmDateTime() {
-        return taskAlarmDateTime;
+    public long getRemindTime() {
+        return remindTime;
     }
 
-    public void setTaskAlarmDateTime(long taskAlarmDateTime) {
-        this.taskAlarmDateTime = taskAlarmDateTime;
+    public void setRemindTime(long remindTime) {
+        this.remindTime = remindTime;
     }
 
     public boolean isDone() {
@@ -111,16 +113,16 @@ public class TaskEntity implements EntityIdentifier {
         this.done = done;
     }
 
-    public boolean getAlarm() {
-        return this.alarm;
+    @Override
+    public Long getIdentifier() {
+        return getId();
+    }
+
+    public boolean getRemind() {
+        return this.remind;
     }
 
     public boolean getDone() {
         return this.done;
-    }
-
-    @Override
-    public Long getIdentifier() {
-        return getId();
     }
 }

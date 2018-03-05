@@ -2,7 +2,7 @@ package cn.alpha2j.schedule.app.alarm;
 
 import android.util.Log;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 
 /**
@@ -22,7 +22,7 @@ public class TaskDataReminder {
         this.mTaskReminder = taskReminder;
     }
 
-    public void remind(TaskDataProvider.TaskData taskData) {
+    public void remind(RVTaskDataProvider.TaskData taskData) {
 
 //        如果传入的taskData为空或者该taskData的task为空, 或者task根本不需要提醒, 那么就直接返回
         if(taskData == null || taskData.getTask() == null || !taskData.getTask().isRemind()) {
@@ -37,7 +37,7 @@ public class TaskDataReminder {
         }
     }
 
-    public void cancelRemind(TaskDataProvider.TaskData taskData) {
+    public void cancelRemind(RVTaskDataProvider.TaskData taskData) {
 
 //        这里不判断是否提醒, 不管是否提醒, 都用相应的id来取消提醒, 因为如果一个任务本来已经设置了提醒,
 //        且已经添加到提醒管理器中了, 但是又取消了提醒, 那么这时候task的isAlarm可能为false了,

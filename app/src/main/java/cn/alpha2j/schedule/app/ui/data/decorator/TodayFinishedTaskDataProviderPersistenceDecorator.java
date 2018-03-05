@@ -1,19 +1,19 @@
 package cn.alpha2j.schedule.app.ui.data.decorator;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 
 /**
  * @author alpha
  */
 public class TodayFinishedTaskDataProviderPersistenceDecorator extends AbstractTaskDataProviderPersistenceDecorator {
 
-    public TodayFinishedTaskDataProviderPersistenceDecorator(TaskDataProvider taskDataProvider) {
+    public TodayFinishedTaskDataProviderPersistenceDecorator(RVTaskDataProvider taskDataProvider) {
         super(taskDataProvider);
     }
 
     @Override
     public String getTaskDataProviderPersistenceDecoratorType() {
 
-        return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
+        return RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
     }
 }

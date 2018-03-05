@@ -25,7 +25,7 @@ import cn.alpha2j.schedule.app.ui.data.observer.AbstractTodayTaskDataProviderObs
 import cn.alpha2j.schedule.app.ui.data.observer.DataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayFinishedTaskDataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayUnfinishedTaskDataProviderObserver;
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 
 /**
@@ -48,8 +48,8 @@ public class TaskTodayFragment extends BaseFragment
     private DataProviderObserver mUnfinishedTaskObserver;
     private DataProviderObserver mFinishedTaskObserver;
 
-    private TaskDataProvider mTodayUnfinishedTaskDataProvider;
-    private TaskDataProvider mTodayFinishedTaskDataProvider;
+    private RVTaskDataProvider mTodayUnfinishedTaskDataProvider;
+    private RVTaskDataProvider mTodayFinishedTaskDataProvider;
 
     private TaskDataReminder mTaskDataReminder;
 
@@ -195,14 +195,14 @@ public class TaskTodayFragment extends BaseFragment
         TaskDataReminder taskDataReminder = new TaskDataReminder();
         int count = mTodayUnfinishedTaskDataProvider.getCount();
         for (int i = 0; i < count; i++) {
-            TaskDataProvider.TaskData taskData = mTodayUnfinishedTaskDataProvider.getItem(i);
+            RVTaskDataProvider.TaskData taskData = mTodayUnfinishedTaskDataProvider.getItem(i);
             taskDataReminder.remind(taskData);
         }
     }
 
     public void notifyNewTaskAdd(Task task) {
 //        需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
-        mTodayUnfinishedTaskDataProvider.addItem(new TaskDataProvider.TaskData(task, false));
+        mTodayUnfinishedTaskDataProvider.addItem(new RVTaskDataProvider.TaskData(task, false));
         mUnfinishedTaskObserver.notifyDataAdd();
     }
 

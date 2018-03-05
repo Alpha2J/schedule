@@ -7,7 +7,7 @@ import java.util.List;
 
 import cn.alpha2j.schedule.app.ui.data.decorator.TodayFinishedTaskDataProviderPersistenceDecorator;
 import cn.alpha2j.schedule.app.ui.data.decorator.TodayUnfinishedTaskDataProviderPersistenceDecorator;
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
@@ -20,21 +20,21 @@ public abstract class AbstractTaskDataProviderGenerator implements DataProviderG
 
     @NonNull
     @Override
-    public TaskDataProvider generate() {
+    public RVTaskDataProvider generate() {
 
 //        实际返回的使他们的装饰器类型
-        TaskDataProvider taskDataProvider = null;
+        RVTaskDataProvider taskDataProvider = null;
 
         TaskService taskService = TaskServiceImpl.getInstance();
         switch (getTaskDataProviderType()) {
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
                 List<Task> unfinishedTasks = taskService.findAllUnfinishedForToday();
-                taskDataProvider = new TodayUnfinishedTaskDataProviderPersistenceDecorator(new TaskDataProvider(convert(unfinishedTasks)));
+                taskDataProvider = new TodayUnfinishedTaskDataProviderPersistenceDecorator(new RVTaskDataProvider(convert(unfinishedTasks)));
 
                 break;
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 List<Task> finishedTasks = taskService.findAllFinishedForToday();
-                taskDataProvider = new TodayFinishedTaskDataProviderPersistenceDecorator(new TaskDataProvider(convert(finishedTasks)));
+                taskDataProvider = new TodayFinishedTaskDataProviderPersistenceDecorator(new RVTaskDataProvider(convert(finishedTasks)));
 
                 break;
             default:
@@ -54,11 +54,11 @@ public abstract class AbstractTaskDataProviderGenerator implements DataProviderG
      */
     public abstract String getTaskDataProviderType();
 
-    private List<TaskDataProvider.TaskData> convert(List<Task> tasks) {
+    private List<RVTaskDataProvider.TaskData> convert(List<Task> tasks) {
 
-        List<TaskDataProvider.TaskData> taskDatas = new ArrayList<>();
+        List<RVTaskDataProvider.TaskData> taskDatas = new ArrayList<>();
         for (Task task : tasks){
-            TaskDataProvider.TaskData taskData = new TaskDataProvider.TaskData(task, false);
+            RVTaskDataProvider.TaskData taskData = new RVTaskDataProvider.TaskData(task, false);
             taskDatas.add(taskData);
         }
 

@@ -21,7 +21,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 
 /**
  * 可左右滑动的RecyclerView Adapter
@@ -30,7 +30,7 @@ import cn.alpha2j.schedule.app.ui.data.provider.DataProvider;
 public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder>
         implements SwipeableItemAdapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> {
 
-    private DataProvider mDataProvider;
+    private RVDataProvider mDataProvider;
 
     /**
      * 在item上完成了各种事件后会回调该接口中的相应方法
@@ -45,7 +45,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
      */
     private View.OnClickListener mOnDeleteButtonClickListener;
 
-    public SwipeableTaskRVAdapter(DataProvider dataProvider) {
+    public SwipeableTaskRVAdapter(RVDataProvider dataProvider) {
 
         this.mDataProvider = dataProvider;
 
@@ -111,11 +111,11 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         void onItemViewClicked(View view, int target);
     }
 
-    public DataProvider getDataProvider() {
+    public RVDataProvider getDataProvider() {
         return mDataProvider;
     }
 
-    public void setDataProvider(DataProvider dataProvider) {
+    public void setDataProvider(RVDataProvider dataProvider) {
         mDataProvider = dataProvider;
     }
 
@@ -161,7 +161,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
     @Override
     public void onBindViewHolder(SwipeableTaskItemViewHolder holder, int position) {
 
-        final DataProvider.Data item = mDataProvider.getItem(position);
+        final RVDataProvider.Data item = mDataProvider.getItem(position);
 
         holder.mTaskTitle.setText(item.getText());
 
@@ -305,7 +305,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
 
             super.onPerformAction();
 
-            DataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            RVDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(!item.isPinned()) {
                 item.setPinned(true);
                 mAdapter.notifyItemChanged(mPosition);
@@ -385,7 +385,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         protected void onPerformAction() {
             super.onPerformAction();
 
-            DataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            RVDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
             if(item.isPinned()) {
                 item.setPinned(false);
                 mAdapter.notifyItemChanged(mPosition);

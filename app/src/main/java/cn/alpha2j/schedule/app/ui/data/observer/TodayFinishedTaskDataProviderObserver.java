@@ -1,6 +1,6 @@
 package cn.alpha2j.schedule.app.ui.data.observer;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 
 /**
  * @author alpha
@@ -13,6 +13,6 @@ public class TodayFinishedTaskDataProviderObserver extends AbstractTodayTaskData
 
     @Override
     public String getTodayTaskDataProviderObserverType() {
-        return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
+        return RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
     }
 }

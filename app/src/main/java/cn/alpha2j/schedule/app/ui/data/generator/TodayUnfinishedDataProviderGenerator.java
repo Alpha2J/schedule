@@ -1,6 +1,6 @@
 package cn.alpha2j.schedule.app.ui.data.generator;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 
 /**
  * @author alpha
@@ -10,6 +10,6 @@ public class TodayUnfinishedDataProviderGenerator extends AbstractTaskDataProvid
     @Override
     public String getTaskDataProviderType() {
 
-        return TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED;
+        return RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED;
     }
 }

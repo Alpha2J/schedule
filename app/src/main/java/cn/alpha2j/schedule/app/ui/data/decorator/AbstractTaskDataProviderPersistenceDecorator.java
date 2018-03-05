@@ -1,6 +1,6 @@
 package cn.alpha2j.schedule.app.ui.data.decorator;
 
-import cn.alpha2j.schedule.app.ui.data.provider.TaskDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
@@ -10,11 +10,11 @@ import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
  *
  * @author alpha
  */
-public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskDataProvider {
+public abstract class AbstractTaskDataProviderPersistenceDecorator extends RVTaskDataProvider {
 
-    protected TaskDataProvider mTaskDataProvider;
+    protected RVTaskDataProvider mTaskDataProvider;
 
-    public AbstractTaskDataProviderPersistenceDecorator(TaskDataProvider taskDataProvider) {
+    public AbstractTaskDataProviderPersistenceDecorator(RVTaskDataProvider taskDataProvider) {
 
         this.mTaskDataProvider = taskDataProvider;
     }
@@ -50,7 +50,7 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
     }
 
     @Override
-    public TaskDataProvider.TaskData getItem(int index) {
+    public RVTaskDataProvider.TaskData getItem(int index) {
 
         return mTaskDataProvider.getItem(index);
     }
@@ -72,11 +72,11 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
 //        同时还要更新前台的数据
         Task task = lastRemovedItem.getTask();
         switch (getTaskDataProviderPersistenceDecoratorType()) {
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
                 task.setDone(true);
                 taskService.setDone(task);
                 break;
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 task.setDone(false);
                 taskService.setUnDone(task);
                 break;
@@ -100,11 +100,11 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
 //        如果要取消上次的移除操作, 那么还要判断DataProvider的类型, 如果是为完成, 那么还要讲任务设置回已完成
         Task task = mTaskDataProvider.getLastRemoval().getTask();
         switch (getTaskDataProviderPersistenceDecoratorType()) {
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 task.setDone(false);
                 taskService.setUnDone(task);
                 break;
-            case TaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 task.setDone(true);
                 taskService.setDone(task);
                 break;
@@ -115,7 +115,7 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends TaskD
     }
 
     @Override
-    public TaskDataProvider.TaskData getLastRemoval() {
+    public RVTaskDataProvider.TaskData getLastRemoval() {
 
         return mTaskDataProvider.getLastRemoval();
     }
