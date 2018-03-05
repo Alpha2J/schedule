@@ -6,51 +6,50 @@ import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
 
 /**
+ * 全称: AbstractRecyclerViewTaskDataProviderSqlitePersistenceDecorator
  * 数据在操作的时候需要保证前端和数据库的数据同步, 无论增加或删除等操作, Persistence Decorator是对数据库进行操作的
  *
  * @author alpha
  */
-public abstract class AbstractTaskDataProviderPersistenceDecorator extends RVTaskDataProvider {
+public abstract class AbstractRVTDPSqlitePersistenceDecorator extends RVTaskDataProvider {
 
     protected RVTaskDataProvider mTaskDataProvider;
+    protected TaskService mTaskService;
 
-    public AbstractTaskDataProviderPersistenceDecorator(RVTaskDataProvider taskDataProvider) {
-
-        this.mTaskDataProvider = taskDataProvider;
+    public AbstractRVTDPSqlitePersistenceDecorator(RVTaskDataProvider taskDataProvider) {
+        mTaskDataProvider = taskDataProvider;
+        mTaskService = TaskServiceImpl.getInstance();
     }
 
     @Override
     public int getCount() {
-
         return mTaskDataProvider.getCount();
     }
 
     @Override
-    public void addItem(Data data) {
+    public void addItem(RVAbstractData data) {
+        Task task = ((RVTaskData)data).getTask();
 
-        TaskService taskService = TaskServiceImpl.getInstance();
-        Task task = ((TaskData)data).getTask();
-
-        switch (getTaskDataProviderPersistenceDecoratorType()) {
+        switch (getRVTaskDataProviderType()) {
 //            如果是添加到未完成的Provider里面, 那么需要将task设置为未完成
-            case TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 task.setDone(false);
                 break;
-            case TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 task.setDone(true);
                 break;
             default:
         }
 
 //        执行数据库操作后要将id设置回前端, 如果这个task是新增的, 那么id还是以前的, 如果是更新的, 那么id是以前的.
-        long id = taskService.addOrUpdateTask(task);
+        long id = mTaskService.addOrUpdateTask(task);
         task.setId(id);
 
         mTaskDataProvider.addItem(data);
     }
 
     @Override
-    public RVTaskDataProvider.TaskData getItem(int index) {
+    public RVTaskData getItem(int index) {
 
         return mTaskDataProvider.getItem(index);
     }
@@ -61,24 +60,21 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends RVTas
      * @param position
      */
     @Override
-    public TaskData removeItem(int position) {
-
-        TaskService taskService = TaskServiceImpl.getInstance();
-
-        TaskData lastRemovedItem = mTaskDataProvider.removeItem(position);
+    public RVTaskData removeItem(int position) {
+        RVTaskData lastRemovedItem = mTaskDataProvider.removeItem(position);
 
 //        将数据从未完成删除或者从已经完成删除, 只需要将他们从自己的TaskDataProvider中删除, 然后更新数据
 //        将响应数据更新为已完成或者未完成
 //        同时还要更新前台的数据
         Task task = lastRemovedItem.getTask();
-        switch (getTaskDataProviderPersistenceDecoratorType()) {
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
+        switch (getRVTaskDataProviderType()) {
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED:
                 task.setDone(true);
-                taskService.setDone(task);
+                mTaskService.setDone(task);
                 break;
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 task.setDone(false);
-                taskService.setUnDone(task);
+                mTaskService.setUnDone(task);
                 break;
             default:
         }
@@ -94,19 +90,21 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends RVTas
 
     @Override
     public int undoLastRemoval() {
-
-        TaskService taskService = TaskServiceImpl.getInstance();
-
 //        如果要取消上次的移除操作, 那么还要判断DataProvider的类型, 如果是为完成, 那么还要讲任务设置回已完成
-        Task task = mTaskDataProvider.getLastRemoval().getTask();
-        switch (getTaskDataProviderPersistenceDecoratorType()) {
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+//        如果没有上次删除项, 直接返回-1
+        RVTaskData rvTaskData = mTaskDataProvider.getLastRemoval();
+        if(rvTaskData == null) {
+            return -1;
+        }
+        Task task = rvTaskData.getTask();
+        switch (getRVTaskDataProviderType()) {
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 task.setDone(false);
-                taskService.setUnDone(task);
+                mTaskService.setUnDone(task);
                 break;
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 task.setDone(true);
-                taskService.setDone(task);
+                mTaskService.setDone(task);
                 break;
             default:
         }
@@ -115,10 +113,34 @@ public abstract class AbstractTaskDataProviderPersistenceDecorator extends RVTas
     }
 
     @Override
-    public RVTaskDataProvider.TaskData getLastRemoval() {
+    public RVTaskData getLastRemoval() {
 
         return mTaskDataProvider.getLastRemoval();
     }
 
-    public abstract String getTaskDataProviderPersistenceDecoratorType();
+    /**
+     * 从provider删除后还要从sqlite数据库删除
+     * @param position
+     * @return
+     */
+    @Override
+    public RVTaskData deleteItem(int position) {
+
+        RVTaskData taskData = mTaskDataProvider.deleteItem(position);
+
+        mTaskService.delete(taskData.getTask());
+
+        return taskData;
+    }
+
+    @Override
+    public RVTaskData getLastDeletion() {
+        return mTaskDataProvider.getLastDeletion();
+    }
+
+    /**
+     * 获取Decorator的真实类型
+     * @return 代表真实类型的string
+     */
+    public abstract String getRVTaskDataProviderType();
 }

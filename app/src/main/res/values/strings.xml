@@ -24,4 +24,7 @@
     <string name="activity_toolbar_title_task_add">添加任务</string>
     <string name="title_activity_settings">设置</string>
 
+    <!--TaskToday Fragment-->
+    <string name="view_holder_item_time">今天 %1$d:%2$d</string>
+    <string name="view_holder_item_alarm_time">%1$d:%2$d</string>
 </resources>

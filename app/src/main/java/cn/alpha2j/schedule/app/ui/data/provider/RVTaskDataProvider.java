@@ -14,11 +14,25 @@ public class RVTaskDataProvider implements RVDataProvider {
     private List<RVTaskData> mDataSet;
     private RVTaskData mLastRemovedData;
     private int mLastRemovedPosition;
+    private RVTaskData mLastDeletedData;
 
     public RVTaskDataProvider() {
         mDataSet = new ArrayList<>();
         mLastRemovedData = null;
         mLastRemovedPosition = -1;
+        mLastDeletedData = null;
+    }
+
+    public RVTaskDataProvider(List<RVTaskData> dataSet) {
+
+        if (dataSet == null) {
+            throw new NullPointerException("dataset不能为空");
+        }
+
+        mDataSet = dataSet;
+        mLastRemovedData = null;
+        mLastRemovedPosition = -1;
+        mLastDeletedData = null;
     }
 
     @Override
@@ -97,6 +111,25 @@ public class RVTaskDataProvider implements RVDataProvider {
         }
     }
 
+    /**
+     * deleteItem方法和remove方法不同, remove只是将它从当前provider移除, 然后可能添加到另一个provider中
+     * 但是deleteItem方法不仅会从当前provider中移除, 还会从持久层中删除
+     * @param position
+     * @return
+     */
+    public RVTaskData deleteItem(int position) {
+        mLastDeletedData = mDataSet.remove(position);
+
+//        删除一个item后, 如果下次需要undoremoval, 那么只能添加到尾部
+        mLastRemovedPosition = -1;
+
+        return mLastDeletedData;
+    }
+
+    public RVTaskData getLastDeletion() {
+        return mLastDeletedData;
+    }
+
     public static final class RVTaskData extends RVAbstractData {
 
         private Task mTask;
@@ -129,30 +162,10 @@ public class RVTaskDataProvider implements RVDataProvider {
         }
     }
 
-//    public interface TaskDataProviderType {
-//
-//        String TYPE_TODAY_TASK_UNFINISHED = "TYPE_TODAY_UNFINISHED_TASK_DATA_PROVIDER";
-//
-//        String TYPE_TODAY_TASK_FINISHED = "TYPE_TODAY_FINISHED_TASK_DATA_PROVIDER";
-//    }
-//
-//    /**
-//     * 标识为过期,
-//     * 需要放到Bundle里面进行传输, 实现Serializable接口
-//     */
-//    @Deprecated
-//    public interface TaskTodayDataProviderGetter extends Serializable {
-//
-//        /**
-//         * 获取含有今日已完成数据的TaskDataProvider
-//         * @return 表示今日已完成的TaskDataProvider
-//         */
-//        TaskRVDataProvider getTodayFinishedTaskDataProvider();
-//
-//        /**
-//         * 获取含有今日未完成数据的TaskDataProvider
-//         * @return 表示今日未完成的TaskDataProvider
-//         */
-//        TaskRVDataProvider getTodayUnfinishedTaskDataProvider();
-//    }
+    public interface RVTaskDataProviderType {
+
+        String TYPE_TODAY_TASK_UNFINISHED = "TYPE_TODAY_UNFINISHED_TASK_DATA_PROVIDER";
+
+        String TYPE_TODAY_TASK_FINISHED = "TYPE_TODAY_FINISHED_TASK_DATA_PROVIDER";
+    }
 }

@@ -1,5 +1,6 @@
 package cn.alpha2j.schedule.app.ui.activity.adapter;
 
+import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +20,15 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionMoveToSwipedDirection;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
+import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
+import cn.alpha2j.schedule.time.ScheduleDateTime;
+import cn.alpha2j.schedule.time.builder.ScheduleDateTimeBuilder;
+import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 
 /**
  * 可左右滑动的RecyclerView Adapter
@@ -30,7 +37,9 @@ import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder>
         implements SwipeableItemAdapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> {
 
-    private RVDataProvider mDataProvider;
+    private Context mContext;
+
+    private RVTaskDataProvider mRVTaskDataProvider;
 
     /**
      * 在item上完成了各种事件后会回调该接口中的相应方法
@@ -45,9 +54,10 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
      */
     private View.OnClickListener mOnDeleteButtonClickListener;
 
-    public SwipeableTaskRVAdapter(RVDataProvider dataProvider) {
+    public SwipeableTaskRVAdapter(Context context, RVTaskDataProvider rvTaskDataProvider) {
+        mContext = context;
 
-        this.mDataProvider = dataProvider;
+        mRVTaskDataProvider = rvTaskDataProvider;
 
         mOnItemClickListener = view -> {
             onItemClick(view);
@@ -76,8 +86,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
 
     @Override
     public long getItemId(int position) {
-
-        return mDataProvider.getItem(position).getId();
+        return mRVTaskDataProvider.getItem(position).getId();
     }
 
     /**
@@ -111,14 +120,6 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         void onItemViewClicked(View view, int target);
     }
 
-    public RVDataProvider getDataProvider() {
-        return mDataProvider;
-    }
-
-    public void setDataProvider(RVDataProvider dataProvider) {
-        mDataProvider = dataProvider;
-    }
-
     public EventListener getEventListener() {
         return mEventListener;
     }
@@ -143,6 +144,14 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         this.mOnDeleteButtonClickListener = onDeleteButtonClickListener;
     }
 
+    public RVTaskDataProvider getRVTaskDataProvider() {
+        return mRVTaskDataProvider;
+    }
+
+    public void setRVTaskDataProvider(RVTaskDataProvider RVTaskDataProvider) {
+        mRVTaskDataProvider = RVTaskDataProvider;
+    }
+
     @Override
     public SwipeableTaskItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -161,10 +170,18 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
     @Override
     public void onBindViewHolder(SwipeableTaskItemViewHolder holder, int position) {
 
-        final RVDataProvider.Data item = mDataProvider.getItem(position);
+        final RVTaskDataProvider.RVTaskData item = mRVTaskDataProvider.getItem(position);
 
-        holder.mTaskTitle.setText(item.getText());
+        holder.mTitle.setText(item.getText());
+        holder.mTime.setText(mContext.getResources().getString(R.string.view_holder_item_time, item.getTask().getTime().getHourOfDay(), item.getTask().getTime().getMinuteOfHour()));
 
+        if(item.getTask().isRemind()) {
+            holder.mAlarmIcon.setImageResource(R.drawable.ic_alarm);
+            holder.mAlarmTime.setText(mContext.getResources().getString(R.string.view_holder_item_alarm_time, item.getTask().getRemindTime().getHourOfDay(), item.getTask().getRemindTime().getMinuteOfHour()));
+        } else {
+            holder.mAlarmIcon.setImageResource(R.drawable.ic_alarm_off);
+            holder.mAlarmTime.setText("");
+        }
         final int swipeState = holder.getSwipeStateFlags();
 
         if ((swipeState & Swipeable.STATE_FLAG_IS_UPDATED) != 0) {
@@ -193,7 +210,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
     @Override
     public int getItemCount() {
 
-        return mDataProvider.getCount();
+        return mRVTaskDataProvider.getCount();
     }
 
     @Override
@@ -221,7 +238,6 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
                 break;
             case Swipeable.DRAWABLE_SWIPE_RIGHT_BACKGROUND :
                 holder.mBehindView.setVisibility(View.GONE);
-//                holder.itemView.setBackgroundResource(R.drawable.recycler_view_item_swipe_to_finish_bg);
                 holder.itemView.setBackgroundResource(getItemSwipeRightBackground());
                 break;
             default:
@@ -235,7 +251,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
             case Swipeable.RESULT_SWIPED_LEFT :
                 return new SwipeLeftResultAction(this, position);
             case Swipeable.RESULT_SWIPED_RIGHT :
-                if(mDataProvider.getItem(position).isPinned()) {
+                if(mRVTaskDataProvider.getItem(position).isPinned()) {
                     return new UnPinResultAction(this, position);
                 } else {
                     return new SwipeRemoveActionResult(this, position);
@@ -260,8 +276,8 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         private Button mDeleteButton;
         private LinearLayout mContainer;
         private RelativeLayout mRoundShape;
-        private TextView mTaskTitle;
-        private TextView mCreateTime;
+        private TextView mTitle;
+        private TextView mTime;
         private ImageView mAlarmIcon;
         private TextView mAlarmTime;
 
@@ -272,8 +288,8 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
             mDeleteButton = itemView.findViewById(R.id.task_item_delete_button);
             mContainer = itemView.findViewById(R.id.container);
             mRoundShape = itemView.findViewById(R.id.round_shape);
-            mTaskTitle = itemView.findViewById(R.id.task_item_title);
-            mCreateTime = itemView.findViewById(R.id.task_item_create_time);
+            mTitle = itemView.findViewById(R.id.task_item_title);
+            mTime = itemView.findViewById(R.id.task_item_time);
             mAlarmIcon = itemView.findViewById(R.id.task_item_alarm_icon);
             mAlarmTime = itemView.findViewById(R.id.task_item_alarm_time);
         }
@@ -305,7 +321,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
 
             super.onPerformAction();
 
-            RVDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            RVTaskDataProvider.RVTaskData item = mAdapter.mRVTaskDataProvider.getItem(mPosition);
             if(!item.isPinned()) {
                 item.setPinned(true);
                 mAdapter.notifyItemChanged(mPosition);
@@ -347,7 +363,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         protected void onPerformAction() {
             super.onPerformAction();
 
-            mAdapter.mDataProvider.removeItem(mPosition);
+            mAdapter.mRVTaskDataProvider.removeItem(mPosition);
             mAdapter.notifyItemRemoved(mPosition);
         }
 
@@ -385,7 +401,7 @@ public abstract class SwipeableTaskRVAdapter extends RecyclerView.Adapter<Swipea
         protected void onPerformAction() {
             super.onPerformAction();
 
-            RVDataProvider.Data item = mAdapter.mDataProvider.getItem(mPosition);
+            RVTaskDataProvider.RVTaskData item = mAdapter.mRVTaskDataProvider.getItem(mPosition);
             if(item.isPinned()) {
                 item.setPinned(false);
                 mAdapter.notifyItemChanged(mPosition);

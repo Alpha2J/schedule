@@ -2,7 +2,7 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import android.support.v7.widget.RecyclerView;
 
-import cn.alpha2j.schedule.app.alarm.TaskDataReminder;
+import cn.alpha2j.schedule.app.alarm.TaskReminderWrapper;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
@@ -15,16 +15,16 @@ import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
  * 今日任务的RecyclerView的Adapter的观察者, 如果adapter里面的数据发生改变, 那么这里做出相应的动作
  * @author alpha
  */
-public abstract class AbstractTodayTaskDataProviderObserver implements DataProviderObserver {
+public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserver {
 
     protected TaskTodayRVAdapterGetter mTaskTodayRVAdapterGetter;
     protected TaskService mTaskService;
-    protected TaskDataReminder mTaskDataReminder;
+    protected TaskReminderWrapper mTaskDataReminder;
 
-    public AbstractTodayTaskDataProviderObserver(TaskTodayRVAdapterGetter taskTodayRVAdapterGetter) {
-        this.mTaskTodayRVAdapterGetter = taskTodayRVAdapterGetter;
-        this.mTaskService = TaskServiceImpl.getInstance();
-        mTaskDataReminder = new TaskDataReminder();
+    public AbstractTodayRVTDPObserver(TaskTodayRVAdapterGetter taskTodayRVAdapterGetter) {
+        mTaskTodayRVAdapterGetter = taskTodayRVAdapterGetter;
+        mTaskService = TaskServiceImpl.getInstance();
+        mTaskDataReminder = new TaskReminderWrapper();
     }
 
     /**
@@ -39,12 +39,12 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
 //        当数据增加的时候, 这个监听器方法要做的事情有:
 //        用mTaskTodayRVAdapterGetter获取相应的adapter, 然后通知对应的adapter, 告诉他数据增加了, 刷新前端显示
         switch (getTodayTaskDataProviderObserverType()) {
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 adapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
                 adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
                 break;
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED:
                 adapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
                 adapterSet = true;
                 adapter.notifyItemInserted(adapter.getItemCount() - 1);
@@ -55,9 +55,9 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
 //        刷新完后台显示后设置通知提醒
 //        如果是未完成的adapter, 那么说明此时item是添加到未完成的, 进行通知
 //        将最后插入那个进行通知
-        if (getTodayTaskDataProviderObserverType().equals(RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED) && adapterSet) {
-            int count = adapter.getDataProvider().getCount();
-            RVTaskDataProvider.TaskData taskData = (RVTaskDataProvider.TaskData) adapter.getDataProvider().getItem(count - 1);
+        if (getTodayTaskDataProviderObserverType().equals(RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED) && adapterSet) {
+            int count = adapter.getRVTaskDataProvider().getCount();
+            RVTaskDataProvider.RVTaskData taskData = adapter.getRVTaskDataProvider().getItem(count - 1);
             mTaskDataReminder.remind(taskData);
         }
     }
@@ -74,21 +74,21 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
         SwipeableTaskRVAdapter finishedAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayFinishedRVAdapter();
 
         switch (getTodayTaskDataProviderObserverType()) {
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
-                RVDataProvider.Data finishedData = unfinishedAdapter.getDataProvider().getLastRemoval();
-                finishedAdapter.getDataProvider().addItem(finishedData);
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+                RVTaskDataProvider.RVTaskData finishedData = unfinishedAdapter.getRVTaskDataProvider().getLastRemoval();
+                finishedAdapter.getRVTaskDataProvider().addItem(finishedData);
                 finishedAdapter.notifyItemInserted(finishedAdapter.getItemCount() - 1);
 
 //                进行通知器通知, 如果是未完成的adapter里面移除的, 那么需要判断是否需要取消通知
-                mTaskDataReminder.cancelRemind((RVTaskDataProvider.TaskData) finishedData);
+                mTaskDataReminder.cancelRemind(finishedData);
                 break;
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
-                RVDataProvider.Data unfinishedData = finishedAdapter.getDataProvider().getLastRemoval();
-                unfinishedAdapter.getDataProvider().addItem(unfinishedData);
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+                RVTaskDataProvider.RVTaskData unfinishedData = finishedAdapter.getRVTaskDataProvider().getLastRemoval();
+                unfinishedAdapter.getRVTaskDataProvider().addItem(unfinishedData);
                 unfinishedAdapter.notifyItemInserted(unfinishedAdapter.getItemCount() - 1);
 
 //                如果是已完成的adapter里面移除的, 那么需要再次判断是否需要进行通知
-                mTaskDataReminder.remind((RVTaskDataProvider.TaskData) unfinishedData);
+                mTaskDataReminder.remind(unfinishedData);
                 break;
             default:
         }
@@ -104,38 +104,65 @@ public abstract class AbstractTodayTaskDataProviderObserver implements DataProvi
         int lastInsertedPosition;
 
         switch (getTodayTaskDataProviderObserverType()) {
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
-                lastInsertedPosition = unfinishedAdapter.getDataProvider().undoLastRemoval();
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+                lastInsertedPosition = unfinishedAdapter.getRVTaskDataProvider().undoLastRemoval();
                 unfinishedAdapter.notifyItemInserted(lastInsertedPosition);
 
                 //删除上次插入已完成的数据
-                RVDataProvider.Data lastInsertedFinishedData = finishedAdapter.getDataProvider().removeItem(finishedAdapter.getDataProvider().getCount() - 1);
-                finishedAdapter.notifyItemRemoved(finishedAdapter.getDataProvider().getCount());
+                RVTaskDataProvider.RVTaskData lastInsertedFinishedData = finishedAdapter.getRVTaskDataProvider().removeItem(finishedAdapter.getRVTaskDataProvider().getCount() - 1);
+                finishedAdapter.notifyItemRemoved(finishedAdapter.getRVTaskDataProvider().getCount());
 
 //                同理通知处理
-                mTaskDataReminder.remind((RVTaskDataProvider.TaskData) lastInsertedFinishedData);
+                mTaskDataReminder.remind(lastInsertedFinishedData);
                 break;
-            case RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
-                lastInsertedPosition = finishedAdapter.getDataProvider().undoLastRemoval();
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
+                lastInsertedPosition = finishedAdapter.getRVTaskDataProvider().undoLastRemoval();
                 finishedAdapter.notifyItemInserted(lastInsertedPosition);
 
                 //删除上次插入的为完成数据
-                RVDataProvider.Data lastInsertedUnfinishedData = unfinishedAdapter.getDataProvider().removeItem(unfinishedAdapter.getDataProvider().getCount() - 1);
-                unfinishedAdapter.notifyItemRemoved(unfinishedAdapter.getDataProvider().getCount());
+                RVTaskDataProvider.RVTaskData lastInsertedUnfinishedData = unfinishedAdapter.getRVTaskDataProvider().removeItem(unfinishedAdapter.getRVTaskDataProvider().getCount() - 1);
+                unfinishedAdapter.notifyItemRemoved(unfinishedAdapter.getRVTaskDataProvider().getCount());
 
 //                通知处理
-                mTaskDataReminder.cancelRemind((RVTaskDataProvider.TaskData) lastInsertedUnfinishedData);
+                mTaskDataReminder.cancelRemind(lastInsertedUnfinishedData);
                 break;
             default:
         }
     }
 
+    @Override
+    public void notifyDataDelete() {
+        switch (getTodayTaskDataProviderObserverType()) {
+//            如果是未完成的删除, 那么需要取消提醒(已完成的不用取消, 因为已完成的没有再设置提醒)
+            case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
+                SwipeableTaskRVAdapter swipeableTaskRVAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
+                mTaskDataReminder.cancelRemind(swipeableTaskRVAdapter.getRVTaskDataProvider().getLastDeletion());
+                break;
+            default:
+        }
+    }
+
+    /**
+     * 获取观察者类型
+     * @return 字符串表示的类型
+     */
     public abstract String getTodayTaskDataProviderObserverType();
 
+    /**
+     * 能获取今日RecyclerView 的Adapter的接口
+     */
     public interface TaskTodayRVAdapterGetter {
 
+        /**
+         * 已经完成的adapter
+         * @return ..
+         */
         RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayFinishedRVAdapter();
 
+        /**
+         * 未完成的adapter
+         * @return 大佬 不要染色了啊, 一个一个写好无聊的
+         */
         RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> getTodayUnfinishedRVAdapter();
     }
 }

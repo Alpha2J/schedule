@@ -1,11 +1,9 @@
 package cn.alpha2j.schedule.app.ui.data.observer;
 
-import java.io.Serializable;
-
 /**
  * @author alpha
  */
-public interface DataProviderObserver extends Serializable {
+public interface RVDataProviderObserver {
 
     /**
      * 当DataProvider新增完数据后执行
@@ -21,4 +19,9 @@ public interface DataProviderObserver extends Serializable {
      * 取消上次的删除操作
      */
     void notifyUndoLastDataRemove();
+
+    /**
+     * 删除数据
+     */
+    void notifyDataDelete();
 }

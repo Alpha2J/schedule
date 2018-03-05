@@ -10,6 +10,6 @@ public class TodayFinishedDataProviderGenerator extends AbstractTaskDataProvider
     @Override
     public String getTaskDataProviderType() {
 
-        return RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
+        return RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
     }
 }

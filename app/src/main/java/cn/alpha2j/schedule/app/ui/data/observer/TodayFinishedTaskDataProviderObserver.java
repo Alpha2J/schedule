@@ -5,7 +5,7 @@ import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 /**
  * @author alpha
  */
-public class TodayFinishedTaskDataProviderObserver extends AbstractTodayTaskDataProviderObserver {
+public class TodayFinishedTaskDataProviderObserver extends AbstractTodayRVTDPObserver {
 
     public TodayFinishedTaskDataProviderObserver(TaskTodayRVAdapterGetter taskTodayRVAdapterGetter) {
         super(taskTodayRVAdapterGetter);
@@ -13,6 +13,6 @@ public class TodayFinishedTaskDataProviderObserver extends AbstractTodayTaskData
 
     @Override
     public String getTodayTaskDataProviderObserverType() {
-        return RVTaskDataProvider.TaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
+        return RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED;
     }
 }

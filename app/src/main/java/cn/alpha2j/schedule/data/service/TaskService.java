@@ -23,6 +23,12 @@ public interface TaskService {
     long addTask(Task task);
 
     /**
+     * 删除一个实体
+     * @param task 需要删除的实体
+     */
+    void delete(Task task);
+
+    /**
      * 增加一个Task或者更新该Task
      *
      * @param task 不能为null

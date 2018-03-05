@@ -52,6 +52,12 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(convertToTaskEntity(task));
     }
 
+    @Override
+    public void delete(Task task) {
+
+        taskRepository.delete(convertToTaskEntity(task));
+    }
+
     /**
      * 新增或者更新一个task, 如果设置了id, 且该id的数据存在, 那么更新该条数据.
      * 如果该id的数据不存在, 那么会插入一条该id的数据.
@@ -210,6 +216,7 @@ public class TaskServiceImpl implements TaskService {
     private TaskEntity convertToTaskEntity(Task task) {
 
         TaskEntity taskEntity = new TaskEntity();
+        taskEntity.setId(task.getId());
         taskEntity.setTitle(task.getTitle());
         taskEntity.setDescription(task.getDescription());
         taskEntity.setDone(task.isDone());
@@ -255,8 +262,6 @@ public class TaskServiceImpl implements TaskService {
 
     private long getEndTime(long startTime) {
 
-        long endTime = (startTime + 24 * 60 * 60 * 1000) - 1;
-
-        return endTime;
+        return (startTime + 24 * 60 * 60 * 1000) - 1;
     }
 }

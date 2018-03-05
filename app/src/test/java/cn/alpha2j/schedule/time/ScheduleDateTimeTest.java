@@ -32,4 +32,11 @@ public class ScheduleDateTimeTest {
         ScheduleDateTime scheduleDateTime = DefaultScheduleDateBuilder.now().toDate(2017, 2, 5).getResult();
         System.out.println("这个月的天数是: " + scheduleDateTime.getMonthDayNumber());
     }
+
+    @Test
+    public void testDayMinute() {
+        ScheduleDateTime scheduleDateTime = ScheduleDateTime.of(1520260139569L);
+        System.out.println(scheduleDateTime.getHourOfDay());
+        System.out.println(scheduleDateTime.getMinuteOfHour());
+    }
 }

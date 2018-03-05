@@ -8,21 +8,21 @@ import cn.alpha2j.schedule.time.ScheduleDateTime;
 /**
  * @author alpha
  */
-public class TaskDataReminder {
+public class TaskReminderWrapper {
 
     private static final String TAG = "TaskDataReminder";
 
     private TaskReminder mTaskReminder;
 
-    public TaskDataReminder() {
+    public TaskReminderWrapper() {
         mTaskReminder = new TaskReminder();
     }
 
-    public TaskDataReminder(TaskReminder taskReminder) {
+    public TaskReminderWrapper(TaskReminder taskReminder) {
         this.mTaskReminder = taskReminder;
     }
 
-    public void remind(RVTaskDataProvider.TaskData taskData) {
+    public void remind(RVTaskDataProvider.RVTaskData taskData) {
 
 //        如果传入的taskData为空或者该taskData的task为空, 或者task根本不需要提醒, 那么就直接返回
         if(taskData == null || taskData.getTask() == null || !taskData.getTask().isRemind()) {
@@ -37,7 +37,7 @@ public class TaskDataReminder {
         }
     }
 
-    public void cancelRemind(RVTaskDataProvider.TaskData taskData) {
+    public void cancelRemind(RVTaskDataProvider.RVTaskData taskData) {
 
 //        这里不判断是否提醒, 不管是否提醒, 都用相应的id来取消提醒, 因为如果一个任务本来已经设置了提醒,
 //        且已经添加到提醒管理器中了, 但是又取消了提醒, 那么这时候task的isAlarm可能为false了,
