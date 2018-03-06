@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 
 import cn.alpha2j.schedule.app.alarm.TaskReminderWrapper;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
-import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;

@@ -3,7 +3,6 @@ package cn.alpha2j.schedule.app.ui.activity.adapter;
 import android.content.Context;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 
 /**

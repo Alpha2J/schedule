@@ -20,15 +20,9 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultAct
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionMoveToSwipedDirection;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.action.SwipeResultActionRemoveItem;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
-import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
-import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.data.provider.RVDataProvider;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
-import cn.alpha2j.schedule.time.ScheduleDateTime;
-import cn.alpha2j.schedule.time.builder.ScheduleDateTimeBuilder;
-import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 
 /**
  * 可左右滑动的RecyclerView Adapter

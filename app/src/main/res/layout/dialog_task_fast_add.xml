@@ -22,6 +22,7 @@
         android:paddingTop="50dp">
 
         <TextView
+            android:id="@+id/tv_fast_add_dialog_time"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_gravity="center_horizontal"
@@ -29,7 +30,6 @@
             android:gravity="center_vertical"
             android:paddingEnd="12dp"
             android:paddingStart="12dp"
-            android:text="今 天"
             android:textColor="@color/colorBlackOpacity87"
             android:textSize="13sp" />
 

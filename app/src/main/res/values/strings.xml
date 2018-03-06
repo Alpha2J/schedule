@@ -27,4 +27,8 @@
     <!--TaskToday Fragment-->
     <string name="view_holder_item_time">今天 %1$d:%2$d</string>
     <string name="view_holder_item_alarm_time">%1$d:%2$d</string>
+
+    <!--Common string-->
+    <string name="common_today_hour_and_minute">今天 %1$d:%2$d</string>
+
 </resources>

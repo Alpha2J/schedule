@@ -29,4 +29,11 @@ public class Constants {
      * 任务到期后发出一个广播, 这个就是广播接收器的action的名字
      */
     public static final String TASK_TIME_OUT_RECEIVER_ACTION = "cn.alpha2j.schedule.receiver.TASK_TIME_OUT";
+
+
+//    以下是实体字段限制
+    /**
+     * Task实体的title字段长度限制
+     */
+    public static final int FIELD_LIMIT_TASK_TITLE = 255;
 }
