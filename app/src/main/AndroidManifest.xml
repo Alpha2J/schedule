@@ -30,13 +30,13 @@
         <receiver
             android:name=".app.broadcast.TaskTimeOutReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="cn.alpha2j.schedule.receiver.TASK_TIME_OUT" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".app.ui.activity.TestActivity"></activity>
+        <activity android:name=".app.ui.activity.TestActivity"/>
     </application>
 
 </manifest>

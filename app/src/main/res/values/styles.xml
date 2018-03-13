@@ -23,7 +23,7 @@
         <!--未选中时的颜色-->
         <item name="colorControlNormal">@color/colorPrimary</item>
         <!--选中时的颜色-->
-        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorSecondaryAccent</item>
     </style>
 
     <!--白色的EditText-->
@@ -72,5 +72,10 @@
 
     <!--NavigationVIew的Header部分背景传到通知栏-->
     <style name="CustomNavHeaderInStatusBar" parent="AppTheme">
+    </style>
+
+    <!--底部快速添加的主题, 只改变accent的颜色-->
+    <style name="CustomFastAddDialog" parent="@style/AppTheme" >
+        <item name="colorAccent">@color/colorSecondaryAccent</item>
     </style>
 </resources>
