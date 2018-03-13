@@ -19,11 +19,11 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:background="#ef392c"
+            android:foreground="?attr/selectableItemBackground"
             android:text="删除"
             android:textColor="@color/colorWhite"
-            android:textSize="16sp"
-            android:foreground="?attr/selectableItemBackground"
-            android:background="#ef392c"/>
+            android:textSize="16sp" />
 
     </RelativeLayout>
 
@@ -31,10 +31,10 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:background="@color/colorWhite"
         android:baselineAligned="false"
         android:foreground="?attr/selectableItemBackground"
-        android:background="@color/colorWhite"
+        android:orientation="horizontal"
         tools:visibility="invisible">
 
         <RelativeLayout
@@ -61,13 +61,13 @@
                 android:id="@+id/task_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingStart="0dp"
-                android:paddingEnd="5dp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:textSize="18sp"
+                android:paddingEnd="5dp"
+                android:paddingStart="0dp"
+                android:paddingTop="10dp"
                 android:textColor="@color/colorTextDark"
-                android:ellipsize="end"/>
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,35 +76,42 @@
 
                 <TextView
                     android:id="@+id/task_item_time"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingStart="2dp"
+                    android:layout_weight="2"
                     android:paddingEnd="50dp"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorTextMuted"
-                    android:text="今天 18:00"/>
-
-                <ImageView
-                    android:id="@+id/task_item_alarm_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
-                    android:src="@drawable/ic_alarm"
-                    android:contentDescription="alarm"
-                    android:tint="@color/colorTextMuted" />
-
-                <TextView
-                    android:id="@+id/task_item_alarm_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:paddingStart="2dp"
                     android:paddingTop="4dp"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="60dp"
-                    android:textSize="12sp"
+                    android:text="今天 18:00"
                     android:textColor="@color/colorTextMuted"
-                    android:text="19:00"/>
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3">
+
+                    <ImageView
+                        android:id="@+id/task_item_alarm_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="alarm"
+                        android:paddingBottom="6dp"
+                        android:paddingTop="6dp"
+                        android:src="@drawable/ic_alarm"
+                        android:tint="@color/colorTextMuted" />
+
+                    <TextView
+                        android:id="@+id/task_item_alarm_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="60dp"
+                        android:paddingStart="0dp"
+                        android:paddingTop="4dp"
+                        android:text="19:00"
+                        android:textColor="@color/colorTextMuted"
+                        android:textSize="12sp" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -51,6 +51,10 @@ public class DescriptionSetterDialog {
 
     public interface OnDescriptionWroteListener {
 
+        /**
+         * 当写完描述后会调用该监听器方法
+         * @param description
+         */
         void onDescriptionWrote(String description);
     }
 }

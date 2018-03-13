@@ -93,17 +93,18 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
 //        添加点击事件, 点击弹出日期 选择框
         mTaskDateTextView = findViewById(R.id.tv_task_add_date);
         mTaskDateTextView.setOnClickListener(view -> showDatePickerDialog());
-
 //        添加点击事件, 点击出现时间选择框;
         mTaskTimeTextView = findViewById(R.id.tv_task_add_time);
         mTaskTimeTextView.setOnClickListener(view -> showTimePickerDialog());
         refreshDateAndTimeText();
 
-//        获取图标
+//        设置提醒样式
         mReminderIcon = findViewById(R.id.iv_task_add_alarm_icon);
+        mReminderTextView = findViewById(R.id.tv_task_add_reminder);
+        refreshReminderText();
+
 //        设置点击事件, 点击弹出dialog, 选择是否提醒, 如果提醒则设置提醒时间, 且将时间显示到reminderTextView中
         mReminderLinearLayout = findViewById(R.id.ll_task_add_reminder_container);
-        mReminderTextView = findViewById(R.id.tv_task_add_reminder);
         mReminderLinearLayout.setOnClickListener(view -> {
             ReminderSetterDialog reminderTimeSetterDialog = ReminderSetterDialog.newInstance(mReminderWrapper);
             reminderTimeSetterDialog.setOnReminderSetListener(reminderWrapper -> {
@@ -112,6 +113,7 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
             });
             reminderTimeSetterDialog.show(getSupportFragmentManager(), "ReminderTimeSetterDialog");
         });
+
 //        设置点击事件, 点击弹出dialog, 将当前已有描述传进去, 且设置到descriptionTextView中.
         mDescriptionLinearLayout = findViewById(R.id.ll_task_add_description_container);
         mDescriptionTextView = findViewById(R.id.tv_task_add_description);

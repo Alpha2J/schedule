@@ -79,4 +79,9 @@
     <style name="CustomFastAddDialog" parent="@style/AppTheme" >
         <item name="colorAccent">@color/colorSecondaryAccent</item>
     </style>
+
+    <!--TextInputLayout错误提示颜色-->
+    <style name="CustomTextInputLayoutErrorColor" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
 </resources>

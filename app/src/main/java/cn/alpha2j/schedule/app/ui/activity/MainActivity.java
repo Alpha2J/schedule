@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity
 
     private TaskTodayFragment mTaskTodayFragment;
     private TaskOverviewFragment mTaskOverviewFragment;
-    private final ConcurrentHashMap<String, Fragment> mMapOfAddedFragments = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, BaseFragment> mMapOfAddedFragments = new ConcurrentHashMap<>();
 
     private String mCurrentFragmentTag;
 
@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity
 //        设置FloatingActionButton的监听器
         setFloatingActionButtonListener();
 //        初始化当前Fragment
-        initCurrentFragment(savedInstanceState);
+        initFragment(savedInstanceState);
 //        设置NavigationView选中项
         setSelectedNavigationItem();
     }
@@ -122,18 +122,24 @@ public class MainActivity extends BaseActivity
         });
     }
 
-    private void initCurrentFragment(@Nullable Bundle savedInstanceState) {
+    private void initFragment(@Nullable Bundle savedInstanceState) {
+        if(mTaskTodayFragment == null) {
+            mTaskTodayFragment = new TaskTodayFragment();
+            mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
+        }
 
-        if (savedInstanceState == null) {
+        if(mTaskOverviewFragment == null) {
+            mTaskOverviewFragment = new TaskOverviewFragment();
+            mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
+        }
+
+//        Activity被系统销毁前显示的是哪个Fragment, 将它设置为当前Fragment然后显示出来.
+        if(savedInstanceState == null) {
             mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
-            displayFragment(mCurrentFragmentTag);
         } else {
             mCurrentFragmentTag = savedInstanceState.getString(FC.FRAGMENT_TAG);
-//            这个方法不用了, 因为activity重建的时候里面什么东西都没有, 只需要获得相应的fragment就可以了
-//            removeAllAndDisplayFragments(mCurrentFragment);
-//            用这个方法代替
-            displayFragment(mCurrentFragmentTag);
         }
+        displayFragment(mCurrentFragmentTag);
     }
 
     /**
@@ -180,9 +186,6 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-//            case R.id.activity_main_menu_profile_item:
-//                Toast.makeText(this, "个人中心", Toast.LENGTH_SHORT).show();
-//                break;
             case R.id.activity_main_menu_task_today_item:
 
                 mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_TODAY;
@@ -247,7 +250,13 @@ public class MainActivity extends BaseActivity
     protected void onRestart() {
         super.onRestart();
 
+//        Activity从不可见状态变为可见状态时, 需要将navigation的item设置为可见时的那个值
         setSelectedNavigationItem();
+
+//        且需要更新TaskTodayFragment
+        mTaskTodayFragment = new TaskTodayFragment();
+        mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
+        displayFragment(mCurrentFragmentTag);
     }
 
     @Override
@@ -311,7 +320,7 @@ public class MainActivity extends BaseActivity
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        for (ConcurrentHashMap.Entry<String, Fragment> entry : mMapOfAddedFragments.entrySet()) {
+        for (ConcurrentHashMap.Entry<String, BaseFragment> entry : mMapOfAddedFragments.entrySet()) {
             if (!entry.getKey().equals(fragmentTag)) {
                 Fragment fragment = entry.getValue();
 
