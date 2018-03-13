@@ -1,30 +1,28 @@
 package cn.alpha2j.schedule.app.ui.dialog;
 
 import android.app.TimePickerDialog;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
-import cn.alpha2j.schedule.ApplicationSettingsConstant;
 import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
+import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
+import cn.alpha2j.schedule.app.ui.listener.OnTaskCreatedListener;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.time.ScheduleDateTime;
 import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 import me.shaohui.bottomdialog.BaseBottomDialog;
 
 /**
- *
  * 一个BottomDialog, 用于快速添加 Task
+ *
  * @author alpha
- * Created on 2017/11/4.
+ *         Created on 2017/11/4.
  */
 public class TaskFastAddBottomDialog extends BaseBottomDialog {
 
@@ -104,56 +102,21 @@ public class TaskFastAddBottomDialog extends BaseBottomDialog {
         task.setTime(mTaskTime);
         task.setDone(false);
         task.setDescription(null);
-//        获取设置项默认是否设置提醒
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean isRemind = sharedPreferences.getBoolean(ApplicationSettingsConstant.OPEN_REMINDER_WHEN_NEW_TASK, false);
-        task.setRemind(isRemind);
-        if (isRemind) {
-            ScheduleDateTime remindTime;
-            long remindTimeInstant = mTaskTime.getEpochMillisecond();
-            String type = sharedPreferences.getString(ApplicationSettingsConstant.REMIND_TYPE, "1");
-            switch (type) {
-                case "1" :
-                    remindTime = ScheduleDateTime.of(remindTimeInstant - generateMinuteInstant(1));
-                    break;
-                case "5" :
-                    remindTime = ScheduleDateTime.of(remindTimeInstant - generateMinuteInstant(5));
-                    break;
-                case "10" :
-                    remindTime = ScheduleDateTime.of(remindTimeInstant - generateMinuteInstant(10));
-                    break;
-                default:
-                    remindTime = ScheduleDateTime.of(remindTimeInstant);
-            }
-
-            task.setRemindTime(remindTime);
+//        设置提醒
+        ReminderWrapper reminderWrapper = ApplicationSettingHelper.getReminderSetting();
+        if (reminderWrapper.isRemind()) {
+            task.setRemind(true);
+//            任务的毫秒减去提醒提前的毫秒数
+            task.setRemindTime(ScheduleDateTime.of(mTaskTime.getEpochMillisecond() - reminderWrapper.getResultAsEpochMills()));
         } else {
+            task.setRemind(false);
             task.setRemindTime(null);
         }
 
-        if(mOnTaskCreatedListener != null) {
+        if (mOnTaskCreatedListener != null) {
             mOnTaskCreatedListener.onTaskCreated(task);
         }
 
         this.dismiss();
-    }
-
-    /**
-     * 生成分钟的毫秒数
-     * @param minute 分钟数
-     * @return 分钟的毫秒数
-     */
-    private long generateMinuteInstant(int minute) {
-        return minute * 60 * 1000;
-    }
-
-    public interface OnTaskCreatedListener {
-
-        /**
-         * 获取到用户输入的信息后回调
-         *
-         * @param task 输入的任务
-         */
-        void onTaskCreated(Task task);
     }
 }

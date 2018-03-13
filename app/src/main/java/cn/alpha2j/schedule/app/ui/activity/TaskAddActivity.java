@@ -4,21 +4,25 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
+import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.DescriptionSetterDialog;
 import cn.alpha2j.schedule.app.ui.dialog.ReminderSetterDialog;
+import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
+import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
+import cn.alpha2j.schedule.app.ui.listener.OnTaskCreatedListener;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.service.TaskService;
 import cn.alpha2j.schedule.data.service.impl.TaskServiceImpl;
@@ -29,11 +33,12 @@ import cn.alpha2j.schedule.time.builder.impl.DefaultScheduleTimeBuilder;
 
 /**
  * @author alpha
- * Created on 2017/11/4.
+ *         Created on 2017/11/4.
  */
-public class TaskAddActivity extends BaseActivity {
+public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListener {
 
-    private EditText mTaskTitleEditText;
+    private TextInputLayout mTaskTitleWrapper;
+    private TextInputEditText mTaskTitleEditText;
     private TextView mTaskDateTextView;
     private TextView mTaskTimeTextView;
     private LinearLayout mReminderLinearLayout;
@@ -67,8 +72,10 @@ public class TaskAddActivity extends BaseActivity {
             mDateAndTimeWrapper.setTime(hourOfDay, minuteOfHour);
             refreshDateAndTimeText();
         };
+        mOnTaskCreatedListener = this;
         mDateAndTimeWrapper = new DateAndTimeWrapper();
-        mReminderWrapper = new ReminderWrapper();
+//        获取默认设置
+        mReminderWrapper = ApplicationSettingHelper.getReminderSetting();
         mDescription = "";
 
         initViews();
@@ -76,12 +83,17 @@ public class TaskAddActivity extends BaseActivity {
 
     private void initViews() {
 
-        mTaskTitleEditText = findViewById(R.id.et_task_add_title);
+//        为edit text添加监听器, 点击的时候去除错误提醒
+        mTaskTitleWrapper = findViewById(R.id.til_task_add_title_wrapper);
+        mTaskTitleEditText = findViewById(R.id.tiet_task_add_title);
+        mTaskTitleEditText.setOnClickListener(view -> {
+            mTaskTitleWrapper.setError(null);
+        });
+
 //        添加点击事件, 点击弹出日期 选择框
         mTaskDateTextView = findViewById(R.id.tv_task_add_date);
-        mTaskDateTextView.setOnClickListener(view -> {
-            showDatePickerDialog();
-        });
+        mTaskDateTextView.setOnClickListener(view -> showDatePickerDialog());
+
 //        添加点击事件, 点击出现时间选择框;
         mTaskTimeTextView = findViewById(R.id.tv_task_add_time);
         mTaskTimeTextView.setOnClickListener(view -> showTimePickerDialog());
@@ -141,7 +153,7 @@ public class TaskAddActivity extends BaseActivity {
 
     private void refreshDateAndTimeText() {
 
-        if(mDateAndTimeWrapper.isToday()) {
+        if (mDateAndTimeWrapper.isToday()) {
             mTaskDateTextView.setText(getResources().getString(R.string.task_add_string_today));
         } else {
             mTaskDateTextView.setText(getResources().getString(R.string.task_add_date, mDateAndTimeWrapper.getYear(), mDateAndTimeWrapper.getMonthOfYear(), mDateAndTimeWrapper.getDayOfMonth()));
@@ -152,7 +164,7 @@ public class TaskAddActivity extends BaseActivity {
 
     private void refreshReminderText() {
 
-        if(mReminderWrapper.isRemind()) {
+        if (mReminderWrapper.isRemind()) {
             mReminderIcon.setImageResource(R.drawable.ic_alarm);
             mReminderTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType().getName()));
         } else {
@@ -189,34 +201,17 @@ public class TaskAddActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case android.R.id.home :
+            case android.R.id.home:
                 finish();
                 return true;
-            case R.id.activity_task_add_save :
-//                点击保存则将内容保存到数据库; 然后结束该activity, 回到首页, toast提示是否保存成功.
-                TaskService taskService = TaskServiceImpl.getInstance();
-                Task task = new Task();
-                task.setTitle(mTaskTitleEditText.getText().toString());
-                task.setDone(false);
-                task.setTime(mDateAndTimeWrapper.getResult());
-                if(mReminderWrapper.isRemind()) {
-                    task.setRemind(true);
-                    long t = mDateAndTimeWrapper.getResult().getEpochMillisecond() - mReminderWrapper.getResult();
-                    task.setRemindTime(ScheduleDateTime.of(t));
-                } else {
-                    task.setRemind(false);
+            case R.id.activity_task_add_save:
+                Task task = checkAndGenerateTask();
+                if(task != null) {
+                    if(mOnTaskCreatedListener != null) {
+                        mOnTaskCreatedListener.onTaskCreated(task);
+                        finish();
+                    }
                 }
-
-                task.setDescription(mDescription);
-                taskService.addTask(task);
-
-                if(mOnTaskCreatedListener != null) {
-                    mOnTaskCreatedListener.onTaskCreated(task);
-                }
-
-                finish();
-
-                Toast.makeText(this, "添加成功!", Toast.LENGTH_SHORT).show();
                 break;
             default:
         }
@@ -224,19 +219,45 @@ public class TaskAddActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public interface OnTaskCreatedListener {
+    private Task checkAndGenerateTask() {
+        String title = mTaskTitleEditText.getText().toString();
 
-        /**
-         * 获取到用户输入的信息后回调
-         *
-         * @param task
-         */
-        void onTaskCreated(Task task);
+        if ("".equals(title)) {
+            mTaskTitleWrapper.setError("请输入标题!");
+            return null;
+        }
+        if (title.length() > Constants.FIELD_LIMIT_TASK_TITLE) {
+            mTaskTitleWrapper.setError("标题超出最大长度!");
+            return null;
+        }
+
+        Task task = new Task();
+        task.setTitle(title);
+        task.setTime(mDateAndTimeWrapper.getResult());
+        task.setDone(false);
+        task.setDescription(null);
+//        设置提醒
+        if (mReminderWrapper.isRemind()) {
+            task.setRemind(true);
+//            任务的毫秒减去提醒提前的毫秒数
+            task.setRemindTime(ScheduleDateTime.of(mDateAndTimeWrapper.getResult().getEpochMillisecond() - mReminderWrapper.getResultAsEpochMills()));
+        } else {
+            task.setRemind(false);
+            task.setRemindTime(null);
+        }
+
+        return task;
+    }
+
+    @Override
+    public void onTaskCreated(Task task) {
+        TaskService taskService = TaskServiceImpl.getInstance();
+        taskService.addTask(task);
     }
 
     public static class DateAndTimeWrapper {
 
-//        todo 这里的话就要区分ScheduleDate和ScheduleTime了, 还要再重写
+        //        todo 这里的话就要区分ScheduleDate和ScheduleTime了, 还要再重写
         private ScheduleDateTime mScheduleDateTime;
 
         public DateAndTimeWrapper() {
@@ -292,84 +313,6 @@ public class TaskAddActivity extends BaseActivity {
         public ScheduleDateTime getResult() {
 
             return mScheduleDateTime;
-        }
-    }
-
-    /**
-     * 包含提醒设置, 是否提醒, 提醒类型
-     */
-    public static class ReminderWrapper {
-
-        private boolean remind;
-
-        private int num;
-
-        private TimeType mTimeType;
-
-        public ReminderWrapper() {
-//            默认为不提醒, 且时间类型为分钟
-            remind = false;
-            num = 0;
-            mTimeType = TimeType.MINUTE;
-        }
-
-        public boolean isRemind() {
-            return remind;
-        }
-
-        public void setRemind(boolean remind) {
-            this.remind = remind;
-        }
-
-        public int getNum() {
-            return num;
-        }
-
-        public void setNum(int num) {
-            this.num = num;
-        }
-
-        public TimeType getTimeType() {
-            return mTimeType;
-        }
-
-        public void setTimeType(TimeType timeType) {
-            mTimeType = timeType;
-        }
-
-//        以毫秒的形式返回
-        public long getResult() {
-//            如果不提醒那么返回0
-            if(remind) {
-                switch (mTimeType) {
-                    case MINUTE:
-                        return num * 60 * 1000;
-                    case HOUR:
-                        return num * 60 * 60 * 1000;
-                    case DAY:
-                        return num * 24 * 60 * 60 * 1000;
-                    default:
-                        return num * 60 * 1000;
-                }
-            } else {
-                return 0;
-            }
-        }
-
-        public enum TimeType {
-            MINUTE("分钟"),
-            HOUR("小时"),
-            DAY("天");
-
-            private String mName;
-
-            TimeType(String name) {
-                this.mName = name;
-            }
-
-            public String getName() {
-                return mName;
-            }
         }
     }
 }

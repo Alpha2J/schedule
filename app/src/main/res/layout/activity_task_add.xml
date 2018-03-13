@@ -6,7 +6,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="175dp">
+        android:layout_height="200dp">
 
         <include layout="@layout/common_toolbar" />
 
@@ -24,16 +24,20 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_task_add_title"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_task_add_title_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="做点什么"
-                android:lines="2"
-                android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorSecondary"
-                android:textSize="25sp"
-                android:theme="@style/CustomLightEditTextStyle" />
+                app:errorEnabled="true">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tiet_task_add_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:textSize="25sp"
+                    android:theme="@style/CustomLightEditTextStyle" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>
 

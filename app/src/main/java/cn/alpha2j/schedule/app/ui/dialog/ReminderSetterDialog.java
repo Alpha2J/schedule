@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.activity.TaskAddActivity;
+import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
+import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
 
 /**
  *
@@ -36,16 +37,16 @@ public class ReminderSetterDialog extends DialogFragment {
     private Spinner mTimeSpinner;
     private Spinner mTypeSpinner;
 
-    private TaskAddActivity.ReminderWrapper mReminderWrapper;
+    private ReminderWrapper mReminderWrapper;
 
     private OnReminderSetListener mOnReminderSetListener;
 
     public ReminderSetterDialog() {
 
-        mReminderWrapper = new TaskAddActivity.ReminderWrapper();
+        mReminderWrapper = ApplicationSettingHelper.getReminderSetting();
     }
 
-    public static ReminderSetterDialog newInstance(TaskAddActivity.ReminderWrapper reminderWrapper) {
+    public static ReminderSetterDialog newInstance(ReminderWrapper reminderWrapper) {
 
         ReminderSetterDialog dialog = new ReminderSetterDialog();
         dialog.setReminderWrapper(reminderWrapper);
@@ -53,7 +54,7 @@ public class ReminderSetterDialog extends DialogFragment {
         return dialog;
     }
 
-    public void setReminderWrapper(TaskAddActivity.ReminderWrapper reminderWrapper) {
+    public void setReminderWrapper(ReminderWrapper reminderWrapper) {
         mReminderWrapper = reminderWrapper;
     }
 
@@ -129,9 +130,9 @@ public class ReminderSetterDialog extends DialogFragment {
         });
 
         List<String> spinnerTypeList = new ArrayList<>();
-        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.MINUTE.getName());
-        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.HOUR.getName());
-        spinnerTypeList.add(TaskAddActivity.ReminderWrapper.TimeType.DAY.getName());
+        spinnerTypeList.add(ReminderWrapper.TimeType.MINUTE.getName());
+        spinnerTypeList.add(ReminderWrapper.TimeType.HOUR.getName());
+        spinnerTypeList.add(ReminderWrapper.TimeType.DAY.getName());
         ArrayAdapter<String> spinnerTypeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerTypeList);
         spinnerTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTypeSpinner.setAdapter(spinnerTypeAdapter);
@@ -153,16 +154,16 @@ public class ReminderSetterDialog extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0 :
-                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.MINUTE);
+                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.MINUTE);
                         break;
                     case 1:
-                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.HOUR);;
+                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.HOUR);;
                         break;
                     case 2:
-                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.DAY);
+                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.DAY);
                         break;
                     default:
-                        mReminderWrapper.setTimeType(TaskAddActivity.ReminderWrapper.TimeType.MINUTE);
+                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.MINUTE);
                 }
                 setDateText();
             }
@@ -216,6 +217,6 @@ public class ReminderSetterDialog extends DialogFragment {
          * 点击ok按钮时调用这个方法
          * @param reminderWrapper
          */
-        void onReminderSet(TaskAddActivity.ReminderWrapper reminderWrapper);
+        void onReminderSet(ReminderWrapper reminderWrapper);
     }
 }
