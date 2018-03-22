@@ -20,17 +20,35 @@
         android:orientation="vertical"
         android:paddingTop="50dp">
 
-        <TextView
-            android:id="@+id/tv_fast_add_dialog_time"
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
             android:background="@drawable/text_view_label_shape"
-            android:gravity="center_vertical"
-            android:paddingEnd="12dp"
-            android:paddingStart="12dp"
-            android:textColor="@color/colorBlackOpacity87"
-            android:textSize="13sp" />
+            android:layout_gravity="center_horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_fast_add_dialog_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlackOpacity87"
+                    android:textSize="13sp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorBlack"
+                    android:layout_marginTop="1dp"/>
+            </LinearLayout>
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"

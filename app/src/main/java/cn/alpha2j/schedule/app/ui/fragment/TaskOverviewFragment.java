@@ -25,4 +25,9 @@ public class TaskOverviewFragment extends BaseFragment {
     protected void afterCreated(Bundle savedInstanceState) {
 
     }
+
+    @Override
+    public void refreshData() {
+
+    }
 }

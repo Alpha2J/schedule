@@ -50,6 +50,11 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void afterCreated(Bundle savedInstanceState);
 
     /**
+     * 更新fragment的数据
+     */
+    public abstract void refreshData();
+
+    /**
      * 各个Fragment中使用到的常量, 当新增Fragment时Tag 常量必须增加, 表示该Fragment的名字
      */
     public interface FragmentConstant {

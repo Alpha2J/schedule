@@ -1,5 +1,7 @@
 package cn.alpha2j.schedule.app.ui.data.decorator;
 
+import java.util.List;
+
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.service.TaskService;
@@ -136,6 +138,21 @@ public abstract class AbstractRVTDPSqlitePersistenceDecorator extends RVTaskData
     @Override
     public RVTaskData getLastDeletion() {
         return mTaskDataProvider.getLastDeletion();
+    }
+
+    @Override
+    public List<RVTaskData> getDataSet() {
+        return mTaskDataProvider.getDataSet();
+    }
+
+    @Override
+    public void setDataSet(List<RVTaskData> dataSet) {
+        mTaskDataProvider.setDataSet(dataSet);
+    }
+
+    @Override
+    public void replaceData(List<RVTaskData> dataSet) {
+        mTaskDataProvider.replaceData(dataSet);
     }
 
     /**

@@ -1,5 +1,8 @@
 package cn.alpha2j.schedule.data;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 import cn.alpha2j.schedule.time.ScheduleDateTime;
@@ -105,5 +108,35 @@ public class Task implements Serializable {
 
     public void setDone(boolean done) {
         mDone = done;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if(obj == null) {
+            return false;
+        }
+
+        if(obj == this) {
+            return true;
+        }
+
+        if(obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Task task = (Task) obj;
+
+        return new EqualsBuilder()
+                .append(mId, task.mId)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(7, 17)
+                .append(mId)
+                .toHashCode();
     }
 }

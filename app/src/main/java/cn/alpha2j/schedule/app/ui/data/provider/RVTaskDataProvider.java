@@ -130,6 +130,27 @@ public class RVTaskDataProvider implements RVDataProvider {
         return mLastDeletedData;
     }
 
+    public List<RVTaskData> getDataSet() {
+        return mDataSet;
+    }
+
+    public void setDataSet(List<RVTaskData> dataSet) {
+        mDataSet = dataSet;
+    }
+
+    public void replaceData(List<RVTaskData> dataSet) {
+
+        if (dataSet == null) {
+            return;
+        }
+
+        mDataSet.clear();
+        mDataSet.addAll(dataSet);
+        mLastRemovedData = null;
+        mLastRemovedPosition = -1;
+        mLastDeletedData = null;
+    }
+
     public static final class RVTaskData extends RVAbstractData {
 
         private Task mTask;

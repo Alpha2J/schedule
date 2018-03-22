@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
@@ -16,7 +17,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.alarm.TaskReminderWrapper;
+import cn.alpha2j.schedule.app.remind.RemindManager;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SimpleSectionHeaderAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableFinishedTaskRVAdapter;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
@@ -42,10 +43,6 @@ public class TaskTodayFragment extends BaseFragment
 
     private RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> mUnfinishedTaskAdapter;
     private RecyclerView.Adapter<SwipeableTaskRVAdapter.SwipeableTaskItemViewHolder> mFinishedTaskAdapter;
-    private RecyclerViewSwipeManager mUnfinishedRVSManager;
-    private RecyclerViewSwipeManager mFinishedRVSManager;
-    private ComposedAdapter mComposedAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private RVDataProviderObserver mUnfinishedTaskObserver;
     private RVDataProviderObserver mFinishedTaskObserver;
@@ -53,13 +50,7 @@ public class TaskTodayFragment extends BaseFragment
     private RVTaskDataProvider mTodayUnfinishedTaskDataProvider;
     private RVTaskDataProvider mTodayFinishedTaskDataProvider;
 
-    public TaskTodayFragment() {
-        mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
-        mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
-
-        mTodayUnfinishedTaskDataProvider = new TodayUnfinishedDataProviderGenerator().generate();
-        mTodayFinishedTaskDataProvider = new TodayFinishedDataProviderGenerator().generate();
-    }
+    public TaskTodayFragment() { }
 
     @Override
     protected boolean hasView() {
@@ -75,8 +66,27 @@ public class TaskTodayFragment extends BaseFragment
     protected void afterCreated(Bundle savedInstanceState) {
 
         initViews();
+
         initData();
+
         initNotification();
+    }
+
+    /**
+     * 更新Fragment的显示数据
+     */
+    @Override
+    public void refreshData() {
+
+//        将数据集里面的数据全部删除
+        RVTaskDataProvider unfinishedTemp = new TodayUnfinishedDataProviderGenerator().generate();
+        mTodayUnfinishedTaskDataProvider.replaceData(unfinishedTemp.getDataSet());
+        mUnfinishedTaskAdapter.notifyDataSetChanged();
+
+        RVTaskDataProvider finishedTemp = new TodayFinishedDataProviderGenerator().generate();
+        mTodayFinishedTaskDataProvider.replaceData(finishedTemp.getDataSet());
+        mFinishedTaskAdapter.notifyDataSetChanged();
+        Log.d(TAG, "refreshData: unfinished data provider and finished data provider has been reload.");
     }
 
     private void initViews() {
@@ -86,10 +96,14 @@ public class TaskTodayFragment extends BaseFragment
 
     private void initData() {
 
+        mUnfinishedTaskObserver = new TodayUnfinishedTaskDataProviderObserver(this);
+        mFinishedTaskObserver = new TodayFinishedTaskDataProviderObserver(this);
+
+        mTodayUnfinishedTaskDataProvider = new TodayUnfinishedDataProviderGenerator().generate();
+        mTodayFinishedTaskDataProvider = new TodayFinishedDataProviderGenerator().generate();
+
         mUnfinishedTaskAdapter = new SwipeableUnfinishedTaskRVAdapter(getContext(), mTodayUnfinishedTaskDataProvider);
         mFinishedTaskAdapter = new SwipeableFinishedTaskRVAdapter(getContext(), mTodayFinishedTaskDataProvider);
-        mUnfinishedRVSManager = new RecyclerViewSwipeManager();
-        mFinishedRVSManager = new RecyclerViewSwipeManager();
 
 //        设置监听事件
         ((SwipeableTaskRVAdapter)mUnfinishedTaskAdapter).setEventListener(new SwipeableTaskRVAdapter.EventListener() {
@@ -173,11 +187,14 @@ public class TaskTodayFragment extends BaseFragment
         });
 
 //        组合各个section
-        mComposedAdapter = new ComposedAdapter();
-        mComposedAdapter.addAdapter(new SimpleSectionHeaderAdapter("未完成"));
-        mComposedAdapter.addAdapter(mUnfinishedRVSManager.createWrappedAdapter(mUnfinishedTaskAdapter));
-        mComposedAdapter.addAdapter(new SimpleSectionHeaderAdapter("已完成"));
-        mComposedAdapter.addAdapter(mFinishedRVSManager.createWrappedAdapter(mFinishedTaskAdapter));
+        ComposedAdapter composedAdapter = new ComposedAdapter();
+        composedAdapter.addAdapter(new SimpleSectionHeaderAdapter("未完成"));
+        RecyclerViewSwipeManager unfinishedRVSManager = new RecyclerViewSwipeManager();
+        composedAdapter.addAdapter(unfinishedRVSManager.createWrappedAdapter(mUnfinishedTaskAdapter));
+
+        composedAdapter.addAdapter(new SimpleSectionHeaderAdapter("已完成"));
+        RecyclerViewSwipeManager finishedRVSManager = new RecyclerViewSwipeManager();
+        composedAdapter.addAdapter(finishedRVSManager.createWrappedAdapter(mFinishedTaskAdapter));
 
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
 //        Change animations 在support-v7-recyclerview v22中默认是开启的
@@ -185,10 +202,10 @@ public class TaskTodayFragment extends BaseFragment
         animator.setSupportsChangeAnimations(false);
 
 //        将设置附加到RecyclerView中
-        mRecyclerView.setAdapter(mComposedAdapter);
+        mRecyclerView.setAdapter(composedAdapter);
 
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
 
         mRecyclerView.setItemAnimator(animator);
 
@@ -196,8 +213,9 @@ public class TaskTodayFragment extends BaseFragment
         mRecyclerView.addItemDecoration(new SimpleListDividerDecorator(ContextCompat.getDrawable(getContext(), R.drawable.list_divider_h), true));
 
 //        为RecyclerView关联每个Adapter的Manager
-        mUnfinishedRVSManager.attachRecyclerView(mRecyclerView);
-        mFinishedRVSManager.attachRecyclerView(mRecyclerView);
+
+        unfinishedRVSManager.attachRecyclerView(mRecyclerView);
+        finishedRVSManager.attachRecyclerView(mRecyclerView);
     }
 
     private int getLocalPosition(View view, RecyclerView.Adapter adapter) {
@@ -218,14 +236,17 @@ public class TaskTodayFragment extends BaseFragment
      * 当fragment初始化完成后需要将所有未完成的task遍历一遍, 如果需要通知且时间合适的话就添加到通知管理
      */
     private void initNotification() {
-        TaskReminderWrapper taskDataReminder = new TaskReminderWrapper();
-        int count = mTodayUnfinishedTaskDataProvider.getCount();
-        for (int i = 0; i < count; i++) {
-            RVTaskDataProvider.RVTaskData taskData = mTodayUnfinishedTaskDataProvider.getItem(i);
-            taskDataReminder.remind(taskData);
+
+        for (int i = 0; i < mTodayUnfinishedTaskDataProvider.getCount(); i++) {
+            Task task = mTodayUnfinishedTaskDataProvider.getItem(i).getTask();
+            RemindManager.add(task);
         }
     }
 
+    /**
+     * 由当前Fragment来进行持久化
+     * @param task 持久化的task
+     */
     public void notifyNewTaskAdd(Task task) {
 //        需要先将数据添加到前端的DataProvider中, 还要将数据持久化到后台中
         mTodayUnfinishedTaskDataProvider.addItem(new RVTaskDataProvider.RVTaskData(task, false));

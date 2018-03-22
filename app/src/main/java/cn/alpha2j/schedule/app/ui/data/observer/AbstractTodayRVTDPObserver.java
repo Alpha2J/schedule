@@ -2,7 +2,7 @@ package cn.alpha2j.schedule.app.ui.data.observer;
 
 import android.support.v7.widget.RecyclerView;
 
-import cn.alpha2j.schedule.app.alarm.TaskReminderWrapper;
+import cn.alpha2j.schedule.app.remind.RemindManager;
 import cn.alpha2j.schedule.app.ui.activity.adapter.SwipeableTaskRVAdapter;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
 import cn.alpha2j.schedule.data.service.TaskService;
@@ -18,12 +18,10 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
 
     protected TaskTodayRVAdapterGetter mTaskTodayRVAdapterGetter;
     protected TaskService mTaskService;
-    protected TaskReminderWrapper mTaskDataReminder;
 
     public AbstractTodayRVTDPObserver(TaskTodayRVAdapterGetter taskTodayRVAdapterGetter) {
         mTaskTodayRVAdapterGetter = taskTodayRVAdapterGetter;
         mTaskService = TaskServiceImpl.getInstance();
-        mTaskDataReminder = new TaskReminderWrapper();
     }
 
     /**
@@ -57,7 +55,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
         if (getTodayTaskDataProviderObserverType().equals(RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED) && adapterSet) {
             int count = adapter.getRVTaskDataProvider().getCount();
             RVTaskDataProvider.RVTaskData taskData = adapter.getRVTaskDataProvider().getItem(count - 1);
-            mTaskDataReminder.remind(taskData);
+            RemindManager.add(taskData.getTask());
         }
     }
 
@@ -79,7 +77,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
                 finishedAdapter.notifyItemInserted(finishedAdapter.getItemCount() - 1);
 
 //                进行通知器通知, 如果是未完成的adapter里面移除的, 那么需要判断是否需要取消通知
-                mTaskDataReminder.cancelRemind(finishedData);
+                RemindManager.remove(finishedData.getTask());
                 break;
             case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 RVTaskDataProvider.RVTaskData unfinishedData = finishedAdapter.getRVTaskDataProvider().getLastRemoval();
@@ -87,7 +85,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
                 unfinishedAdapter.notifyItemInserted(unfinishedAdapter.getItemCount() - 1);
 
 //                如果是已完成的adapter里面移除的, 那么需要再次判断是否需要进行通知
-                mTaskDataReminder.remind(unfinishedData);
+                RemindManager.add(unfinishedData.getTask());
                 break;
             default:
         }
@@ -112,7 +110,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
                 finishedAdapter.notifyItemRemoved(finishedAdapter.getRVTaskDataProvider().getCount());
 
 //                同理通知处理
-                mTaskDataReminder.remind(lastInsertedFinishedData);
+                RemindManager.add(lastInsertedFinishedData.getTask());
                 break;
             case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_FINISHED :
                 lastInsertedPosition = finishedAdapter.getRVTaskDataProvider().undoLastRemoval();
@@ -123,7 +121,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
                 unfinishedAdapter.notifyItemRemoved(unfinishedAdapter.getRVTaskDataProvider().getCount());
 
 //                通知处理
-                mTaskDataReminder.cancelRemind(lastInsertedUnfinishedData);
+                RemindManager.remove(lastInsertedUnfinishedData.getTask());
                 break;
             default:
         }
@@ -135,7 +133,7 @@ public abstract class AbstractTodayRVTDPObserver implements RVDataProviderObserv
 //            如果是未完成的删除, 那么需要取消提醒(已完成的不用取消, 因为已完成的没有再设置提醒)
             case RVTaskDataProvider.RVTaskDataProviderType.TYPE_TODAY_TASK_UNFINISHED :
                 SwipeableTaskRVAdapter swipeableTaskRVAdapter = (SwipeableTaskRVAdapter) mTaskTodayRVAdapterGetter.getTodayUnfinishedRVAdapter();
-                mTaskDataReminder.cancelRemind(swipeableTaskRVAdapter.getRVTaskDataProvider().getLastDeletion());
+                RemindManager.remove(swipeableTaskRVAdapter.getRVTaskDataProvider().getLastDeletion().getTask());
                 break;
             default:
         }

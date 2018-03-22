@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.facebook.stetho.Stetho;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.service.AlarmService;
 import cn.alpha2j.schedule.app.ui.dialog.TaskFastAddBottomDialog;
 import cn.alpha2j.schedule.app.ui.fragment.BaseFragment;
 import cn.alpha2j.schedule.app.ui.fragment.TaskOverviewFragment;
@@ -38,6 +40,8 @@ import cn.alpha2j.schedule.app.ui.fragment.TaskTodayFragment;
  */
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "MainActivity";
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -64,17 +68,27 @@ public class MainActivity extends BaseActivity
 
 //        集成Stetho
         Stetho.initializeWithDefaults(this);
+
 //        初始化view域
         initViews();
+
+//        初始化服务
+        Intent remindServiceIntent = new Intent(this, AlarmService.class);
+        startService(remindServiceIntent);
+
 //        改变homeAsUp图标
         changeDisplayHomeAsUpIcon();
+
 //        初始化NavigationView的数据(初始化头部, 设置列表选中项, 设置监听器)
         setNavigationViewHeader();
         setNavigationViewItemSelectedListener();
+
 //        设置FloatingActionButton的监听器
         setFloatingActionButtonListener();
+
 //        初始化当前Fragment
         initFragment(savedInstanceState);
+
 //        设置NavigationView选中项
         setSelectedNavigationItem();
     }
@@ -123,15 +137,6 @@ public class MainActivity extends BaseActivity
     }
 
     private void initFragment(@Nullable Bundle savedInstanceState) {
-        if(mTaskTodayFragment == null) {
-            mTaskTodayFragment = new TaskTodayFragment();
-            mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
-        }
-
-        if(mTaskOverviewFragment == null) {
-            mTaskOverviewFragment = new TaskOverviewFragment();
-            mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_OVERVIEW, mTaskOverviewFragment);
-        }
 
 //        Activity被系统销毁前显示的是哪个Fragment, 将它设置为当前Fragment然后显示出来.
         if(savedInstanceState == null) {
@@ -139,6 +144,7 @@ public class MainActivity extends BaseActivity
         } else {
             mCurrentFragmentTag = savedInstanceState.getString(FC.FRAGMENT_TAG);
         }
+
         displayFragment(mCurrentFragmentTag);
     }
 
@@ -253,10 +259,10 @@ public class MainActivity extends BaseActivity
 //        Activity从不可见状态变为可见状态时, 需要将navigation的item设置为可见时的那个值
         setSelectedNavigationItem();
 
-//        且需要更新TaskTodayFragment
-        mTaskTodayFragment = new TaskTodayFragment();
-        mMapOfAddedFragments.put(FC.FRAGMENT_TAG_TASK_TODAY, mTaskTodayFragment);
-        displayFragment(mCurrentFragmentTag);
+//        调用TaskTodayFragment的更新方法, 更新Fragment的数据
+        if (mTaskTodayFragment != null) {
+            mTaskTodayFragment.refreshData();
+        }
     }
 
     @Override

@@ -36,7 +36,11 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".app.ui.activity.TestActivity"/>
+        <activity android:name=".app.ui.activity.TestActivity" />
+
+        <service
+            android:name=".app.service.AlarmService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
