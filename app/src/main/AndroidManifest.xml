@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.alpha2j.schedule">
 
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -36,11 +39,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".app.ui.activity.TestActivity" />
-
         <service
             android:name=".app.service.AlarmService"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
+import cn.alpha2j.schedule.app.ui.entity.ReminderSetting;
 import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
 import cn.alpha2j.schedule.app.ui.listener.OnTaskCreatedListener;
 import cn.alpha2j.schedule.data.Task;
@@ -102,11 +102,15 @@ public class TaskFastAddBottomDialog extends BaseBottomDialog {
         task.setTime(mTaskTime);
         task.setDone(false);
         task.setDescription(null);
+
 //        设置提醒
-        ReminderWrapper reminderWrapper = ApplicationSettingHelper.getReminderSetting();
-        if (reminderWrapper.isRemind()) {
+        ReminderSetting reminderSetting = ApplicationSettingHelper.getReminderSetting();
+        if(reminderSetting.isRemind()) {
+            ReminderSetterDialog.ReminderWrapper reminderWrapper = new ReminderSetterDialog.ReminderWrapper();
+            reminderWrapper.setNum(reminderSetting.getNum());
+            reminderWrapper.setRemind(reminderSetting.isRemind());
+            reminderWrapper.setTimeType(reminderSetting.getRemindTimeType());
             task.setRemind(true);
-//            任务的毫秒减去提醒提前的毫秒数
             task.setRemindTime(ScheduleDateTime.of(mTaskTime.getEpochMillisecond() - reminderWrapper.getResultAsEpochMills()));
         } else {
             task.setRemind(false);

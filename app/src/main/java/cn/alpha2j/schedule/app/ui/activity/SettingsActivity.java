@@ -108,9 +108,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         addPreferencesFromResource(R.xml.pref_settings);
 
-        bindPreferenceSummaryToValue(findPreference("before_time"));
+        bindPreferenceSummaryToValue(findPreference("ahead_time"));
         bindPreferenceSummaryToValue(findPreference("remind_type"));
-        bindPreferenceSummaryToValue(findPreference("remind_ringtone"));
+        bindPreferenceSummaryToValue(findPreference("remind_notification_ringtone"));
     }
 
     /**

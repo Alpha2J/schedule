@@ -17,13 +17,11 @@
 
     <string-array name="dialog_remind_type_titles">
         <item>状态栏通知</item>
-        <item>桌面泡泡</item>
         <item>系统闹铃</item>
     </string-array>
 
     <string-array name="dialog_remind_type_values">
         <item>1</item>
         <item>2</item>
-        <item>3</item>
     </string-array>
 </resources>

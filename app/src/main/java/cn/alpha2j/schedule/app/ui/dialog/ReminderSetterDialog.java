@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.alpha2j.schedule.R;
-import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
-import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
+import cn.alpha2j.schedule.app.ui.entity.TimeType;
 
 /**
  *
@@ -43,7 +42,7 @@ public class ReminderSetterDialog extends DialogFragment {
 
     public ReminderSetterDialog() {
 
-        mReminderWrapper = ApplicationSettingHelper.getReminderSetting();
+        mReminderWrapper = new ReminderWrapper();
     }
 
     public static ReminderSetterDialog newInstance(ReminderWrapper reminderWrapper) {
@@ -130,20 +129,20 @@ public class ReminderSetterDialog extends DialogFragment {
         });
 
         List<String> spinnerTypeList = new ArrayList<>();
-        spinnerTypeList.add(ReminderWrapper.TimeType.MINUTE.getName());
-        spinnerTypeList.add(ReminderWrapper.TimeType.HOUR.getName());
-        spinnerTypeList.add(ReminderWrapper.TimeType.DAY.getName());
+        spinnerTypeList.add(TimeType.MINUTE);
+        spinnerTypeList.add(TimeType.HOUR);
+        spinnerTypeList.add(TimeType.DAY);
         ArrayAdapter<String> spinnerTypeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, spinnerTypeList);
         spinnerTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTypeSpinner.setAdapter(spinnerTypeAdapter);
         switch (mReminderWrapper.getTimeType()) {
-            case MINUTE:
+            case TimeType.MINUTE:
                 mTypeSpinner.setSelection(0);
                 break;
-            case HOUR:
+            case TimeType.HOUR:
                 mTypeSpinner.setSelection(1);
                 break;
-            case DAY:
+            case TimeType.DAY:
                 mTypeSpinner.setSelection(2);
                 break;
             default:
@@ -154,16 +153,16 @@ public class ReminderSetterDialog extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0 :
-                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.MINUTE);
+                        mReminderWrapper.setTimeType(TimeType.MINUTE);
                         break;
                     case 1:
-                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.HOUR);;
+                        mReminderWrapper.setTimeType(TimeType.HOUR);
                         break;
                     case 2:
-                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.DAY);
+                        mReminderWrapper.setTimeType(TimeType.DAY);
                         break;
                     default:
-                        mReminderWrapper.setTimeType(ReminderWrapper.TimeType.MINUTE);
+                        mReminderWrapper.setTimeType(TimeType.MINUTE);
                 }
                 setDateText();
             }
@@ -180,7 +179,7 @@ public class ReminderSetterDialog extends DialogFragment {
 
     private void setDateText() {
 
-        mTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType().getName()));
+        mTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType()));
     }
 
     private void setViewEnable() {
@@ -218,5 +217,77 @@ public class ReminderSetterDialog extends DialogFragment {
          * @param reminderWrapper
          */
         void onReminderSet(ReminderWrapper reminderWrapper);
+    }
+
+    public static class ReminderWrapper {
+
+        /**
+         * 是否提醒
+         */
+        private boolean remind;
+        /**
+         * 提醒的时间数
+         */
+        private int num;
+        /**
+         * 提醒的时间类型
+         */
+        private String mTimeType;
+
+        public ReminderWrapper() {
+//            默认为不提醒, 且时间类型为分钟
+            remind = false;
+            num = 0;
+            mTimeType = TimeType.MINUTE;
+        }
+
+        public boolean isRemind() {
+            return remind;
+        }
+
+        public void setRemind(boolean remind) {
+            this.remind = remind;
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public void setNum(int num) {
+            this.num = num;
+        }
+
+        public String getTimeType() {
+            return mTimeType;
+        }
+
+        public void setTimeType(String timeType) {
+            if(TimeType.isTimeType(timeType)) {
+                mTimeType = timeType;
+            } else {
+                mTimeType = TimeType.MINUTE;
+            }
+        }
+
+        /**
+         * 如果设置了提醒, 那么返回提醒的类型和数量构成的毫秒数
+         */
+        public long getResultAsEpochMills() {
+//            如果不提醒那么返回0
+            if(remind) {
+                switch (mTimeType) {
+                    case TimeType.MINUTE:
+                        return num * 60 * 1000;
+                    case TimeType.HOUR:
+                        return num * 60 * 60 * 1000;
+                    case TimeType.DAY:
+                        return num * 24 * 60 * 60 * 1000;
+                    default:
+                        return num * 60 * 1000;
+                }
+            } else {
+                return 0;
+            }
+        }
     }
 }

@@ -11,6 +11,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import cn.alpha2j.schedule.R;
+import cn.alpha2j.schedule.app.remind.CommonReminder;
+import cn.alpha2j.schedule.app.remind.Reminder;
 import cn.alpha2j.schedule.data.Task;
 
 /**
@@ -31,29 +33,16 @@ public class TaskTimeOutReceiver extends BroadcastReceiver {
             return;
         }
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification;
+
 //        这种方式在安卓7.0是获取不到值的
 //        Task task = (Task) intent.getSerializableExtra("task");
 //        用这种方式获取
         Bundle bundle = intent.getBundleExtra("bundle");
         Task task = (Task) bundle.getSerializable("task");
         if (task == null) {
-            notification = new NotificationCompat.Builder(context, "0")
-                    .setContentTitle("出问题了? title")
-                    .setContentText("text")
-                    .setSmallIcon(R.drawable.ic_account_circle)
-                    .build();
-            notificationManager.notify(0, notification);
+            Log.d(TAG, "onReceive: 获取不到task对象, 是否出现问题了. 方法结束, 不进行提醒.");
         } else {
-            notification = new NotificationCompat.Builder(context, String.valueOf(task.getId()))
-                    .setContentTitle(task.getTitle())
-                    .setContentText(task.getDescription())
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round))
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .build();
-            notificationManager.notify(task.getId().intValue(), notification);
+            new CommonReminder(context).remind(task);
         }
     }
 }

@@ -20,7 +20,7 @@ import cn.alpha2j.schedule.Constants;
 import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.DescriptionSetterDialog;
 import cn.alpha2j.schedule.app.ui.dialog.ReminderSetterDialog;
-import cn.alpha2j.schedule.app.ui.entity.ReminderWrapper;
+import cn.alpha2j.schedule.app.ui.entity.ReminderSetting;
 import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
 import cn.alpha2j.schedule.app.ui.listener.OnTaskCreatedListener;
 import cn.alpha2j.schedule.data.Task;
@@ -48,7 +48,7 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
     private TextView mDescriptionTextView;
 
     private DateAndTimeWrapper mDateAndTimeWrapper;
-    private ReminderWrapper mReminderWrapper;
+    private ReminderSetterDialog.ReminderWrapper mReminderWrapper;
     private String mDescription;
 
     private DatePickerDialog.OnDateSetListener mOnDateSetListener;
@@ -75,7 +75,11 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
         mOnTaskCreatedListener = this;
         mDateAndTimeWrapper = new DateAndTimeWrapper();
 //        获取默认设置
-        mReminderWrapper = ApplicationSettingHelper.getReminderSetting();
+        ReminderSetting reminderSetting = ApplicationSettingHelper.getReminderSetting();
+        mReminderWrapper = new ReminderSetterDialog.ReminderWrapper();
+        mReminderWrapper.setTimeType(reminderSetting.getRemindTimeType());
+        mReminderWrapper.setRemind(reminderSetting.isRemind());
+        mReminderWrapper.setNum(reminderSetting.getNum());
         mDescription = "";
 
         initViews();
@@ -168,7 +172,7 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
 
         if (mReminderWrapper.isRemind()) {
             mReminderIcon.setImageResource(R.drawable.ic_alarm);
-            mReminderTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType().getName()));
+            mReminderTextView.setText(getResources().getString(R.string.task_add_string_reminder_text, mReminderWrapper.getNum(), mReminderWrapper.getTimeType()));
         } else {
             mReminderIcon.setImageResource(R.drawable.ic_alarm_off);
             mReminderTextView.setText(getResources().getString(R.string.task_add_string_no_alarm));

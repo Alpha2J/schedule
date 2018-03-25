@@ -33,7 +33,7 @@
                     android:clickable="true">
 
                     <ImageView
-                        android:id="@+id/img_card_about_1"
+                        android:id="@+id/img_about_header_icon"
                         android:layout_width="64dp"
                         android:layout_height="128dp"
                         android:background="@color/gray_very_light"
@@ -46,10 +46,10 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp"
                         android:layout_marginStart="16dp"
-                        android:layout_toEndOf="@id/img_card_about_1">
+                        android:layout_toEndOf="@id/img_about_header_icon">
 
                         <TextView
-                            android:id="@+id/tv_card_about_1_1"
+                            android:id="@+id/tv_about_welcome"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="嗨! 很高兴见到你!"
@@ -60,19 +60,17 @@
                             android:id="@+id/tv_about_version"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_card_about_1_1"
+                            android:layout_below="@id/tv_about_welcome"
                             android:layout_marginTop="8dp"
                             android:lineSpacingExtra="8dp"
                             android:textStyle="italic" />
 
                     </RelativeLayout>
-
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/card_about_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -85,7 +83,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tv_card_about_2_1"
+                        android:id="@+id/tv_about_contact_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -94,17 +92,17 @@
                         android:textStyle="bold" />
 
                     <View
-                        android:id="@+id/view_card_about_2_line"
+                        android:id="@+id/view_about_line"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_below="@id/tv_card_about_2_1"
+                        android:layout_below="@id/tv_about_contact_text"
                         android:background="@color/main_background" />
 
                     <LinearLayout
-                        android:id="@+id/ll_card_about_2_shop"
+                        android:id="@+id/ll_about_shop_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/view_card_about_2_line"
+                        android:layout_below="@id/view_about_line"
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
                         android:orientation="horizontal">
@@ -114,7 +112,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="16dp"
-                            android:src="@drawable/ic_shop_black"/>
+                            android:src="@drawable/ic_shop_grey"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -126,10 +124,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ll_card_about_2_email"
+                        android:id="@+id/ll_about_email_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/ll_card_about_2_shop"
+                        android:layout_below="@id/ll_about_shop_container"
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
                         android:orientation="horizontal">
@@ -139,7 +137,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="16dp"
-                            android:src="@drawable/ic_email_black" />
+                            android:src="@drawable/ic_email_grey" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -151,10 +149,10 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ll_card_about_2_location"
+                        android:id="@+id/ll_about_location"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/ll_card_about_2_email"
+                        android:layout_below="@id/ll_about_email_container"
                         android:background="?android:selectableItemBackground"
                         android:clickable="true"
                         android:orientation="horizontal">
@@ -164,7 +162,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_margin="16dp"
-                            android:src="@drawable/ic_location_on_black" />
+                            android:src="@drawable/ic_location_on_grey" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -186,7 +184,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/view_card_about_2_line"
                     android:background="?android:selectableItemBackground"
                     android:clickable="true"
                     android:orientation="horizontal">
@@ -196,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_margin="16dp"
-                        android:src="@drawable/ic_update_black"/>
+                        android:src="@drawable/ic_update_grey"/>
 
                     <TextView
                         android:layout_width="wrap_content"
