@@ -1,6 +1,7 @@
 package cn.alpha2j.schedule.data.service;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.exception.PrimaryKeyNotExistException;
@@ -52,7 +53,7 @@ public interface TaskService {
     List<Task> findAllFinishedForToday();
 
     /**
-     * 查找属于某年和某月的所有数据, 包括已经完成的和没有完成的
+     * 查找属于某年某月的所有数据, 包括已经完成的和没有完成的
      *
      * @param year 年
      * @param monthOfYear 月份 1到12
@@ -78,7 +79,23 @@ public interface TaskService {
      */
     void setUnDone(Task task);
 
+    /**
+     * 获取某天的已完成数量
+     * @param year
+     * @param monthOfYear
+     * @param dayOfMonth
+     * @return
+     */
     int countFinishedForDate(int year, int monthOfYear, int dayOfMonth);
 
+    /**
+     * 获取某的未完成数量
+     * @param year
+     * @param monthOfYear
+     * @param dayOfMonth
+     * @return
+     */
     int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth);
+
+    Map<Integer, List<Task>> findAndMap(int year, int monthOfYear);
 }

@@ -199,8 +199,10 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.activity_main_menu_task_overview_item:
 
-                mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_OVERVIEW;
-                displayFragment(mCurrentFragmentTag);
+//                mCurrentFragmentTag = FC.FRAGMENT_TAG_TASK_OVERVIEW;
+//                displayFragment(mCurrentFragmentTag);
+                Intent taskOverviewActivityIntent = new Intent(this, TaskOverviewActivity.class);
+                startActivity(taskOverviewActivityIntent);
                 break;
             case R.id.activity_main_menu_task_statistics_item:
 

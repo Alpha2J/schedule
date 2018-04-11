@@ -33,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 调用方法初始化activity
      *
-     * @param savedInstanceState
+     * @param savedInstanceState ..
      */
     protected abstract void initActivity(@Nullable Bundle savedInstanceState);
 

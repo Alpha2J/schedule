@@ -1,7 +1,9 @@
 package cn.alpha2j.schedule.data.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.alpha2j.schedule.data.Task;
 import cn.alpha2j.schedule.data.entity.TaskEntity;
@@ -107,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
      * 没写完
      * @param year 年
      * @param monthOfYear 月份 1到12
-     * @return
+     * @return ..
      */
     @Override
     public List<Task> findAllForYearAndMonth(int year, int monthOfYear) {
@@ -185,6 +187,27 @@ public class TaskServiceImpl implements TaskService {
         long endTime = getEndTime(startTime);
 
         return (int) taskRepository.countTaskEntitiesByDoneAndTimeBetween(false, startTime, endTime);
+    }
+
+    @Override
+    public Map<Integer, List<Task>> findAndMap(int year, int monthOfYear) {
+
+        int dayBegin = 1;
+        ScheduleDateTime yearAndMonth = DefaultScheduleDateBuilder.now().toDate(year, monthOfYear, dayBegin).toDateBegin().getResult();
+        int maxDay = yearAndMonth.getMonthDayNumber();
+
+        Map<Integer, List<Task>> resultMap = new HashMap<>(maxDay);
+        for (int i = dayBegin; i <= maxDay; i++) {
+            long startTime = DefaultScheduleDateBuilder.of(yearAndMonth).toDayOfMonth(i).getResult().getEpochMillisecond();
+            long endTime = getEndTime(startTime);
+
+            List<Task> temp = convert(taskRepository.findTaskEntitiesByTimeBetween(startTime, endTime));
+            if(temp.size() != 0) {
+                resultMap.put(i, temp);
+            }
+        }
+
+        return resultMap;
     }
 
     private List<Task> convert(List<TaskEntity> taskEntities) {
