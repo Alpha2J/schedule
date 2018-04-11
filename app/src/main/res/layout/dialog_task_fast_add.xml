@@ -68,6 +68,7 @@
                 android:id="@+id/bottom_dialog_task_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:lines="2"
                 android:hint="请输入标题"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_td_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="今天下午 15:00"
+                android:layout_centerInParent="true"
+                android:textSize="16sp"
+                android:textColor="@color/colorTextDark"/>
+
+            <ImageButton
+                android:id="@+id/ib_td_edit_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mode_edit_grey"
+                android:layout_alignParentEnd="true"
+                android:background="#00000000"
+                android:contentDescription="click me"
+                android:foreground="?attr/selectableItemBackground"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="35dp"
+            android:background="@drawable/list_divider_h"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="标题:"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/tv_td_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            android:textColor="@color/colorBlack"
+            android:layout_marginTop="10dp"
+            android:text="空军建军节 空军建军节, 我们就是想问下我们究竟在哪里 空军建军节 空军建军节, 我们就是想问下我们究竟在哪里 空军建军节 空军建军节, 我们就是想问下我们究竟在哪里 "/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="描述:"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/tv_td_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@color/colorBlack"
+            android:layout_marginTop="10dp"
+            android:text="描述描述"/>
+    </LinearLayout>
+</ScrollView>

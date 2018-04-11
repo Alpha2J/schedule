@@ -98,4 +98,11 @@ public interface TaskService {
     int countUnfinishedForDate(int year, int monthOfYear, int dayOfMonth);
 
     Map<Integer, List<Task>> findAndMap(int year, int monthOfYear);
+
+    /**
+     * 根据id获取一个task
+     * @param id
+     * @return task或者null
+     */
+    Task findOne(long id);
 }

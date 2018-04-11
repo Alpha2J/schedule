@@ -30,6 +30,8 @@
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingsActivityTheme" />
 
+        <activity android:name=".app.ui.activity.TaskOverviewActivity"/>
+
         <receiver
             android:name=".app.broadcast.TaskTimeOutReceiver"
             android:enabled="true"
@@ -42,8 +44,6 @@
         <service
             android:name=".app.service.AlarmService"
             android:exported="false" />
-
-        <activity android:name=".app.ui.activity.TaskOverviewActivity"></activity>
     </application>
 
 </manifest>

@@ -29,6 +29,7 @@ import cn.alpha2j.schedule.app.ui.data.observer.RVDataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayFinishedTaskDataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.observer.TodayUnfinishedTaskDataProviderObserver;
 import cn.alpha2j.schedule.app.ui.data.provider.RVTaskDataProvider;
+import cn.alpha2j.schedule.app.ui.dialog.TaskDetailBottomDialog;
 import cn.alpha2j.schedule.data.Task;
 
 /**
@@ -136,7 +137,12 @@ public class TaskTodayFragment extends BaseFragment
 
                 if(target == SwipeableTaskRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
 //                    点击了item
-                    System.out.println(position);
+                    Task task = mTodayUnfinishedTaskDataProvider.getItem(position).getTask();
+                    String time = task.getTime().getHourOfDay() + " : " + task.getTime().getMinuteOfHour();
+                    TaskDetailBottomDialog.TaskDetailWrapper wrapper = new TaskDetailBottomDialog.TaskDetailWrapper(task.getId(), task.getTitle(), task.getDescription(), time);
+                    TaskDetailBottomDialog dialog = TaskDetailBottomDialog.getInstance(wrapper);
+
+                    dialog.show(getActivity().getSupportFragmentManager());
                 } else {
 //                    点击了item的delete button
                     mTodayUnfinishedTaskDataProvider.deleteItem(position);
@@ -176,7 +182,12 @@ public class TaskTodayFragment extends BaseFragment
 
                 if(target == SwipeableTaskRVAdapter.EventListener.TASK_ITEM_CLICK_EVENT) {
 //                    点击了item
-                    System.out.println(position);
+                    Task task = mTodayFinishedTaskDataProvider.getItem(position).getTask();
+                    String time = task.getTime().getHourOfDay() + " : " + task.getTime().getMinuteOfHour();
+                    TaskDetailBottomDialog.TaskDetailWrapper wrapper = new TaskDetailBottomDialog.TaskDetailWrapper(task.getId(), task.getTitle(), task.getDescription(), time);
+                    TaskDetailBottomDialog dialog = TaskDetailBottomDialog.getInstance(wrapper);
+
+                    dialog.show(getActivity().getSupportFragmentManager());
                 } else {
 //                    点击了item的delete button
                     mTodayFinishedTaskDataProvider.deleteItem(position);

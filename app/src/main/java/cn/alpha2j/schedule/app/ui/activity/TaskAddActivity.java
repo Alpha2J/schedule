@@ -2,6 +2,7 @@ package cn.alpha2j.schedule.app.ui.activity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -21,6 +22,7 @@ import cn.alpha2j.schedule.R;
 import cn.alpha2j.schedule.app.ui.dialog.DescriptionSetterDialog;
 import cn.alpha2j.schedule.app.ui.dialog.ReminderSetterDialog;
 import cn.alpha2j.schedule.app.ui.entity.ReminderSetting;
+import cn.alpha2j.schedule.app.ui.entity.TimeType;
 import cn.alpha2j.schedule.app.ui.helper.ApplicationSettingHelper;
 import cn.alpha2j.schedule.app.ui.listener.OnTaskCreatedListener;
 import cn.alpha2j.schedule.data.Task;
@@ -55,6 +57,8 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
     private TimePickerDialog.OnTimeSetListener mOnTimeSetListener;
     private OnTaskCreatedListener mOnTaskCreatedListener;
 
+    private Task mTask;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_task_add;
@@ -83,6 +87,7 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
         mDescription = "";
 
         initViews();
+        initTask();
     }
 
     private void initViews() {
@@ -130,6 +135,46 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
             });
             dialog.show();
         });
+    }
+
+    private void initTask() {
+
+        Intent intent = getIntent();
+        long taskId = intent.getLongExtra("taskId", -1);
+        if(taskId == -1) {
+            return;
+        }
+
+        TaskService taskService = TaskServiceImpl.getInstance();
+        mTask = taskService.findOne(taskId);
+
+        mTaskTitleEditText.setText(mTask.getTitle());
+        mDateAndTimeWrapper.setDate(mTask.getTime().getYear(), mTask.getTime().getMonthOfYear(), mTask.getTime().getDayOfMonth());
+        refreshDateAndTimeText();
+
+        if(mTask.isRemind()) {
+            long distance = mTask.getTime().getEpochMillisecond() - mTask.getTime().getEpochMillisecond();
+            long minute = 1000 * 60;
+            long hour = 1000 * 60 * 60;
+            long day = 1000 * 60 * 60 * 24;
+
+            if(distance < minute * 60) {
+                mReminderWrapper.setNum((int) (distance / minute));
+                mReminderWrapper.setTimeType(TimeType.MINUTE);
+            } else if(distance < hour * 60) {
+                mReminderWrapper.setNum((int) (distance / hour));
+                mReminderWrapper.setTimeType(TimeType.HOUR);
+            } else if (distance < day * 60) {
+                mReminderWrapper.setNum((int) (distance / day));
+                mReminderWrapper.setTimeType(TimeType.DAY);
+            }
+        } else {
+            mReminderWrapper.setRemind(false);
+        }
+        refreshReminderText();
+
+        mDescription = mTask.getDescription();
+        refreshDescriptionText();
     }
 
     private void showDatePickerDialog() {
@@ -237,28 +282,29 @@ public class TaskAddActivity extends BaseActivity implements OnTaskCreatedListen
             return null;
         }
 
-        Task task = new Task();
-        task.setTitle(title);
-        task.setTime(mDateAndTimeWrapper.getResult());
-        task.setDone(false);
-        task.setDescription(null);
+        if(mTask == null) {
+            mTask = new Task();
+        }
+        mTask.setTitle(title);
+        mTask.setTime(mDateAndTimeWrapper.getResult());
+        mTask.setDescription(null);
 //        设置提醒
         if (mReminderWrapper.isRemind()) {
-            task.setRemind(true);
+            mTask.setRemind(true);
 //            任务的毫秒减去提醒提前的毫秒数
-            task.setRemindTime(ScheduleDateTime.of(mDateAndTimeWrapper.getResult().getEpochMillisecond() - mReminderWrapper.getResultAsEpochMills()));
+            mTask.setRemindTime(ScheduleDateTime.of(mDateAndTimeWrapper.getResult().getEpochMillisecond() - mReminderWrapper.getResultAsEpochMills()));
         } else {
-            task.setRemind(false);
-            task.setRemindTime(null);
+            mTask.setRemind(false);
+            mTask.setRemindTime(null);
         }
 
-        return task;
+        return mTask;
     }
 
     @Override
     public void onTaskCreated(Task task) {
         TaskService taskService = TaskServiceImpl.getInstance();
-        taskService.addTask(task);
+        taskService.addOrUpdateTask(task);
     }
 
     public static class DateAndTimeWrapper {

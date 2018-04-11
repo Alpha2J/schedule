@@ -210,6 +210,12 @@ public class TaskServiceImpl implements TaskService {
         return resultMap;
     }
 
+    @Override
+    public Task findOne(long id) {
+
+        return convert(taskRepository.findOne(id));
+    }
+
     private List<Task> convert(List<TaskEntity> taskEntities) {
 
         List<Task> tasks = new ArrayList<>();
