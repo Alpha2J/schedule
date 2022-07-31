@@ -1,4 +1,7 @@
 # Schedule
+2022-07-31提示：支持的安卓版本（Android 5.0.1[sdk21] - Android 8.1[sdk27]）
+
+
 大三上学期的独立开发的竞赛作品: 一款安卓平台的单机ToDo应用.
 
 ![主页面.png](https://github.com/Alpha2J/Schedule/blob/master/pics/%E4%B8%BB%E9%A1%B5%E9%9D%A2.png)
